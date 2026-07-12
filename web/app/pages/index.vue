@@ -7,6 +7,7 @@ const { get } = useApi();
 const { data: top } = await useAsyncData("top-standard", () =>
   get<LatestRating[]>("/latest_ratings", {
     rating_type: "eq.standard",
+    or: "(flag.is.null,flag.not.in.(i,wi))",
     order: "rating.desc",
     limit: "25",
   }),
