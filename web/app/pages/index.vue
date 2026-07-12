@@ -51,7 +51,7 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
 
 const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
 
-const topIds = computed(() => (top.value ?? []).slice(0, 10).map((r) => r.fideid));
+const topIds = computed(() => (top.value ?? []).map((r) => r.fideid));
 
 const { data: history, pending: historyPending } = await useAsyncData(
   "history-top5",
