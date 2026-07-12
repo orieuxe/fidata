@@ -454,74 +454,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        /** Format: text */
-                        p_country?: string;
-                        /** Format: integer */
-                        p_limit?: number;
-                        /** Format: integer */
-                        p_max_age?: number;
-                        /** Format: integer */
-                        p_min_age?: number;
-                        /** Format: rating_type */
-                        p_rating_type?: string;
-                        /** Format: text[] */
-                        p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
-                    };
-                    "application/vnd.pgrst.object+json;nulls=stripped": {
-                        /** Format: text */
-                        p_country?: string;
-                        /** Format: integer */
-                        p_limit?: number;
-                        /** Format: integer */
-                        p_max_age?: number;
-                        /** Format: integer */
-                        p_min_age?: number;
-                        /** Format: rating_type */
-                        p_rating_type?: string;
-                        /** Format: text[] */
-                        p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
-                    };
-                    "application/vnd.pgrst.object+json": {
-                        /** Format: text */
-                        p_country?: string;
-                        /** Format: integer */
-                        p_limit?: number;
-                        /** Format: integer */
-                        p_max_age?: number;
-                        /** Format: integer */
-                        p_min_age?: number;
-                        /** Format: rating_type */
-                        p_rating_type?: string;
-                        /** Format: text[] */
-                        p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
-                    };
-                    "text/csv": {
-                        /** Format: text */
-                        p_country?: string;
-                        /** Format: integer */
-                        p_limit?: number;
-                        /** Format: integer */
-                        p_max_age?: number;
-                        /** Format: integer */
-                        p_min_age?: number;
-                        /** Format: rating_type */
-                        p_rating_type?: string;
-                        /** Format: text[] */
-                        p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
-                    };
-                };
-            };
+            requestBody: components["requestBodies"]["Args"];
             responses: {
                 /** @description OK */
                 200: {
@@ -659,6 +592,67 @@ export interface paths {
                     };
                 };
             };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rpc/top_players": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    p_year?: number;
+                    p_country?: string;
+                    p_rating_type?: string;
+                    p_titles?: string;
+                    p_min_age?: number;
+                    p_max_age?: number;
+                    p_limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Preference */
+                    Prefer?: components["parameters"]["preferParams"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: components["requestBodies"]["Args"];
             responses: {
                 /** @description OK */
                 200: {
@@ -836,6 +830,74 @@ export interface components {
                 "application/vnd.pgrst.object+json;nulls=stripped": components["schemas"]["ratings"];
                 "application/vnd.pgrst.object+json": components["schemas"]["ratings"];
                 "text/csv": components["schemas"]["ratings"];
+            };
+        };
+        Args: {
+            content: {
+                "application/json": {
+                    /** Format: text */
+                    p_country?: string;
+                    /** Format: integer */
+                    p_limit?: number;
+                    /** Format: integer */
+                    p_max_age?: number;
+                    /** Format: integer */
+                    p_min_age?: number;
+                    /** Format: rating_type */
+                    p_rating_type?: string;
+                    /** Format: text[] */
+                    p_titles?: string[];
+                    /** Format: integer */
+                    p_year?: number;
+                };
+                "application/vnd.pgrst.object+json;nulls=stripped": {
+                    /** Format: text */
+                    p_country?: string;
+                    /** Format: integer */
+                    p_limit?: number;
+                    /** Format: integer */
+                    p_max_age?: number;
+                    /** Format: integer */
+                    p_min_age?: number;
+                    /** Format: rating_type */
+                    p_rating_type?: string;
+                    /** Format: text[] */
+                    p_titles?: string[];
+                    /** Format: integer */
+                    p_year?: number;
+                };
+                "application/vnd.pgrst.object+json": {
+                    /** Format: text */
+                    p_country?: string;
+                    /** Format: integer */
+                    p_limit?: number;
+                    /** Format: integer */
+                    p_max_age?: number;
+                    /** Format: integer */
+                    p_min_age?: number;
+                    /** Format: rating_type */
+                    p_rating_type?: string;
+                    /** Format: text[] */
+                    p_titles?: string[];
+                    /** Format: integer */
+                    p_year?: number;
+                };
+                "text/csv": {
+                    /** Format: text */
+                    p_country?: string;
+                    /** Format: integer */
+                    p_limit?: number;
+                    /** Format: integer */
+                    p_max_age?: number;
+                    /** Format: integer */
+                    p_min_age?: number;
+                    /** Format: rating_type */
+                    p_rating_type?: string;
+                    /** Format: text[] */
+                    p_titles?: string[];
+                    /** Format: integer */
+                    p_year?: number;
+                };
             };
         };
         /** @description countries */

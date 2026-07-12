@@ -16,7 +16,6 @@ const countryOptions = computed(() => [
 ]);
 
 const ratingTypeOptions = [
-  { title: "All time controls", value: null },
   { title: "Standard", value: "standard" },
   { title: "Rapid", value: "rapid" },
   { title: "Blitz", value: "blitz" },
@@ -31,7 +30,7 @@ const directionOptions = [
 
 const year = ref<number>(currentYear);
 const country = ref<string | null>(null);
-const ratingType = ref<string | null>(null);
+const ratingType = ref<string>("standard");
 const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);

@@ -1,26 +1,52 @@
 <script setup lang="ts">
 import { Line } from "vue-chartjs";
-import type { LatestRating, Rating } from "~/types/api";
+import type { TopPlayer, Rating, Country } from "~/types/api";
 
 const { get } = useApi();
 
-const { data: top } = await useAsyncData("top-standard", () =>
-  get<LatestRating[]>("/latest_ratings", {
-    rating_type: "eq.standard",
-    or: "(flag.is.null,flag.not.in.(i,wi))",
-    order: "rating.desc",
-    limit: "25",
-  }),
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: currentYear - 2015 + 2 }, (_, i) => currentYear + 1 - i); // newest first, +1 = "All time"
+const yearOptions = years.map((y) => (y > currentYear ? { title: "All time", value: null } : { title: String(y), value: y }));
+
+const { data: countries } = await useAsyncData("countries", () =>
+  get<Country[]>("/countries"),
+);
+const countryOptions = computed(() => [
+  { title: "All countries", value: null },
+  ...(countries.value ?? []).map((c) => ({ title: c.code, value: c.code })),
+]);
+
+const ratingTypeOptions = [
+  { title: "Standard", value: "standard" },
+  { title: "Rapid", value: "rapid" },
+  { title: "Blitz", value: "blitz" },
+];
+
+const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
+
+const year = ref<number | null>(currentYear);
+const country = ref<string | null>(null);
+const ratingType = ref<string>("standard");
+const titles = ref<string[]>([]);
+const minAge = ref<number | null>(null);
+const maxAge = ref<number | null>(null);
+
+const { data: top, pending } = await useAsyncData<TopPlayer[]>(
+  "top-players",
+  () =>
+    get<TopPlayer[]>("/rpc/top_players", {
+      ...(year.value != null && { p_year: String(year.value) }),
+      ...(country.value && { p_country: country.value }),
+      p_rating_type: ratingType.value,
+      ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
+      ...(minAge.value != null && { p_min_age: String(minAge.value) }),
+      ...(maxAge.value != null && { p_max_age: String(maxAge.value) }),
+      p_limit: "25",
+    }),
+  { watch: [year, country, ratingType, titles, minAge, maxAge] },
 );
 
-const currentYear = new Date().getFullYear();
-const rows = computed(() =>
-  (top.value ?? []).map((r, i) => ({
-    ...r,
-    rank: i + 1,
-    age: r.birthday ? currentYear - r.birthday : null,
-  })),
-);
+const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
 
 const topIds = computed(() => (top.value ?? []).slice(0, 5).map((r) => r.fideid));
 
@@ -30,12 +56,12 @@ const { data: history } = await useAsyncData(
     topIds.value.length
       ? get<Rating[]>("/ratings", {
           fideid: `in.(${topIds.value.join(",")})`,
-          rating_type: "eq.standard",
+          rating_type: `eq.${ratingType.value}`,
           order: "period.asc",
           select: "fideid,period,rating,name",
         })
       : Promise.resolve([] as Rating[]),
-  { watch: [topIds] },
+  { watch: [topIds, ratingType] },
 );
 
 const headers = [
@@ -45,7 +71,6 @@ const headers = [
   { title: "Title", key: "title" },
   { title: "Rating", key: "rating" },
   { title: "Age", key: "age" },
-  { title: "Games", key: "games" },
 ];
 
 const chartData = computed(() => {
@@ -71,10 +96,37 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
 
 <template>
   <v-container fluid>
+    <v-card title="Top players" class="mb-4">
+      <v-card-text>
+        <v-row dense>
+          <v-col cols="12" sm="6" md="2">
+            <v-select v-model="year" :items="yearOptions" label="Year" density="compact" />
+          </v-col>
+          <v-col cols="12" sm="6" md="2">
+            <v-autocomplete v-model="country" :items="countryOptions" label="Country" density="compact" />
+          </v-col>
+          <v-col cols="12" sm="6" md="2">
+            <v-select v-model="ratingType" :items="ratingTypeOptions" label="Time control" density="compact" />
+          </v-col>
+          <v-col cols="12" sm="6" md="2">
+            <v-select v-model="titles" :items="titleOptions" label="Title" multiple chips density="compact" />
+          </v-col>
+          <v-col cols="6" md="2">
+            <v-text-field v-model.number="minAge" type="number" label="Min age" density="compact" />
+          </v-col>
+          <v-col cols="6" md="2">
+            <v-text-field v-model.number="maxAge" type="number" label="Max age" density="compact" />
+          </v-col>
+        </v-row>
+        <p v-if="year == null" class="text-caption text-medium-emphasis">
+          "All time" scans the full rating history and can take a while.
+        </p>
+      </v-card-text>
+    </v-card>
     <v-row>
       <v-col cols="12" md="6">
-        <v-card title="Top 25 — Standard rating">
-          <v-data-table :headers="headers" :items="rows" :items-per-page="25" density="compact">
+        <v-card title="Top 25">
+          <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="25" density="compact">
             <template #item.name="{ item }">
               <div class="d-flex align-center" style="gap: 6px">
                 <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" title="FIDE profile">
