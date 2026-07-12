@@ -24,7 +24,7 @@ const ratingTypeOptions = computed(() => [
 ]);
 
 const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
-const limitOptions = [25, 50, 100, 200];
+const limitOptions = [10, 25, 50, 100, 200];
 
 const year = ref<number | null>(currentYear);
 const country = ref<string | null>(null);
@@ -32,7 +32,7 @@ const ratingType = ref<string>("standard");
 const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
-const limit = ref<number>(25);
+const limit = ref<number>(10);
 
 const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   "top-players",
