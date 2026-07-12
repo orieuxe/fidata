@@ -1,5 +1,5 @@
 --! Previous: -
---! Hash: sha1:b885522c0b6b94adbc253d22f54d3e9e0d042121
+--! Hash: sha1:d341346ba95be3dcb37835696da2c26524c6b9b3
 
 -- Baseline: FIDE rating history schema, functions, and indexes.
 -- Squashed history (local-only DB, no need to preserve migration-by-
@@ -303,6 +303,12 @@ as $$
     limit p_limit;
 $$;
 
+-- iso2 is normally a real ISO 3166-1 alpha-2 code, used both for flag-icons
+-- classes and Intl.DisplayNames region lookups. ENG/SCO/WLS are FIDE
+-- federations, not ISO countries, so they get flag-icons' non-standard
+-- gb-eng/gb-sct/gb-wls codes instead -- fine for flagClass, but callers
+-- must not feed these into Intl.DisplayNames (see countryName in
+-- web/app/utils/countryDisplay.ts, which guards on iso2 length).
 insert into countries (code, name, iso2) values
     ('AFG', 'Afghanistan', 'AF'),
     ('AHO', 'Netherlands Antilles (former)', NULL),
@@ -358,7 +364,7 @@ insert into countries (code, name, iso2) values
     ('DOM', 'Dominican Republic', 'DO'),
     ('ECU', 'Ecuador', 'EC'),
     ('EGY', 'Egypt', 'EG'),
-    ('ENG', 'England', NULL),
+    ('ENG', 'England', 'gb-eng'),
     ('ERI', 'Eritrea', 'ER'),
     ('ESA', 'El Salvador', 'SV'),
     ('ESP', 'Spain', 'ES'),
@@ -460,7 +466,7 @@ insert into countries (code, name, iso2) values
     ('RUS', 'Russia', 'RU'),
     ('RWA', 'Rwanda', 'RW'),
     ('SAM', 'Samoa', 'WS'),
-    ('SCO', 'Scotland', NULL),
+    ('SCO', 'Scotland', 'gb-sct'),
     ('SEN', 'Senegal', 'SN'),
     ('SEY', 'Seychelles', 'SC'),
     ('SIN', 'Singapore', 'SG'),
@@ -502,7 +508,7 @@ insert into countries (code, name, iso2) values
     ('VEN', 'Venezuela', 'VE'),
     ('VIE', 'Vietnam', 'VN'),
     ('VIN', 'Saint Vincent and the Grenadines', 'VC'),
-    ('WLS', 'Wales', NULL),
+    ('WLS', 'Wales', 'gb-wls'),
     ('YEM', 'Yemen', 'YE'),
     ('ZAM', 'Zambia', 'ZM'),
     ('ZIM', 'Zimbabwe', 'ZW')
