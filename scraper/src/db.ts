@@ -13,10 +13,6 @@ export async function upsertRatings(
   kind: RatingKind,
   rows: PlayerRow[],
 ): Promise<void> {
-  // Skip games = 0 rows (FIDE's monthly carry-forward entry for players who
-  // didn't play -- rating just repeats unchanged): keeps `ratings` at one
-  // row per period actually played instead of regrowing the ~90% of rows
-  // pruned in db/migrations/committed/000001.sql.
   rows = rows.filter((r) => r.games !== 0);
 
   for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
