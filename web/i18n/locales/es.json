@@ -41,7 +41,7 @@
   "pages": {
     "topPlayersCard": "Mejores jugadores",
     "top25": "Top {n}",
-    "ratingHistoryTop5": "Historial de clasificación — top {n}",
+    "ratingHistory": "Historial de clasificación",
     "loadingHistory": "Cargando historial…",
     "mostActivePlayers": "Jugadores más activos",
     "ratingMovers": "Cambios de clasificación",
