@@ -1,0 +1,21 @@
+{
+  "name": "fidata-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "graphile-migrate watch",
+    "commit": "graphile-migrate commit",
+    "migrate": "graphile-migrate migrate",
+    "status": "graphile-migrate status"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "private": "true",
+  "devDependencies": {
+    "graphile-migrate": "^1.4.1"
+  }
+}
