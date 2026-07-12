@@ -49,6 +49,10 @@ export async function upsertRatings(
   }
 }
 
+export async function refreshLatestRatings(): Promise<void> {
+  await sql`refresh materialized view concurrently latest_ratings`;
+}
+
 export async function closeDb(): Promise<void> {
   await sql.end();
 }
