@@ -6,8 +6,8 @@ const { get } = useApi();
 const { t } = useI18n();
 
 const currentYear = new Date().getFullYear();
-const years = Array.from({ length: currentYear - 2015 + 2 }, (_, i) => currentYear + 1 - i); // newest first, +1 = "All time"
-const yearOptions = years.map((y) => (y > currentYear ? { title: t("filters.allTime"), value: null } : { title: String(y), value: y }));
+const years = Array.from({ length: currentYear - 2015 + 1 }, (_, i) => currentYear - i);
+const yearOptions = years.map((y) => ({ title: String(y), value: y }));
 
 const { data: countries } = await useAsyncData("countries", () =>
   get<Country[]>("/countries"),
@@ -26,7 +26,7 @@ const ratingTypeOptions = computed(() => [
 const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
 const limitOptions = [10, 25, 50, 100, 200];
 
-const year = ref<number | null>(currentYear);
+const year = ref<number>(currentYear);
 const country = ref<string | null>(null);
 const ratingType = ref<string>("standard");
 const titles = ref<string[]>([]);
@@ -38,7 +38,7 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   "top-players",
   () =>
     get<TopPlayer[]>("/rpc/top_players", {
-      ...(year.value != null && { p_year: String(year.value) }),
+      p_year: String(year.value),
       ...(country.value && { p_country: country.value }),
       p_rating_type: ratingType.value,
       ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
@@ -60,11 +60,12 @@ const { data: history, pending: historyPending } = await useAsyncData(
       ? get<Rating[]>("/ratings", {
           fideid: `in.(${topIds.value.join(",")})`,
           rating_type: `eq.${ratingType.value}`,
+          and: `(period.gte.${year.value}-01-01,period.lte.${year.value}-12-31)`,
           order: "period.asc",
           select: "fideid,period,rating,name",
         })
       : Promise.resolve([] as Rating[]),
-  { watch: [topIds, ratingType, limit] },
+  { watch: [topIds, ratingType, year, country, titles, minAge, maxAge, limit] },
 );
 
 const headers = computed(() => [
@@ -127,9 +128,6 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
             <v-select v-model="limit" :items="limitOptions" :label="t('filters.limit')" density="compact" />
           </v-col>
         </v-row>
-        <p v-if="year == null" class="text-caption text-medium-emphasis">
-          {{ t("pages.allTimeWarning") }}
-        </p>
       </v-card-text>
     </v-card>
     <v-card :title="t('pages.top25', { n: limit })" class="mb-4">
