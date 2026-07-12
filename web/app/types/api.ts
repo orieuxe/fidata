@@ -28,3 +28,12 @@ export interface RatingChange {
   delta: number;
   age: number | null;
 }
+
+export interface TopPlayer {
+  fideid: number;
+  name: string;
+  country: string | null;
+  title: string | null;
+  rating: number | null;
+  age: number | null;
+}
