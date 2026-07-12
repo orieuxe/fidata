@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   modules: ["@nuxtjs/i18n"],
-  css: ["vuetify/styles", "@mdi/font/css/materialdesignicons.css"],
+  css: ["vuetify/styles", "@mdi/font/css/materialdesignicons.css", "flag-icons/css/flag-icons.min.css"],
   build: { transpile: ["vuetify"] },
   vite: {
     plugins: [vuetify({ autoImport: true })],

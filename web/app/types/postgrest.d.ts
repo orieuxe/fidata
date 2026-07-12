@@ -49,6 +49,8 @@ export interface paths {
             parameters: {
                 query?: {
                     code?: components["parameters"]["rowFilter.countries.code"];
+                    name?: components["parameters"]["rowFilter.countries.name"];
+                    iso2?: components["parameters"]["rowFilter.countries.iso2"];
                     /** @description Filtering Columns */
                     select?: components["parameters"]["select"];
                     /** @description Ordering */
@@ -121,6 +123,8 @@ export interface paths {
             parameters: {
                 query?: {
                     code?: components["parameters"]["rowFilter.countries.code"];
+                    name?: components["parameters"]["rowFilter.countries.name"];
+                    iso2?: components["parameters"]["rowFilter.countries.iso2"];
                 };
                 header?: {
                     /** @description Preference */
@@ -146,6 +150,8 @@ export interface paths {
             parameters: {
                 query?: {
                     code?: components["parameters"]["rowFilter.countries.code"];
+                    name?: components["parameters"]["rowFilter.countries.name"];
+                    iso2?: components["parameters"]["rowFilter.countries.iso2"];
                 };
                 header?: {
                     /** @description Preference */
@@ -680,6 +686,10 @@ export interface components {
              *     This is a Primary Key.<pk/>
              */
             code: string;
+            /** Format: text */
+            name?: string;
+            /** Format: text */
+            iso2?: string;
         };
         latest_ratings: {
             /**
@@ -793,6 +803,8 @@ export interface components {
         /** @description Limiting and Pagination */
         limit: string;
         "rowFilter.countries.code": string;
+        "rowFilter.countries.name": string;
+        "rowFilter.countries.iso2": string;
         "rowFilter.latest_ratings.fideid": string;
         "rowFilter.latest_ratings.period": string;
         "rowFilter.latest_ratings.rating_type": string;

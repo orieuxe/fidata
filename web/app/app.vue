@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useTheme } from "vuetify";
+import { useCookie } from "#app";
+import { useI18n } from "#i18n";
 
 const theme = useTheme();
 const themeCookie = useCookie<"light" | "dark">("theme", { default: () => "dark" });

@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import type { ActivePlayer, Country } from "~/types/api";
+import { ref, computed } from "vue";
+import { useAsyncData } from "#app";
+import { useI18n } from "#i18n";
+import type { ActivePlayer } from "~/types/api";
+import { useApi } from "~/composables/useApi";
+import { useCountryOptions } from "~/composables/useCountryOptions";
+import { useYearOptions } from "~/composables/useYearOptions";
+import { fideProfileUrl, lichessUrl } from "~/utils/links";
 
 const { get } = useApi();
 const { t } = useI18n();
 
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: currentYear - 2015 + 2 }, (_, i) => currentYear + 1 - i); // newest first, +1 = "All time"
-const yearOptions = years.map((y) => (y > currentYear ? { title: t("filters.allTime"), value: null } : { title: String(y), value: y }));
-
-const { data: countries } = await useAsyncData("countries", () =>
-  get<Country[]>("/countries"),
-);
-const countryOptions = computed(() => [
-  { title: t("filters.allCountries"), value: null },
-  ...(countries.value ?? []).map((c) => ({ title: c.code, value: c.code })),
-]);
+const { currentYear, yearOptions } = useYearOptions(true);
+const { countryOptions, countryName, countryFlag } = await useCountryOptions();
 
 const ratingTypeOptions = computed(() => [
   { title: t("filters.allTimeControls"), value: null },
@@ -27,7 +25,7 @@ const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTIT
 
 const year = ref<number | null>(currentYear);
 const country = ref<string | null>(null);
-const ratingType = ref<string | null>(null);
+const ratingType = ref<string | null>("standard");
 const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
@@ -69,7 +67,18 @@ const headers = computed(() => [
             <v-select v-model="year" :items="yearOptions" :label="t('filters.year')" density="compact" />
           </v-col>
           <v-col cols="12" sm="6" md="2">
-            <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact" />
+            <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact">
+              <template #item="{ props, item }">
+                <v-list-item v-bind="props" title="">
+                  <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
+                  {{ item.raw?.title ?? item.title }}
+                </v-list-item>
+              </template>
+              <template #selection="{ item }">
+                <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
+                {{ item.raw?.title ?? item.title }}
+              </template>
+            </v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6" md="2">
             <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" />
@@ -99,6 +108,15 @@ const headers = computed(() => [
             </a>
             <span>{{ item.name }}</span>
           </div>
+        </template>
+        <template #item.country="{ item }">
+          <span
+            v-if="countryFlag(item.country)"
+            :class="countryFlag(item.country)"
+            :title="countryName(item.country)"
+            style="font-size: 1.2em"
+          />
+          <span v-else :title="item.country">{{ item.country }}</span>
         </template>
       </v-data-table>
     </v-card>
