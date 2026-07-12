@@ -60,7 +60,7 @@ const { data: history, pending: historyPending } = await useAsyncData(
       ? get<Rating[]>("/ratings", {
           fideid: `in.(${topIds.value.join(",")})`,
           rating_type: `eq.${ratingType.value}`,
-          and: `(period.gte.${year.value}-01-01,period.lte.${year.value}-12-31)`,
+          period: `lte.${year.value}-12-31`,
           order: "period.asc",
           select: "fideid,period,rating,name",
         })
