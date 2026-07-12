@@ -73,7 +73,19 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
     <v-row>
       <v-col cols="12" md="6">
         <v-card title="Top 25 — Standard rating">
-          <v-data-table :headers="headers" :items="rows" :items-per-page="25" density="compact" />
+          <v-data-table :headers="headers" :items="rows" :items-per-page="25" density="compact">
+            <template #item.name="{ item }">
+              <div class="d-flex align-center" style="gap: 6px">
+                <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" title="FIDE profile">
+                  <img src="/icons/fide.png" width="14" height="14" alt="FIDE" />
+                </a>
+                <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" title="Lichess">
+                  <img src="/icons/lichess.png" width="14" height="14" alt="Lichess" />
+                </a>
+                <span>{{ item.name }}</span>
+              </div>
+            </template>
+          </v-data-table>
         </v-card>
       </v-col>
       <v-col cols="12" md="6">
