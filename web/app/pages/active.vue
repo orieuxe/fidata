@@ -54,6 +54,7 @@ const headers = [
   { title: "Country", key: "country" },
   { title: "Title", key: "title" },
   { title: "Rating", key: "rating" },
+  { title: "Age", key: "age" },
   { title: "Games", key: "total_games" },
 ];
 </script>
