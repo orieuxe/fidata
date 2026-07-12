@@ -21,6 +21,7 @@
     "title": "Titel",
     "minAge": "Min. Alter",
     "maxAge": "Max. Alter",
+    "limit": "Anzeigen",
     "direction": "Richtung",
     "mostImproved": "Größte Verbesserung",
     "biggestLoss": "Größter Wertungsverlust"
@@ -39,7 +40,7 @@
   },
   "pages": {
     "topPlayersCard": "Top-Spieler",
-    "top25": "Top 25",
+    "top25": "Top {n}",
     "ratingHistoryTop5": "Wertungsverlauf — Top 5",
     "loadingHistory": "Verlauf wird geladen…",
     "mostActivePlayers": "Aktivste Spieler",

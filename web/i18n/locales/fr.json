@@ -21,6 +21,7 @@
     "title": "Titre",
     "minAge": "Âge min",
     "maxAge": "Âge max",
+    "limit": "Afficher",
     "direction": "Sens",
     "mostImproved": "Plus forte progression",
     "biggestLoss": "Plus forte baisse"
@@ -39,7 +40,7 @@
   },
   "pages": {
     "topPlayersCard": "Meilleurs joueurs",
-    "top25": "Top 25",
+    "top25": "Top {n}",
     "ratingHistoryTop5": "Historique de classement — top 5",
     "loadingHistory": "Chargement de l'historique…",
     "mostActivePlayers": "Joueurs les plus actifs",
