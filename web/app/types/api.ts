@@ -15,6 +15,7 @@ export interface ActivePlayer {
   title: string | null;
   total_games: number;
   rating: number | null;
+  age: number | null;
 }
 
 export interface RatingChange {
@@ -25,4 +26,5 @@ export interface RatingChange {
   start_rating: number;
   end_rating: number;
   delta: number;
+  age: number | null;
 }

@@ -12,8 +12,13 @@ const { data: top } = await useAsyncData("top-standard", () =>
   }),
 );
 
+const currentYear = new Date().getFullYear();
 const rows = computed(() =>
-  (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })),
+  (top.value ?? []).map((r, i) => ({
+    ...r,
+    rank: i + 1,
+    age: r.birthday ? currentYear - r.birthday : null,
+  })),
 );
 
 const topIds = computed(() => (top.value ?? []).slice(0, 5).map((r) => r.fideid));
@@ -38,6 +43,7 @@ const headers = [
   { title: "Country", key: "country" },
   { title: "Title", key: "title" },
   { title: "Rating", key: "rating" },
+  { title: "Age", key: "age" },
   { title: "Games", key: "games" },
 ];
 

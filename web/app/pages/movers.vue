@@ -60,6 +60,7 @@ const headers = [
   { title: "Name", key: "name" },
   { title: "Country", key: "country" },
   { title: "Title", key: "title" },
+  { title: "Age", key: "age" },
   { title: "Start", key: "start_rating" },
   { title: "End", key: "end_rating" },
   { title: "Δ", key: "delta" },
