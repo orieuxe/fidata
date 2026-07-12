@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the fidata scraper monthly
+
+[Timer]
+# FIDE publishes new rating lists at the start of each month.
+OnCalendar=*-*-03 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
