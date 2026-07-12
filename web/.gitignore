@@ -22,3 +22,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# Intermediate step for `npm run gen:api-types` (app/types/postgrest.d.ts is the committed output)
+scripts/postgrest-openapi.json

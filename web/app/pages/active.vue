@@ -1,11 +1,5 @@
 <script setup lang="ts">
-interface ActivePlayer {
-  fideid: number;
-  name: string;
-  country: string | null;
-  title: string | null;
-  total_games: number;
-}
+import type { ActivePlayer, Country } from "~/types/api";
 
 const { get } = useApi();
 
@@ -14,7 +8,7 @@ const years = Array.from({ length: currentYear - 2015 + 2 }, (_, i) => currentYe
 const yearOptions = years.map((y) => (y > currentYear ? { title: "All time", value: null } : { title: String(y), value: y }));
 
 const { data: countries } = await useAsyncData("countries", () =>
-  get<{ code: string }[]>("/countries"),
+  get<Country[]>("/countries"),
 );
 const countryOptions = computed(() => [
   { title: "All countries", value: null },
@@ -63,6 +57,7 @@ const headers = [
   { title: "Name", key: "name" },
   { title: "Country", key: "country" },
   { title: "Title", key: "title" },
+  { title: "Rating", key: "rating" },
   { title: "Games", key: "total_games" },
 ];
 </script>

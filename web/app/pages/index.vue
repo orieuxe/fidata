@@ -1,21 +1,11 @@
 <script setup lang="ts">
 import { Line } from "vue-chartjs";
-
-interface RatingRow {
-  fideid: number;
-  period: string;
-  rating_type: string;
-  name: string;
-  country: string | null;
-  title: string | null;
-  rating: number | null;
-  games: number | null;
-}
+import type { LatestRating, Rating } from "~/types/api";
 
 const { get } = useApi();
 
 const { data: top } = await useAsyncData("top-standard", () =>
-  get<RatingRow[]>("/latest_ratings", {
+  get<LatestRating[]>("/latest_ratings", {
     rating_type: "eq.standard",
     order: "rating.desc",
     limit: "25",
@@ -32,13 +22,13 @@ const { data: history } = await useAsyncData(
   "history-top5",
   () =>
     topIds.value.length
-      ? get<RatingRow[]>("/ratings", {
+      ? get<Rating[]>("/ratings", {
           fideid: `in.(${topIds.value.join(",")})`,
           rating_type: "eq.standard",
           order: "period.asc",
           select: "fideid,period,rating,name",
         })
-      : Promise.resolve([] as RatingRow[]),
+      : Promise.resolve([] as Rating[]),
   { watch: [topIds] },
 );
 
