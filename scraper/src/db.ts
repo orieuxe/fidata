@@ -39,6 +39,14 @@ export async function upsertRatings(
         flag = excluded.flag
     `;
   }
+
+  const codes = [...new Set(rows.map((r) => r.country).filter((c): c is string => !!c))];
+  if (codes.length) {
+    await sql`
+      insert into countries ${sql(codes.map((code) => ({ code })), "code")}
+      on conflict do nothing
+    `;
+  }
 }
 
 export async function closeDb(): Promise<void> {
