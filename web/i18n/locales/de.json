@@ -41,7 +41,7 @@
   "pages": {
     "topPlayersCard": "Top-Spieler",
     "top25": "Top {n}",
-    "ratingHistoryTop5": "Wertungsverlauf — Top 10",
+    "ratingHistoryTop5": "Wertungsverlauf — Top {n}",
     "loadingHistory": "Verlauf wird geladen…",
     "mostActivePlayers": "Aktivste Spieler",
     "ratingMovers": "Wertungsveränderungen",

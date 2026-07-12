@@ -51,7 +51,7 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
 
 const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
 
-const topIds = computed(() => (top.value ?? []).slice(0, 10).map((r) => r.fideid));
+const topIds = computed(() => (top.value ?? []).map((r) => r.fideid));
 
 const { data: history } = await useAsyncData(
   "history-top5",
@@ -132,13 +132,7 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
         </p>
       </v-card-text>
     </v-card>
-    <v-card :title="t('pages.ratingHistoryTop5')" class="mb-4">
-      <div class="pa-4">
-        <Line v-if="chartData.labels.length" :data="chartData" :options="chartOptions" />
-        <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
-      </div>
-    </v-card>
-    <v-card :title="t('pages.top25', { n: limit })">
+    <v-card :title="t('pages.top25', { n: limit })" class="mb-4">
       <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="-1" density="compact">
         <template #item.name="{ item }">
           <div class="d-flex align-center" style="gap: 6px">
@@ -152,6 +146,12 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
           </div>
         </template>
       </v-data-table>
+    </v-card>
+    <v-card :title="t('pages.ratingHistoryTop5', { n: limit })">
+      <div class="pa-4">
+        <Line v-if="chartData.labels.length" :data="chartData" :options="chartOptions" />
+        <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
+      </div>
     </v-card>
   </v-container>
 </template>
