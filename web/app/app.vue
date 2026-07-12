@@ -45,3 +45,15 @@ const { t, locale, locales, setLocale } = useI18n();
     </v-main>
   </v-app>
 </template>
+
+<style>
+/* native number spinner misaligns in dense Vuetify fields, drop it */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+</style>
