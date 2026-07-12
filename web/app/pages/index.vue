@@ -24,6 +24,7 @@ const ratingTypeOptions = computed(() => [
 ]);
 
 const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
+const limitOptions = [25, 50, 100, 200];
 
 const year = ref<number | null>(currentYear);
 const country = ref<string | null>(null);
@@ -31,6 +32,7 @@ const ratingType = ref<string>("standard");
 const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
+const limit = ref<number>(25);
 
 const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   "top-players",
@@ -42,9 +44,9 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
       ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
       ...(minAge.value != null && { p_min_age: String(minAge.value) }),
       ...(maxAge.value != null && { p_max_age: String(maxAge.value) }),
-      p_limit: "25",
+      p_limit: String(limit.value),
     }),
-  { watch: [year, country, ratingType, titles, minAge, maxAge] },
+  { watch: [year, country, ratingType, titles, minAge, maxAge, limit] },
 );
 
 const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
@@ -112,11 +114,14 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
           <v-col cols="12" sm="6" md="2">
             <v-select v-model="titles" :items="titleOptions" :label="t('filters.title')" multiple chips density="compact" />
           </v-col>
-          <v-col cols="6" md="2">
+          <v-col cols="6" md="1">
             <v-text-field v-model.number="minAge" type="number" :label="t('filters.minAge')" density="compact" />
           </v-col>
-          <v-col cols="6" md="2">
+          <v-col cols="6" md="1">
             <v-text-field v-model.number="maxAge" type="number" :label="t('filters.maxAge')" density="compact" />
+          </v-col>
+          <v-col cols="12" sm="6" md="2">
+            <v-select v-model="limit" :items="limitOptions" :label="t('filters.limit')" density="compact" />
           </v-col>
         </v-row>
         <p v-if="year == null" class="text-caption text-medium-emphasis">
@@ -126,8 +131,8 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
     </v-card>
     <v-row>
       <v-col cols="12" md="6">
-        <v-card :title="t('pages.top25')">
-          <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="25" density="compact">
+        <v-card :title="t('pages.top25', { n: limit })">
+          <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="limit" density="compact">
             <template #item.name="{ item }">
               <div class="d-flex align-center" style="gap: 6px">
                 <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" :title="t('links.fideProfile')">

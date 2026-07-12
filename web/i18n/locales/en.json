@@ -21,6 +21,7 @@
     "title": "Title",
     "minAge": "Min age",
     "maxAge": "Max age",
+    "limit": "Show",
     "direction": "Direction",
     "mostImproved": "Most improved",
     "biggestLoss": "Biggest rating loss"
@@ -39,7 +40,7 @@
   },
   "pages": {
     "topPlayersCard": "Top players",
-    "top25": "Top 25",
+    "top25": "Top {n}",
     "ratingHistoryTop5": "Rating history — top 5",
     "loadingHistory": "Loading history…",
     "mostActivePlayers": "Most active players",
