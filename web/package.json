@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "gen:api-types": "swagger2openapi http://localhost:3001/ -o scripts/postgrest-openapi.json && openapi-typescript scripts/postgrest-openapi.json -o app/types/postgrest.d.ts"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -19,6 +20,8 @@
     "vuetify": "^4.1.4"
   },
   "devDependencies": {
+    "openapi-typescript": "^7.13.0",
+    "swagger2openapi": "^7.0.8",
     "vite-plugin-vuetify": "^2.1.3"
   }
 }
