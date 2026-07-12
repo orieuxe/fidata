@@ -1,21 +1,19 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
+import { useAsyncData } from "#app";
+import { useI18n } from "#i18n";
 import { Line } from "vue-chartjs";
-import type { TopPlayer, Rating, Country } from "~/types/api";
+import type { TopPlayer, Rating } from "~/types/api";
+import { useApi } from "~/composables/useApi";
+import { useCountryOptions } from "~/composables/useCountryOptions";
+import { useYearOptions } from "~/composables/useYearOptions";
+import { fideProfileUrl, lichessUrl } from "~/utils/links";
 
 const { get } = useApi();
 const { t } = useI18n();
 
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: currentYear - 2015 + 1 }, (_, i) => currentYear - i);
-const yearOptions = years.map((y) => ({ title: String(y), value: y }));
-
-const { data: countries } = await useAsyncData("countries", () =>
-  get<Country[]>("/countries"),
-);
-const countryOptions = computed(() => [
-  { title: t("filters.allCountries"), value: null },
-  ...(countries.value ?? []).map((c) => ({ title: c.code, value: c.code })),
-]);
+const { currentYear, yearOptions } = useYearOptions(false);
+const { countryOptions, countryName, countryFlag } = await useCountryOptions();
 
 const ratingTypeOptions = computed(() => [
   { title: t("filters.standard"), value: "standard" },
@@ -54,7 +52,7 @@ const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1
 const topIds = computed(() => (top.value ?? []).map((r) => r.fideid));
 
 const { data: history, pending: historyPending } = await useAsyncData(
-  "history-top5",
+  "rating-history",
   () =>
     topIds.value.length
       ? get<Rating[]>("/ratings", {
@@ -103,14 +101,38 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
 
 <template>
   <v-container fluid>
-    <v-card :title="t('pages.topPlayersCard')" class="mb-4">
+    <v-card class="mb-4">
+      <v-card-title class="d-flex align-center">
+        <span>{{ t('pages.topPlayersCard') }}</span>
+        <v-select
+          v-model="limit"
+          :items="limitOptions"
+          :label="t('filters.limit')"
+          density="compact"
+          hide-details
+          class="ml-4"
+          style="max-width: 130px"
+        />
+        <v-spacer />
+      </v-card-title>
       <v-card-text>
         <v-row dense>
           <v-col cols="12" sm="6" md="2">
             <v-select v-model="year" :items="yearOptions" :label="t('filters.year')" density="compact" />
           </v-col>
           <v-col cols="12" sm="6" md="2">
-            <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact" />
+            <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact">
+              <template #item="{ props, item }">
+                <v-list-item v-bind="props" title="">
+                  <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
+                  {{ item.raw?.title ?? item.title }}
+                </v-list-item>
+              </template>
+              <template #selection="{ item }">
+                <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
+                {{ item.raw?.title ?? item.title }}
+              </template>
+            </v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6" md="2">
             <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" />
@@ -124,13 +146,10 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
           <v-col cols="6" md="1">
             <v-text-field v-model.number="maxAge" type="number" :label="t('filters.maxAge')" density="compact" />
           </v-col>
-          <v-col cols="12" sm="6" md="2">
-            <v-select v-model="limit" :items="limitOptions" :label="t('filters.limit')" density="compact" />
-          </v-col>
         </v-row>
       </v-card-text>
     </v-card>
-    <v-card :title="t('pages.top25', { n: limit })" class="mb-4">
+    <v-card class="mb-4">
       <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="-1" hide-default-footer density="compact">
         <template #item.name="{ item }">
           <div class="d-flex align-center" style="gap: 6px">
@@ -143,9 +162,18 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
             <span>{{ item.name }}</span>
           </div>
         </template>
+        <template #item.country="{ item }">
+          <span
+            v-if="countryFlag(item.country)"
+            :class="countryFlag(item.country)"
+            :title="countryName(item.country)"
+            style="font-size: 1.2em"
+          />
+          <span v-else :title="item.country">{{ item.country }}</span>
+        </template>
       </v-data-table>
     </v-card>
-    <v-card :title="t('pages.ratingHistory')">
+    <v-card>
       <div class="pa-4">
         <Line v-if="!historyPending && chartData.labels.length" :data="chartData" :options="chartOptions" />
         <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
