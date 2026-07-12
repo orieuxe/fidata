@@ -16,3 +16,13 @@ export interface ActivePlayer {
   total_games: number;
   rating: number | null;
 }
+
+export interface RatingChange {
+  fideid: number;
+  name: string;
+  country: string | null;
+  title: string | null;
+  start_rating: number;
+  end_rating: number;
+  delta: number;
+}
