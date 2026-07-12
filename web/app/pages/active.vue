@@ -4,24 +4,19 @@ import { useAsyncData } from "#app";
 import { useI18n } from "#i18n";
 import type { ActivePlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
-import { useCountryOptions } from "~/composables/useCountryOptions";
-import { useYearOptions } from "~/composables/useYearOptions";
+import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
 import { fideProfileUrl, lichessUrl } from "~/utils/links";
+import { TITLE_OPTIONS, LIMIT_OPTIONS } from "~/utils/filterOptions";
 
 const { get } = useApi();
 const { t } = useI18n();
 
 const { currentYear, yearOptions } = useYearOptions(true);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
+const ratingTypeOptions = useRatingTypeOptions(true);
 
-const ratingTypeOptions = computed(() => [
-  { title: t("filters.allTimeControls"), value: null },
-  { title: t("filters.standard"), value: "standard" },
-  { title: t("filters.rapid"), value: "rapid" },
-  { title: t("filters.blitz"), value: "blitz" },
-]);
-
-const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
+const titleOptions = TITLE_OPTIONS;
+const limitOptions = LIMIT_OPTIONS;
 
 const year = ref<number | null>(currentYear);
 const country = ref<string | null>(null);
@@ -29,10 +24,11 @@ const ratingType = ref<string | null>("standard");
 const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
+const limit = ref<number>(25);
 
 const { data: players, pending, refresh } = await useAsyncData<ActivePlayer[]>(
   "most-active",
-  () =>
+  (_nuxtApp, { signal }) =>
     get<ActivePlayer[]>("/rpc/most_active_players", {
       ...(year.value != null && { p_year: String(year.value) }),
       ...(country.value && { p_country: country.value }),
@@ -40,18 +36,16 @@ const { data: players, pending, refresh } = await useAsyncData<ActivePlayer[]>(
       ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
       ...(minAge.value != null && { p_min_age: String(minAge.value) }),
       ...(maxAge.value != null && { p_max_age: String(maxAge.value) }),
-      p_limit: "50",
-    }),
-  { watch: [year, country, ratingType, titles, minAge, maxAge] },
+      p_limit: String(limit.value),
+    }, { signal }),
+  { watch: [year, country, ratingType, titles, minAge, maxAge, limit] },
 );
 
 const rows = computed(() => (players.value ?? []).map((p, i) => ({ ...p, rank: i + 1 })));
 
+const baseHeaders = useBaseHeaders();
 const headers = computed(() => [
-  { title: t("table.rank"), key: "rank", width: 60 },
-  { title: t("table.name"), key: "name" },
-  { title: t("table.country"), key: "country" },
-  { title: t("table.title"), key: "title" },
+  ...baseHeaders.value,
   { title: t("table.rating"), key: "rating" },
   { title: t("table.age"), key: "age" },
   { title: t("table.games"), key: "total_games" },
@@ -91,6 +85,9 @@ const headers = computed(() => [
           </v-col>
           <v-col cols="6" md="2">
             <v-text-field v-model.number="maxAge" type="number" :label="t('filters.maxAge')" density="compact" />
+          </v-col>
+          <v-col cols="6" md="1">
+            <v-select v-model="limit" :items="limitOptions" :label="t('filters.limit')" density="compact" />
           </v-col>
         </v-row>
         <p v-if="year == null" class="text-caption text-medium-emphasis">

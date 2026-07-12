@@ -4,8 +4,8 @@ import { useRuntimeConfig } from "#app";
 export function useApi() {
   const { public: { apiBase } } = useRuntimeConfig();
 
-  function get<T>(path: string, query?: Record<string, string>) {
-    return $fetch<T>(path, { baseURL: apiBase, query });
+  function get<T>(path: string, query?: Record<string, string>, opts?: { signal?: AbortSignal }) {
+    return $fetch<T>(path, { baseURL: apiBase, query, signal: opts?.signal });
   }
 
   return { get };
