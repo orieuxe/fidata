@@ -132,32 +132,26 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
         </p>
       </v-card-text>
     </v-card>
-    <v-row>
-      <v-col cols="12" md="6">
-        <v-card :title="t('pages.top25', { n: limit })">
-          <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="limit" density="compact">
-            <template #item.name="{ item }">
-              <div class="d-flex align-center" style="gap: 6px">
-                <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" :title="t('links.fideProfile')">
-                  <img src="/icons/fide.png" width="14" height="14" alt="FIDE" />
-                </a>
-                <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" :title="t('links.lichess')">
-                  <img src="/icons/lichess.png" width="14" height="14" alt="Lichess" />
-                </a>
-                <span>{{ item.name }}</span>
-              </div>
-            </template>
-          </v-data-table>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-card :title="t('pages.ratingHistoryTop5')">
-          <div class="pa-4">
-            <Line v-if="chartData.labels.length" :data="chartData" :options="chartOptions" />
-            <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
+    <v-card :title="t('pages.ratingHistoryTop5')" class="mb-4">
+      <div class="pa-4">
+        <Line v-if="chartData.labels.length" :data="chartData" :options="chartOptions" />
+        <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
+      </div>
+    </v-card>
+    <v-card :title="t('pages.top25', { n: limit })">
+      <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="-1" density="compact">
+        <template #item.name="{ item }">
+          <div class="d-flex align-center" style="gap: 6px">
+            <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" :title="t('links.fideProfile')">
+              <img src="/icons/fide.png" width="14" height="14" alt="FIDE" />
+            </a>
+            <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" :title="t('links.lichess')">
+              <img src="/icons/lichess.png" width="14" height="14" alt="Lichess" />
+            </a>
+            <span>{{ item.name }}</span>
           </div>
-        </v-card>
-      </v-col>
-    </v-row>
+        </template>
+      </v-data-table>
+    </v-card>
   </v-container>
 </template>
