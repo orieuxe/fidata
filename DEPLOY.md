@@ -2,14 +2,18 @@
 
 ## Why self-hosted on a single VPS
 
-The `ratings` table is ~29 GB (100M rows) and growing every month. That
-alone rules out every managed free tier that could otherwise run this
-stack for free:
+The `ratings` table used to be ~29 GB (100M rows): FIDE publishes a row
+per player per month even for months they didn't play (`games = 0`,
+rating just carried forward unchanged), which was ~90% of the table.
+Those rows are now pruned at the DB layer (see the note in
+`db/migrations/committed/000001.sql`), bringing it down to ~2.5 GB
+(9.5M rows). Still growing every month, just far more slowly, and still
+enough to rule out most managed free tiers:
 
 - **Neon** free plan: 0.5 GB storage per project.
 - **Supabase** free plan: 500 MB, paused after a week of inactivity.
-- **Fly.io** volumes: $0.15/GB/month -- ~$4.35/month for storage alone,
-  before compute, and that's before it grows further.
+- **Fly.io** volumes: $0.15/GB/month -- storage cost is now negligible at
+  this size, but still simpler to self-host than to add a managed DB.
 
 A single small VPS running Postgres + PostgREST + Nuxt + the scraper in
 Docker Compose is both the cheapest and the simplest option, since
@@ -25,9 +29,9 @@ egress or cross-service latency.
    right now (`Out of capacity` errors on signup) -- worth trying first
    since it's free, but don't count on it working immediately.
 2. **OVH VPS-1** -- $4.54/mo (~4.20 EUR), 2 vCPU / 4 GB RAM / 40 GB NVMe.
-   Fits the budget, EU-based. 40 GB vs. today's 29 GB DB leaves ~11 GB of
-   headroom -- fine for now, but worth checking `docker system df` /
-   `df -h` every few months as the scraper keeps backfilling.
+   Fits the budget, EU-based. 40 GB vs. today's ~2.5 GB DB now leaves huge
+   headroom -- the `games = 0` pruning was the main growth driver, so this
+   should hold for years without revisiting.
 3. **Hetzner CX22** -- ~3.79-5.49 EUR/mo depending on region/timing, same
    specs ballpark as OVH VPS-1. Equally good if OVH doesn't have capacity
    in your preferred region.
@@ -62,7 +66,7 @@ Any of the three run the exact same Docker Compose stack below -- only the
    docker compose exec -T postgres psql -U postgres -d fidata < db/migrations/committed/000001.sql
    docker compose exec -T postgres psql -U postgres -d fidata < db/migrations/committed/000002.sql
    ```
-6. **Transfer the existing data** from your local dev DB (29 GB -- a
+6. **Transfer the existing data** from your local dev DB (~2.5 GB -- a
    one-time transfer beats re-running the full historical backfill against
    FIDE's servers again):
    ```
