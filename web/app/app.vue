@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <NuxtLoadingIndicator color="#1976d2" />
     <v-app-bar title="FIDE Ratings">
       <v-btn to="/" text="Top players" />
       <v-btn to="/active" text="Most active" />
