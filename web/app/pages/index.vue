@@ -53,7 +53,7 @@ const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1
 
 const topIds = computed(() => (top.value ?? []).slice(0, 10).map((r) => r.fideid));
 
-const { data: history } = await useAsyncData(
+const { data: history, pending: historyPending } = await useAsyncData(
   "history-top5",
   () =>
     topIds.value.length
@@ -64,7 +64,7 @@ const { data: history } = await useAsyncData(
           select: "fideid,period,rating,name",
         })
       : Promise.resolve([] as Rating[]),
-  { watch: [topIds, ratingType] },
+  { watch: [topIds, ratingType, limit] },
 );
 
 const headers = computed(() => [
@@ -149,7 +149,7 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
     </v-card>
     <v-card :title="t('pages.ratingHistory')">
       <div class="pa-4">
-        <Line v-if="chartData.labels.length" :data="chartData" :options="chartOptions" />
+        <Line v-if="!historyPending && chartData.labels.length" :data="chartData" :options="chartOptions" />
         <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
       </div>
     </v-card>
