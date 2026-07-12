@@ -2,3 +2,5 @@
 node_modules/
 dist/
 cron.log
+*.key
+*.pem
