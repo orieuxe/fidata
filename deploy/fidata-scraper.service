@@ -1,0 +1,9 @@
+[Unit]
+Description=fidata FIDE rating scrape
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fidata
+ExecStart=/usr/bin/docker compose --profile cron run --rm scraper
