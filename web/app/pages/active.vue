@@ -87,7 +87,19 @@ const headers = [
           "All time" scans the full rating history and can take a while.
         </p>
       </v-card-text>
-      <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="50" density="compact" />
+      <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="25" density="compact">
+        <template #item.name="{ item }">
+          <div class="d-flex align-center" style="gap: 6px">
+            <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" title="FIDE profile">
+              <img src="/icons/fide.png" width="14" height="14" alt="FIDE" />
+            </a>
+            <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" title="Lichess">
+              <img src="/icons/lichess.png" width="14" height="14" alt="Lichess" />
+            </a>
+            <span>{{ item.name }}</span>
+          </div>
+        </template>
+      </v-data-table>
     </v-card>
   </v-container>
 </template>
