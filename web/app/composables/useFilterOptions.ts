@@ -5,6 +5,32 @@ import type { Country } from "~/types/api";
 import { useApi } from "./useApi";
 import { countryName, flagClass } from "~/utils/countryDisplay";
 
+export function useYearOptions(includeAllTime: boolean) {
+  const { t } = useI18n();
+  const currentYear = new Date().getFullYear();
+  const count = currentYear - 2015 + 1 + (includeAllTime ? 1 : 0);
+  const years = Array.from(
+    { length: count },
+    (_, i) => (includeAllTime ? currentYear + 1 : currentYear) - i,
+  );
+  const yearOptions = years.map((y) =>
+    includeAllTime && y > currentYear
+      ? { title: t("filters.allTime"), value: null }
+      : { title: String(y), value: y },
+  );
+  return { currentYear, yearOptions };
+}
+
+export function useRatingTypeOptions(includeAllTimeControls: boolean) {
+  const { t } = useI18n();
+  return computed(() => [
+    ...(includeAllTimeControls ? [{ title: t("filters.allTimeControls"), value: null }] : []),
+    { title: t("filters.standard"), value: "standard" },
+    { title: t("filters.rapid"), value: "rapid" },
+    { title: t("filters.blitz"), value: "blitz" },
+  ]);
+}
+
 export async function useCountryOptions() {
   const { get } = useApi();
   const { t, locale } = useI18n();
@@ -42,4 +68,16 @@ export async function useCountryOptions() {
   });
 
   return { countryOptions, countryName: nameFor, countryFlag: flagFor };
+}
+
+// Rank/name/country/title columns are identical across every player table;
+// each page appends whatever else it shows (rating, games, delta...).
+export function useBaseHeaders() {
+  const { t } = useI18n();
+  return computed(() => [
+    { title: t("table.rank"), key: "rank", width: 60 },
+    { title: t("table.name"), key: "name" },
+    { title: t("table.country"), key: "country" },
+    { title: t("table.title"), key: "title" },
+  ]);
 }

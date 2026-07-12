@@ -5,24 +5,19 @@ import { useI18n } from "#i18n";
 import { Line } from "vue-chartjs";
 import type { TopPlayer, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
-import { useCountryOptions } from "~/composables/useCountryOptions";
-import { useYearOptions } from "~/composables/useYearOptions";
+import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
 import { fideProfileUrl, lichessUrl } from "~/utils/links";
+import { TITLE_OPTIONS, LIMIT_OPTIONS_WIDE } from "~/utils/filterOptions";
 
 const { get } = useApi();
 const { t } = useI18n();
 
 const { currentYear, yearOptions } = useYearOptions(false);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
+const ratingTypeOptions = useRatingTypeOptions(false);
 
-const ratingTypeOptions = computed(() => [
-  { title: t("filters.standard"), value: "standard" },
-  { title: t("filters.rapid"), value: "rapid" },
-  { title: t("filters.blitz"), value: "blitz" },
-]);
-
-const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
-const limitOptions = [10, 25, 50, 100, 200];
+const titleOptions = TITLE_OPTIONS;
+const limitOptions = LIMIT_OPTIONS_WIDE;
 
 const year = ref<number>(currentYear);
 const country = ref<string | null>(null);
@@ -34,7 +29,7 @@ const limit = ref<number>(10);
 
 const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   "top-players",
-  () =>
+  (_nuxtApp, { signal }) =>
     get<TopPlayer[]>("/rpc/top_players", {
       p_year: String(year.value),
       ...(country.value && { p_country: country.value }),
@@ -43,17 +38,17 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
       ...(minAge.value != null && { p_min_age: String(minAge.value) }),
       ...(maxAge.value != null && { p_max_age: String(maxAge.value) }),
       p_limit: String(limit.value),
-    }),
+    }, { signal }),
   { watch: [year, country, ratingType, titles, minAge, maxAge, limit] },
 );
 
 const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
 
-const topIds = computed(() => (top.value ?? []).map((r) => r.fideid));
+const topIds = computed(() => (top.value ?? []).slice(0, 15).map((r) => r.fideid));
 
 const { data: history, pending: historyPending } = await useAsyncData(
   "rating-history",
-  () =>
+  (_nuxtApp, { signal }) =>
     topIds.value.length
       ? get<Rating[]>("/ratings", {
           fideid: `in.(${topIds.value.join(",")})`,
@@ -61,16 +56,14 @@ const { data: history, pending: historyPending } = await useAsyncData(
           period: `lte.${year.value}-12-31`,
           order: "period.asc",
           select: "fideid,period,rating,name",
-        })
+        }, { signal })
       : Promise.resolve([] as Rating[]),
   { watch: [topIds, ratingType, year, country, titles, minAge, maxAge, limit] },
 );
 
+const baseHeaders = useBaseHeaders();
 const headers = computed(() => [
-  { title: t("table.rank"), key: "rank", width: 60 },
-  { title: t("table.name"), key: "name" },
-  { title: t("table.country"), key: "country" },
-  { title: t("table.title"), key: "title" },
+  ...baseHeaders.value,
   { title: t("table.rating"), key: "rating" },
   { title: t("table.age"), key: "age" },
 ]);
