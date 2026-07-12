@@ -22,16 +22,12 @@ const ratingTypeOptions = [
   { title: "Blitz", value: "blitz" },
 ];
 
-const titledOptions = [
-  { title: "Titled or not", value: null },
-  { title: "Titled only", value: true },
-  { title: "Untitled only", value: false },
-];
+const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
 
 const year = ref<number | null>(currentYear);
 const country = ref<string | null>(null);
 const ratingType = ref<string | null>(null);
-const titled = ref<boolean | null>(null);
+const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
 
@@ -42,12 +38,12 @@ const { data: players, pending, refresh } = await useAsyncData<ActivePlayer[]>(
       ...(year.value != null && { p_year: String(year.value) }),
       ...(country.value && { p_country: country.value }),
       ...(ratingType.value && { p_rating_type: ratingType.value }),
-      ...(titled.value != null && { p_titled: String(titled.value) }),
+      ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
       ...(minAge.value != null && { p_min_age: String(minAge.value) }),
       ...(maxAge.value != null && { p_max_age: String(maxAge.value) }),
       p_limit: "50",
     }),
-  { watch: [year, country, ratingType, titled, minAge, maxAge] },
+  { watch: [year, country, ratingType, titles, minAge, maxAge] },
 );
 
 const rows = computed(() => (players.value ?? []).map((p, i) => ({ ...p, rank: i + 1 })));
@@ -77,7 +73,7 @@ const headers = [
             <v-select v-model="ratingType" :items="ratingTypeOptions" label="Time control" density="compact" />
           </v-col>
           <v-col cols="12" sm="6" md="2">
-            <v-select v-model="titled" :items="titledOptions" label="Title" density="compact" />
+            <v-select v-model="titles" :items="titleOptions" label="Title" multiple chips density="compact" />
           </v-col>
           <v-col cols="6" md="2">
             <v-text-field v-model.number="minAge" type="number" label="Min age" density="compact" />
