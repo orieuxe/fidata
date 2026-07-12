@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "FIDE Ratings"
+  },
+  "nav": {
+    "topPlayers": "Top players",
+    "mostActive": "Most active",
+    "ratingMovers": "Rating movers",
+    "findPlayer": "Find a player"
+  },
+  "filters": {
+    "year": "Year",
+    "allTime": "All time",
+    "country": "Country",
+    "allCountries": "All countries",
+    "timeControl": "Time control",
+    "allTimeControls": "All time controls",
+    "standard": "Standard",
+    "rapid": "Rapid",
+    "blitz": "Blitz",
+    "title": "Title",
+    "minAge": "Min age",
+    "maxAge": "Max age",
+    "direction": "Direction",
+    "mostImproved": "Most improved",
+    "biggestLoss": "Biggest rating loss"
+  },
+  "table": {
+    "rank": "#",
+    "name": "Name",
+    "country": "Country",
+    "title": "Title",
+    "rating": "Rating",
+    "age": "Age",
+    "games": "Games",
+    "start": "Start",
+    "end": "End",
+    "delta": "Δ"
+  },
+  "pages": {
+    "topPlayersCard": "Top players",
+    "top25": "Top 25",
+    "ratingHistoryTop5": "Rating history — top 5",
+    "loadingHistory": "Loading history…",
+    "mostActivePlayers": "Most active players",
+    "ratingMovers": "Rating movers",
+    "allTimeWarning": "\"All time\" scans the full rating history and can take a while."
+  },
+  "links": {
+    "fideProfile": "FIDE profile",
+    "lichess": "Lichess"
+  }
+}

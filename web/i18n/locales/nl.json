@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "FIDE-ratings"
+  },
+  "nav": {
+    "topPlayers": "Topspelers",
+    "mostActive": "Meest actief",
+    "ratingMovers": "Ratingveranderingen",
+    "findPlayer": "Speler zoeken"
+  },
+  "filters": {
+    "year": "Jaar",
+    "allTime": "Aller tijden",
+    "country": "Land",
+    "allCountries": "Alle landen",
+    "timeControl": "Bedenktijd",
+    "allTimeControls": "Alle bedenktijden",
+    "standard": "Standaard",
+    "rapid": "Rapid",
+    "blitz": "Blitz",
+    "title": "Titel",
+    "minAge": "Min. leeftijd",
+    "maxAge": "Max. leeftijd",
+    "direction": "Richting",
+    "mostImproved": "Meest verbeterd",
+    "biggestLoss": "Grootste ratingverlies"
+  },
+  "table": {
+    "rank": "#",
+    "name": "Naam",
+    "country": "Land",
+    "title": "Titel",
+    "rating": "Rating",
+    "age": "Leeftijd",
+    "games": "Partijen",
+    "start": "Start",
+    "end": "Einde",
+    "delta": "Δ"
+  },
+  "pages": {
+    "topPlayersCard": "Topspelers",
+    "top25": "Top 25",
+    "ratingHistoryTop5": "Ratingverloop — top 5",
+    "loadingHistory": "Verloop laden…",
+    "mostActivePlayers": "Meest actieve spelers",
+    "ratingMovers": "Ratingveranderingen",
+    "allTimeWarning": "\"Aller tijden\" doorzoekt de volledige ratinggeschiedenis en kan even duren."
+  },
+  "links": {
+    "fideProfile": "FIDE-profiel",
+    "lichess": "Lichess"
+  }
+}

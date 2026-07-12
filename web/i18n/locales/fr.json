@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "Classements FIDE"
+  },
+  "nav": {
+    "topPlayers": "Meilleurs joueurs",
+    "mostActive": "Plus actifs",
+    "ratingMovers": "Évolutions de classement",
+    "findPlayer": "Chercher un joueur"
+  },
+  "filters": {
+    "year": "Année",
+    "allTime": "Toutes périodes",
+    "country": "Pays",
+    "allCountries": "Tous les pays",
+    "timeControl": "Cadence",
+    "allTimeControls": "Toutes les cadences",
+    "standard": "Standard",
+    "rapid": "Rapide",
+    "blitz": "Blitz",
+    "title": "Titre",
+    "minAge": "Âge min",
+    "maxAge": "Âge max",
+    "direction": "Sens",
+    "mostImproved": "Plus forte progression",
+    "biggestLoss": "Plus forte baisse"
+  },
+  "table": {
+    "rank": "#",
+    "name": "Nom",
+    "country": "Pays",
+    "title": "Titre",
+    "rating": "Classement",
+    "age": "Âge",
+    "games": "Parties",
+    "start": "Début",
+    "end": "Fin",
+    "delta": "Δ"
+  },
+  "pages": {
+    "topPlayersCard": "Meilleurs joueurs",
+    "top25": "Top 25",
+    "ratingHistoryTop5": "Historique de classement — top 5",
+    "loadingHistory": "Chargement de l'historique…",
+    "mostActivePlayers": "Joueurs les plus actifs",
+    "ratingMovers": "Évolutions de classement",
+    "allTimeWarning": "« Toutes périodes » parcourt tout l'historique et peut prendre du temps."
+  },
+  "links": {
+    "fideProfile": "Profil FIDE",
+    "lichess": "Lichess"
+  }
+}
