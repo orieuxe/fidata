@@ -51,7 +51,7 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
 
 const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
 
-const topIds = computed(() => (top.value ?? []).slice(0, 5).map((r) => r.fideid));
+const topIds = computed(() => (top.value ?? []).slice(0, 10).map((r) => r.fideid));
 
 const { data: history } = await useAsyncData(
   "history-top5",
@@ -84,7 +84,10 @@ const chartData = computed(() => {
     if (!byPlayer.has(r.fideid)) byPlayer.set(r.fideid, { name: r.name, byPeriod: new Map() });
     byPlayer.get(r.fideid)!.byPeriod.set(r.period, r.rating ?? NaN);
   }
-  const colors = ["#e57373", "#64b5f6", "#81c784", "#ffd54f", "#ba68c8"];
+  const colors = [
+    "#e57373", "#64b5f6", "#81c784", "#ffd54f", "#ba68c8",
+    "#4db6ac", "#f06292", "#a1887f", "#90a4ae", "#dce775",
+  ];
   const datasets = [...byPlayer.values()].map((p, i) => ({
     label: p.name,
     data: labels.map((period) => p.byPeriod.get(period) ?? null),
