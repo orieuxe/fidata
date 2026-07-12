@@ -1,11 +1,12 @@
 --! Previous: -
---! Hash: sha1:c7887649d1cc184bd3f0d5608a9205fe3e4e07fe
+--! Hash: sha1:b885522c0b6b94adbc253d22f54d3e9e0d042121
 
 -- Baseline: FIDE rating history schema, functions, and indexes.
--- Squashed from the original 000001-000011 history (local-only DB, no need
--- to preserve migration-by-migration history) -- generated from a
--- pg_dump of the live schema so it's guaranteed to match the actual current
--- state rather than hand-replaying old intermediate steps.
+-- Squashed history (local-only DB, no need to preserve migration-by-
+-- migration history) -- regenerated from the live schema so it's
+-- guaranteed to match actual current state rather than hand-replaying old
+-- intermediate steps. Folds in the former 000002.sql (web_anon role) and
+-- the top_players carry-forward fix (see below).
 
 do $$ begin
     create type rating_type as enum ('standard', 'rapid', 'blitz');
@@ -28,6 +29,14 @@ create table if not exists ratings (
     k           integer,
     flag        text
 );
+
+-- FIDE publishes a row every month for every player, including months
+-- they didn't play (games = 0, rating just carried forward unchanged from
+-- last game). That was ~90% of this table by row count. Rows with
+-- games = 0 are pruned to keep the table small; queries that need a
+-- player's rating "as of" some date should pick the latest row at or
+-- before that date rather than assuming a row exists for every period --
+-- see top_players below for the one place that got this wrong.
 
 do $$ begin
     if not exists (select 1 from pg_constraint where conname = 'ratings_pkey') then
@@ -242,6 +251,14 @@ $$;
 -- defaults to standard -- "all time controls" doesn't make sense for a
 -- single rating ranking). Excludes FIDE-inactive players (flag i/wi).
 -- Exposed at /rpc/top_players.
+--
+-- Only bounded by period <= year end, not >= year start: the `ratings`
+-- table only keeps rows for periods a player actually played (rows where
+-- games = 0 -- FIDE's monthly carry-forward entry for inactive players --
+-- are pruned), so a player who hasn't played yet in p_year would otherwise
+-- have no row in range and drop out of the ranking entirely. Picking the
+-- latest row at or before year end instead carries their last known
+-- rating forward, same as most_active_players' embedded rating subquery.
 create or replace function top_players(
     p_year        integer     default null,
     p_country     text        default null,
@@ -266,7 +283,6 @@ as $$
             r.fideid, r.name, r.country, r.title, r.birthday, r.rating
         from ratings r
         where r.rating_type = p_rating_type
-          and r.period >= coalesce(make_date(p_year, 1, 1), '-infinity'::date)
           and r.period <= least(make_date(p_year, 12, 1), current_date)
           and coalesce(r.flag, '') not like '%i%'
           and (p_country is null or r.country = p_country)
@@ -491,3 +507,18 @@ insert into countries (code, name, iso2) values
     ('ZAM', 'Zambia', 'ZM'),
     ('ZIM', 'Zimbabwe', 'ZW')
 on conflict (code) do update set name = excluded.name, iso2 = excluded.iso2;
+
+-- Security fix: PostgREST's db-anon-role was set to "postgres" (the
+-- superuser), so every unauthenticated request the public API serves --
+-- once this is deployed off localhost -- would execute as superuser,
+-- capable of arbitrary writes/DDL. This app is read-only from the
+-- frontend, so give PostgREST a role that can only SELECT/EXECUTE.
+do $$ begin
+    if not exists (select 1 from pg_roles where rolname = 'web_anon') then
+        create role web_anon nologin;
+    end if;
+end $$;
+
+grant usage on schema public to web_anon;
+grant select on ratings, latest_ratings, countries to web_anon;
+grant execute on all functions in schema public to web_anon;
