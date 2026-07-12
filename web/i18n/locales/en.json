@@ -41,7 +41,7 @@
   "pages": {
     "topPlayersCard": "Top players",
     "top25": "Top {n}",
-    "ratingHistoryTop5": "Rating history — top 10",
+    "ratingHistoryTop5": "Rating history — top {n}",
     "loadingHistory": "Loading history…",
     "mostActivePlayers": "Most active players",
     "ratingMovers": "Rating movers",

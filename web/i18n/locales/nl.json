@@ -41,7 +41,7 @@
   "pages": {
     "topPlayersCard": "Topspelers",
     "top25": "Top {n}",
-    "ratingHistoryTop5": "Ratingverloop — top 10",
+    "ratingHistoryTop5": "Ratingverloop — top {n}",
     "loadingHistory": "Verloop laden…",
     "mostActivePlayers": "Meest actieve spelers",
     "ratingMovers": "Ratingveranderingen",
