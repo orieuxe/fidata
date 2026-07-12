@@ -8,17 +8,33 @@ function toggleTheme() {
   theme.global.name.value = theme.global.name.value === "dark" ? "light" : "dark";
   themeCookie.value = theme.global.name.value as "light" | "dark";
 }
+
+const { t, locale, locales, setLocale } = useI18n();
 </script>
 
 <template>
   <v-app>
     <NuxtLoadingIndicator color="#1976d2" />
-    <v-app-bar title="FIDE Ratings">
-      <v-btn to="/" text="Top players" />
-      <v-btn to="/active" text="Most active" />
-      <v-btn to="/movers" text="Rating movers" />
-      <v-btn href="https://lichess.org/fide" target="_blank" rel="noopener" text="Find a player" append-icon="mdi-open-in-new" />
+    <v-app-bar :title="t('app.title')">
+      <v-btn to="/" :text="t('nav.topPlayers')" />
+      <v-btn to="/active" :text="t('nav.mostActive')" />
+      <v-btn to="/movers" :text="t('nav.ratingMovers')" />
+      <v-btn href="https://lichess.org/fide" target="_blank" rel="noopener" :text="t('nav.findPlayer')" append-icon="mdi-open-in-new" />
       <v-spacer />
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn icon="mdi-translate" v-bind="props" />
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="l in locales"
+            :key="l.code"
+            :active="l.code === locale"
+            :title="l.name"
+            @click="setLocale(l.code)"
+          />
+        </v-list>
+      </v-menu>
       <v-btn
         :icon="theme.global.current.value.dark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
         @click="toggleTheme"

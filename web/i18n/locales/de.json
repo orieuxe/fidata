@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "FIDE-Wertungen"
+  },
+  "nav": {
+    "topPlayers": "Top-Spieler",
+    "mostActive": "Aktivste",
+    "ratingMovers": "Wertungsveränderungen",
+    "findPlayer": "Spieler suchen"
+  },
+  "filters": {
+    "year": "Jahr",
+    "allTime": "Gesamter Zeitraum",
+    "country": "Land",
+    "allCountries": "Alle Länder",
+    "timeControl": "Bedenkzeit",
+    "allTimeControls": "Alle Bedenkzeiten",
+    "standard": "Standard",
+    "rapid": "Schnellschach",
+    "blitz": "Blitz",
+    "title": "Titel",
+    "minAge": "Min. Alter",
+    "maxAge": "Max. Alter",
+    "direction": "Richtung",
+    "mostImproved": "Größte Verbesserung",
+    "biggestLoss": "Größter Wertungsverlust"
+  },
+  "table": {
+    "rank": "#",
+    "name": "Name",
+    "country": "Land",
+    "title": "Titel",
+    "rating": "Wertung",
+    "age": "Alter",
+    "games": "Partien",
+    "start": "Start",
+    "end": "Ende",
+    "delta": "Δ"
+  },
+  "pages": {
+    "topPlayersCard": "Top-Spieler",
+    "top25": "Top 25",
+    "ratingHistoryTop5": "Wertungsverlauf — Top 5",
+    "loadingHistory": "Verlauf wird geladen…",
+    "mostActivePlayers": "Aktivste Spieler",
+    "ratingMovers": "Wertungsveränderungen",
+    "allTimeWarning": "„Gesamter Zeitraum\" durchsucht die komplette Wertungshistorie und kann dauern."
+  },
+  "links": {
+    "fideProfile": "FIDE-Profil",
+    "lichess": "Lichess"
+  }
+}

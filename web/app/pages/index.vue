@@ -3,24 +3,25 @@ import { Line } from "vue-chartjs";
 import type { TopPlayer, Rating, Country } from "~/types/api";
 
 const { get } = useApi();
+const { t } = useI18n();
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: currentYear - 2015 + 2 }, (_, i) => currentYear + 1 - i); // newest first, +1 = "All time"
-const yearOptions = years.map((y) => (y > currentYear ? { title: "All time", value: null } : { title: String(y), value: y }));
+const yearOptions = years.map((y) => (y > currentYear ? { title: t("filters.allTime"), value: null } : { title: String(y), value: y }));
 
 const { data: countries } = await useAsyncData("countries", () =>
   get<Country[]>("/countries"),
 );
 const countryOptions = computed(() => [
-  { title: "All countries", value: null },
+  { title: t("filters.allCountries"), value: null },
   ...(countries.value ?? []).map((c) => ({ title: c.code, value: c.code })),
 ]);
 
-const ratingTypeOptions = [
-  { title: "Standard", value: "standard" },
-  { title: "Rapid", value: "rapid" },
-  { title: "Blitz", value: "blitz" },
-];
+const ratingTypeOptions = computed(() => [
+  { title: t("filters.standard"), value: "standard" },
+  { title: t("filters.rapid"), value: "rapid" },
+  { title: t("filters.blitz"), value: "blitz" },
+]);
 
 const titleOptions = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
 
@@ -64,14 +65,14 @@ const { data: history } = await useAsyncData(
   { watch: [topIds, ratingType] },
 );
 
-const headers = [
-  { title: "#", key: "rank", width: 60 },
-  { title: "Name", key: "name" },
-  { title: "Country", key: "country" },
-  { title: "Title", key: "title" },
-  { title: "Rating", key: "rating" },
-  { title: "Age", key: "age" },
-];
+const headers = computed(() => [
+  { title: t("table.rank"), key: "rank", width: 60 },
+  { title: t("table.name"), key: "name" },
+  { title: t("table.country"), key: "country" },
+  { title: t("table.title"), key: "title" },
+  { title: t("table.rating"), key: "rating" },
+  { title: t("table.age"), key: "age" },
+]);
 
 const chartData = computed(() => {
   const rows = history.value ?? [];
@@ -96,43 +97,43 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
 
 <template>
   <v-container fluid>
-    <v-card title="Top players" class="mb-4">
+    <v-card :title="t('pages.topPlayersCard')" class="mb-4">
       <v-card-text>
         <v-row dense>
           <v-col cols="12" sm="6" md="2">
-            <v-select v-model="year" :items="yearOptions" label="Year" density="compact" />
+            <v-select v-model="year" :items="yearOptions" :label="t('filters.year')" density="compact" />
           </v-col>
           <v-col cols="12" sm="6" md="2">
-            <v-autocomplete v-model="country" :items="countryOptions" label="Country" density="compact" />
+            <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact" />
           </v-col>
           <v-col cols="12" sm="6" md="2">
-            <v-select v-model="ratingType" :items="ratingTypeOptions" label="Time control" density="compact" />
+            <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" />
           </v-col>
           <v-col cols="12" sm="6" md="2">
-            <v-select v-model="titles" :items="titleOptions" label="Title" multiple chips density="compact" />
+            <v-select v-model="titles" :items="titleOptions" :label="t('filters.title')" multiple chips density="compact" />
           </v-col>
           <v-col cols="6" md="2">
-            <v-text-field v-model.number="minAge" type="number" label="Min age" density="compact" />
+            <v-text-field v-model.number="minAge" type="number" :label="t('filters.minAge')" density="compact" />
           </v-col>
           <v-col cols="6" md="2">
-            <v-text-field v-model.number="maxAge" type="number" label="Max age" density="compact" />
+            <v-text-field v-model.number="maxAge" type="number" :label="t('filters.maxAge')" density="compact" />
           </v-col>
         </v-row>
         <p v-if="year == null" class="text-caption text-medium-emphasis">
-          "All time" scans the full rating history and can take a while.
+          {{ t("pages.allTimeWarning") }}
         </p>
       </v-card-text>
     </v-card>
     <v-row>
       <v-col cols="12" md="6">
-        <v-card title="Top 25">
+        <v-card :title="t('pages.top25')">
           <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="25" density="compact">
             <template #item.name="{ item }">
               <div class="d-flex align-center" style="gap: 6px">
-                <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" title="FIDE profile">
+                <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" :title="t('links.fideProfile')">
                   <img src="/icons/fide.png" width="14" height="14" alt="FIDE" />
                 </a>
-                <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" title="Lichess">
+                <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" :title="t('links.lichess')">
                   <img src="/icons/lichess.png" width="14" height="14" alt="Lichess" />
                 </a>
                 <span>{{ item.name }}</span>
@@ -142,10 +143,10 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
         </v-card>
       </v-col>
       <v-col cols="12" md="6">
-        <v-card title="Rating history — top 5">
+        <v-card :title="t('pages.ratingHistoryTop5')">
           <div class="pa-4">
             <Line v-if="chartData.labels.length" :data="chartData" :options="chartOptions" />
-            <p v-else class="text-medium-emphasis">Loading history…</p>
+            <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
           </div>
         </v-card>
       </v-col>
