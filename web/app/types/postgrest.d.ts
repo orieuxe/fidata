@@ -423,7 +423,7 @@ export interface paths {
                     p_year?: number;
                     p_country?: string;
                     p_rating_type?: string;
-                    p_titled?: boolean;
+                    p_titles?: string;
                     p_min_age?: number;
                     p_max_age?: number;
                     p_limit?: number;
@@ -467,8 +467,8 @@ export interface paths {
                         p_min_age?: number;
                         /** Format: rating_type */
                         p_rating_type?: string;
-                        /** Format: boolean */
-                        p_titled?: boolean;
+                        /** Format: text[] */
+                        p_titles?: string[];
                         /** Format: integer */
                         p_year?: number;
                     };
@@ -483,8 +483,8 @@ export interface paths {
                         p_min_age?: number;
                         /** Format: rating_type */
                         p_rating_type?: string;
-                        /** Format: boolean */
-                        p_titled?: boolean;
+                        /** Format: text[] */
+                        p_titles?: string[];
                         /** Format: integer */
                         p_year?: number;
                     };
@@ -499,8 +499,8 @@ export interface paths {
                         p_min_age?: number;
                         /** Format: rating_type */
                         p_rating_type?: string;
-                        /** Format: boolean */
-                        p_titled?: boolean;
+                        /** Format: text[] */
+                        p_titles?: string[];
                         /** Format: integer */
                         p_year?: number;
                     };
@@ -515,8 +515,8 @@ export interface paths {
                         p_min_age?: number;
                         /** Format: rating_type */
                         p_rating_type?: string;
-                        /** Format: boolean */
-                        p_titled?: boolean;
+                        /** Format: text[] */
+                        p_titles?: string[];
                         /** Format: integer */
                         p_year?: number;
                     };
