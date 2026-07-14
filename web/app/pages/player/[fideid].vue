@@ -139,13 +139,16 @@ function fmtDelta(delta: number | null) {
             <tr v-for="y in yearlyStats" :key="y.year">
               <td>{{ y.year }}</td>
               <td>
-                {{ y.games_standard }} <span :class="{ 'text-red': (y.delta_standard ?? 0) < 0, 'text-green': (y.delta_standard ?? 0) > 0 }">{{ fmtDelta(y.delta_standard) }}</span>
+                <span class="d-inline-block text-right" style="width: 2em">{{ y.games_standard }}</span>
+                <span :class="{ 'text-red': (y.delta_standard ?? 0) < 0, 'text-green': (y.delta_standard ?? 0) > 0 }">{{ fmtDelta(y.delta_standard) }}</span>
               </td>
               <td>
-                {{ y.games_rapid }} <span :class="{ 'text-red': (y.delta_rapid ?? 0) < 0, 'text-green': (y.delta_rapid ?? 0) > 0 }">{{ fmtDelta(y.delta_rapid) }}</span>
+                <span class="d-inline-block text-right" style="width: 2em">{{ y.games_rapid }}</span>
+                <span :class="{ 'text-red': (y.delta_rapid ?? 0) < 0, 'text-green': (y.delta_rapid ?? 0) > 0 }">{{ fmtDelta(y.delta_rapid) }}</span>
               </td>
               <td>
-                {{ y.games_blitz }} <span :class="{ 'text-red': (y.delta_blitz ?? 0) < 0, 'text-green': (y.delta_blitz ?? 0) > 0 }">{{ fmtDelta(y.delta_blitz) }}</span>
+                <span class="d-inline-block text-right" style="width: 2em">{{ y.games_blitz }}</span>
+                <span :class="{ 'text-red': (y.delta_blitz ?? 0) < 0, 'text-green': (y.delta_blitz ?? 0) > 0 }">{{ fmtDelta(y.delta_blitz) }}</span>
               </td>
               <td>{{ y.games_total }}</td>
             </tr>
