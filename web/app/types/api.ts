@@ -37,3 +37,17 @@ export interface TopPlayer {
   rating: number | null;
   age: number | null;
 }
+
+// Matches search_players() in db/migrations/current.sql -- one row per
+// player with all 3 cadences, since the search page has no time control
+// picker.
+export interface SearchPlayer {
+  fideid: number;
+  name: string;
+  country: string | null;
+  title: string | null;
+  rating_standard: number | null;
+  rating_rapid: number | null;
+  rating_blitz: number | null;
+  age: number | null;
+}

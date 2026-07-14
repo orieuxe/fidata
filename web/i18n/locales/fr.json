@@ -22,6 +22,7 @@
     "minAge": "Âge min",
     "maxAge": "Âge max",
     "limit": "Afficher",
+    "playerName": "Nom du joueur",
     "direction": "Sens",
     "mostImproved": "Plus forte progression",
     "biggestLoss": "Plus forte baisse"
@@ -45,7 +46,10 @@
     "loadingHistory": "Chargement de l'historique…",
     "mostActivePlayers": "Joueurs les plus actifs",
     "ratingMovers": "Évolutions de classement",
-    "allTimeWarning": "« Toutes périodes » parcourt tout l'historique et peut prendre du temps."
+    "allTimeWarning": "« Toutes périodes » parcourt tout l'historique et peut prendre du temps.",
+    "searchPlayers": "Rechercher un joueur",
+    "searchHint": "Tapez au moins 2 caractères",
+    "searchNoResults": "Aucun joueur trouvé"
   },
   "links": {
     "fideProfile": "Profil FIDE",
