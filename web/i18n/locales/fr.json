@@ -49,10 +49,15 @@
     "allTimeWarning": "« Toutes périodes » parcourt tout l'historique et peut prendre du temps.",
     "searchPlayers": "Rechercher un joueur",
     "searchHint": "Tapez au moins 2 caractères",
-    "searchNoResults": "Aucun joueur trouvé"
+    "searchNoResults": "Aucun joueur trouvé",
+    "rankWorld": "Rang mondial",
+    "rankCountry": "Rang national",
+    "maxRating": "Meilleur classement",
+    "playerNotFound": "Joueur introuvable"
   },
   "links": {
     "fideProfile": "Profil FIDE",
-    "lichess": "Lichess"
+    "lichess": "Lichess",
+    "playerProfile": "Fiche joueur"
   }
 }
