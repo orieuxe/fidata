@@ -51,3 +51,20 @@ export interface SearchPlayer {
   rating_blitz: number | null;
   age: number | null;
 }
+
+// Matches player_profile() in db/migrations/current.sql.
+export interface PlayerProfile {
+  fideid: number;
+  name: string;
+  country: string | null;
+  title: string | null;
+  age: number | null;
+  rating_standard: number | null;
+  rating_rapid: number | null;
+  rating_blitz: number | null;
+  max_standard: number | null;
+  max_rapid: number | null;
+  max_blitz: number | null;
+  rank_country_standard: number | null;
+  rank_world_standard: number | null;
+}

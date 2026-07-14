@@ -49,10 +49,15 @@
     "allTimeWarning": "„Gesamter Zeitraum\" durchsucht die komplette Wertungshistorie und kann dauern.",
     "searchPlayers": "Spieler suchen",
     "searchHint": "Mindestens 2 Zeichen eingeben",
-    "searchNoResults": "Keine Spieler gefunden"
+    "searchNoResults": "Keine Spieler gefunden",
+    "rankWorld": "Weltrang",
+    "rankCountry": "Landesrang",
+    "maxRating": "Bestwertung",
+    "playerNotFound": "Spieler nicht gefunden"
   },
   "links": {
     "fideProfile": "FIDE-Profil",
-    "lichess": "Lichess"
+    "lichess": "Lichess",
+    "playerProfile": "Spielerprofil"
   }
 }

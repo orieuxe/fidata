@@ -124,6 +124,9 @@ const headers = [
                 <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" :title="t('links.lichess')">
                   <img src="/icons/lichess.png" width="14" height="14" alt="Lichess" />
                 </a>
+                <NuxtLink :to="`/player/${item.fideid}`" :title="t('links.playerProfile')">
+                  <v-icon size="14" icon="mdi-chart-line" />
+                </NuxtLink>
                 <span>{{ item.name }}</span>
               </div>
             </template>
