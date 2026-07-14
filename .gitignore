@@ -4,3 +4,4 @@ dist/
 cron.log
 *.key
 *.pem
+.claude/worktrees/
