@@ -21,7 +21,7 @@ const { t, locale, locales, setLocale } = useI18n();
       <v-btn to="/" :text="t('nav.topPlayers')" />
       <v-btn to="/active" :text="t('nav.mostActive')" />
       <v-btn to="/movers" :text="t('nav.ratingMovers')" />
-      <v-btn href="https://lichess.org/fide" target="_blank" rel="noopener" :text="t('nav.findPlayer')" append-icon="mdi-open-in-new" />
+      <v-btn to="/search" :text="t('nav.findPlayer')" />
       <v-spacer />
       <v-menu>
         <template #activator="{ props }">

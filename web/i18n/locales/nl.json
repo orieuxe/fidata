@@ -22,6 +22,7 @@
     "minAge": "Min. leeftijd",
     "maxAge": "Max. leeftijd",
     "limit": "Tonen",
+    "playerName": "Spelersnaam",
     "direction": "Richting",
     "mostImproved": "Meest verbeterd",
     "biggestLoss": "Grootste ratingverlies"
@@ -45,7 +46,10 @@
     "loadingHistory": "Verloop laden…",
     "mostActivePlayers": "Meest actieve spelers",
     "ratingMovers": "Ratingveranderingen",
-    "allTimeWarning": "\"Aller tijden\" doorzoekt de volledige ratinggeschiedenis en kan even duren."
+    "allTimeWarning": "\"Aller tijden\" doorzoekt de volledige ratinggeschiedenis en kan even duren.",
+    "searchPlayers": "Spelers zoeken",
+    "searchHint": "Typ minstens 2 tekens",
+    "searchNoResults": "Geen spelers gevonden"
   },
   "links": {
     "fideProfile": "FIDE-profiel",
