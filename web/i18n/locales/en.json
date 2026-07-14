@@ -37,7 +37,8 @@
     "games": "Games",
     "start": "Start",
     "end": "End",
-    "delta": "Δ"
+    "delta": "Δ",
+    "gamesTotal": "Total games"
   },
   "pages": {
     "topPlayersCard": "Top players",
@@ -53,7 +54,8 @@
     "rankWorld": "World rank",
     "rankCountry": "Country rank",
     "maxRating": "Peak rating",
-    "playerNotFound": "Player not found"
+    "playerNotFound": "Player not found",
+    "yearlyActivity": "Yearly activity"
   },
   "links": {
     "fideProfile": "FIDE profile",

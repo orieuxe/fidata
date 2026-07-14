@@ -37,7 +37,8 @@
     "games": "Partijen",
     "start": "Start",
     "end": "Einde",
-    "delta": "Δ"
+    "delta": "Δ",
+    "gamesTotal": "Totaal partijen"
   },
   "pages": {
     "topPlayersCard": "Topspelers",
@@ -53,7 +54,8 @@
     "rankWorld": "Wereldranglijst",
     "rankCountry": "Landelijke ranglijst",
     "maxRating": "Hoogste rating",
-    "playerNotFound": "Speler niet gevonden"
+    "playerNotFound": "Speler niet gevonden",
+    "yearlyActivity": "Jaarlijkse activiteit"
   },
   "links": {
     "fideProfile": "FIDE-profiel",
