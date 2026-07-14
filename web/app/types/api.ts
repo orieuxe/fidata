@@ -68,3 +68,15 @@ export interface PlayerProfile {
   rank_country_standard: number | null;
   rank_world_standard: number | null;
 }
+
+// Matches player_yearly_stats() in db/migrations/current.sql.
+export interface PlayerYearlyStat {
+  year: number;
+  games_standard: number;
+  delta_standard: number | null;
+  games_rapid: number;
+  delta_rapid: number | null;
+  games_blitz: number;
+  delta_blitz: number | null;
+  games_total: number;
+}

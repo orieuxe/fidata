@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useAsyncData, useRoute } from "#app";
 import { useI18n } from "#i18n";
 import { Line } from "vue-chartjs";
-import type { PlayerProfile, Rating } from "~/types/api";
+import type { PlayerProfile, PlayerYearlyStat, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions } from "~/composables/useFilterOptions";
 import { fideProfileUrl, lichessUrl } from "~/utils/links";
@@ -31,6 +31,13 @@ const { data: history, pending: historyPending } = await useAsyncData(
       order: "period.asc",
       select: "period,rating,rating_type",
     }, { signal }),
+  { watch: [fideid] },
+);
+
+const { data: yearlyStats } = await useAsyncData(
+  () => `player-yearly-${fideid.value}`,
+  (_nuxtApp, { signal }) =>
+    get<PlayerYearlyStat[]>("/rpc/player_yearly_stats", { p_fideid: String(fideid.value) }, { signal }),
   { watch: [fideid] },
 );
 
@@ -66,6 +73,11 @@ const chartData = computed(() => {
 });
 
 const chartOptions = { responsive: true, plugins: { legend: { position: "bottom" as const } } };
+
+function fmtDelta(delta: number | null) {
+  if (delta == null) return "";
+  return delta > 0 ? `+${delta}` : `${delta}`;
+}
 </script>
 
 <template>
@@ -110,6 +122,35 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
             </tbody>
           </v-table>
         </v-card-text>
+      </v-card>
+      <v-card class="mb-4" v-if="yearlyStats?.length">
+        <v-card-title>{{ t("pages.yearlyActivity") }}</v-card-title>
+        <v-table density="compact">
+          <thead>
+            <tr>
+              <th>{{ t("filters.year") }}</th>
+              <th>{{ t("filters.standard") }}</th>
+              <th>{{ t("filters.rapid") }}</th>
+              <th>{{ t("filters.blitz") }}</th>
+              <th>{{ t("table.gamesTotal") }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="y in yearlyStats" :key="y.year">
+              <td>{{ y.year }}</td>
+              <td>
+                {{ y.games_standard }} <span :class="{ 'text-red': (y.delta_standard ?? 0) < 0, 'text-green': (y.delta_standard ?? 0) > 0 }">{{ fmtDelta(y.delta_standard) }}</span>
+              </td>
+              <td>
+                {{ y.games_rapid }} <span :class="{ 'text-red': (y.delta_rapid ?? 0) < 0, 'text-green': (y.delta_rapid ?? 0) > 0 }">{{ fmtDelta(y.delta_rapid) }}</span>
+              </td>
+              <td>
+                {{ y.games_blitz }} <span :class="{ 'text-red': (y.delta_blitz ?? 0) < 0, 'text-green': (y.delta_blitz ?? 0) > 0 }">{{ fmtDelta(y.delta_blitz) }}</span>
+              </td>
+              <td>{{ y.games_total }}</td>
+            </tr>
+          </tbody>
+        </v-table>
       </v-card>
       <v-card>
         <v-card-title>{{ t("pages.ratingHistory") }}</v-card-title>
