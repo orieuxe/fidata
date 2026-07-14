@@ -49,10 +49,15 @@
     "allTimeWarning": "\"Aller tijden\" doorzoekt de volledige ratinggeschiedenis en kan even duren.",
     "searchPlayers": "Spelers zoeken",
     "searchHint": "Typ minstens 2 tekens",
-    "searchNoResults": "Geen spelers gevonden"
+    "searchNoResults": "Geen spelers gevonden",
+    "rankWorld": "Wereldranglijst",
+    "rankCountry": "Landelijke ranglijst",
+    "maxRating": "Hoogste rating",
+    "playerNotFound": "Speler niet gevonden"
   },
   "links": {
     "fideProfile": "FIDE-profiel",
-    "lichess": "Lichess"
+    "lichess": "Lichess",
+    "playerProfile": "Spelersprofiel"
   }
 }
