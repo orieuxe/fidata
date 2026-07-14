@@ -1,6 +1,6 @@
 {$DOMAIN} {
 	handle_path /api/* {
-		reverse_proxy postgrest:3001
+		reverse_proxy postgrest:3000
 	}
 	handle {
 		reverse_proxy web:3000

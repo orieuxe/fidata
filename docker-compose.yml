@@ -15,7 +15,7 @@ services:
       retries: 10
 
   postgrest:
-    image: postgrest/postgrest:v12
+    image: postgrest/postgrest:v12.2.12
     restart: unless-stopped
     depends_on:
       postgres:
