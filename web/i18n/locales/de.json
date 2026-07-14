@@ -22,6 +22,7 @@
     "minAge": "Min. Alter",
     "maxAge": "Max. Alter",
     "limit": "Anzeigen",
+    "playerName": "Spielername",
     "direction": "Richtung",
     "mostImproved": "Größte Verbesserung",
     "biggestLoss": "Größter Wertungsverlust"
@@ -45,7 +46,10 @@
     "loadingHistory": "Verlauf wird geladen…",
     "mostActivePlayers": "Aktivste Spieler",
     "ratingMovers": "Wertungsveränderungen",
-    "allTimeWarning": "„Gesamter Zeitraum\" durchsucht die komplette Wertungshistorie und kann dauern."
+    "allTimeWarning": "„Gesamter Zeitraum\" durchsucht die komplette Wertungshistorie und kann dauern.",
+    "searchPlayers": "Spieler suchen",
+    "searchHint": "Mindestens 2 Zeichen eingeben",
+    "searchNoResults": "Keine Spieler gefunden"
   },
   "links": {
     "fideProfile": "FIDE-Profil",
