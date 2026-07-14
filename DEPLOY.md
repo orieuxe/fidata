@@ -33,7 +33,7 @@ read first and wins if only the main config is edited).
 
 ## Remaining
 
-- [ ] Install the scraper's monthly systemd timer (step 9 below).
+- [x] Install the scraper's monthly systemd timer (step 9 below).
 - [ ] Confirm TLS cert issued once DNS is fully propagated (Caddy retries
   automatically; check with `docker compose logs caddy`).
 
