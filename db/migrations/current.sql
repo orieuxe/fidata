@@ -125,6 +125,10 @@ $$;
 -- max_* pulls from ratings (not latest_ratings, which only has the latest
 -- snapshot): still cheap, ratings_fideid_type_period_idx scopes the scan to
 -- just this player's rows.
+--
+-- Rank counts only active players (flag not like '%i%'), same convention as
+-- top_players/search_players -- inactive/withdrawn players shouldn't inflate
+-- everyone else's rank.
 create or replace function player_profile(p_fideid integer)
 returns table (
     fideid                integer,
@@ -166,11 +170,13 @@ as $$
         (select max(rating) from ratings where fideid = p_fideid and rating_type = 'blitz') as max_blitz,
         case when (select rating from std) is not null then
             (select count(*) + 1 from latest_ratings lr
-             where lr.rating_type = 'standard' and lr.country = p.country and lr.rating > (select rating from std))
+             where lr.rating_type = 'standard' and lr.country = p.country and lr.rating > (select rating from std)
+               and coalesce(lr.flag, '') not like '%i%')
         end as rank_country_standard,
         case when (select rating from std) is not null then
             (select count(*) + 1 from latest_ratings lr
-             where lr.rating_type = 'standard' and lr.rating > (select rating from std))
+             where lr.rating_type = 'standard' and lr.rating > (select rating from std)
+               and coalesce(lr.flag, '') not like '%i%')
         end as rank_world_standard
     from picked p;
 $$;
