@@ -20,24 +20,22 @@ Docker Compose is both the cheapest and the simplest option, since
 everything talks over localhost/the Docker network instead of paying
 egress or cross-service latency.
 
-**Recommended, in order:**
+**Currently running on:** OVH VPS-1 -- $4.54/mo (~4.20 EUR), 2 vCPU / 4 GB
+RAM / 40 GB NVMe. 40 GB vs. today's ~2.5 GB DB leaves huge headroom -- the
+`games = 0` pruning was the main growth driver, so this should hold for
+years without revisiting. Domain: `fide-data.com` (OVH, ~9.59 EUR first
+year / ~13.49 EUR/yr after).
 
-1. **Oracle Cloud Always Free** -- genuinely $0/month forever, 200 GB
-   block storage (unaffected by their mid-2026 compute-tier cut) is
-   comfortable headroom well past what this DB needs for years. Downside:
-   Ampere A1 free-tier capacity is notoriously hard to get in some regions
-   right now (`Out of capacity` errors on signup) -- worth trying first
-   since it's free, but don't count on it working immediately.
-2. **OVH VPS-1** -- $4.54/mo (~4.20 EUR), 2 vCPU / 4 GB RAM / 40 GB NVMe.
-   Fits the budget, EU-based. 40 GB vs. today's ~2.5 GB DB now leaves huge
-   headroom -- the `games = 0` pruning was the main growth driver, so this
-   should hold for years without revisiting.
-3. **Hetzner CX22** -- ~3.79-5.49 EUR/mo depending on region/timing, same
-   specs ballpark as OVH VPS-1. Equally good if OVH doesn't have capacity
-   in your preferred region.
+SSH: key-only auth (`~/.ssh/oracle-fidata.key`), password auth disabled
+server-side (`PasswordAuthentication no` in both `/etc/ssh/sshd_config`
+and `/etc/ssh/sshd_config.d/50-cloud-init.conf` -- the cloud-init file is
+read first and wins if only the main config is edited).
 
-Any of the three run the exact same Docker Compose stack below -- only the
-"create a VPS" step differs per provider.
+## Remaining
+
+- [ ] Install the scraper's monthly systemd timer (step 9 below).
+- [ ] Confirm TLS cert issued once DNS is fully propagated (Caddy retries
+  automatically; check with `docker compose logs caddy`).
 
 ## What's not included (and why)
 
@@ -64,7 +62,6 @@ Any of the three run the exact same Docker Compose stack below -- only the
    ```
    docker compose up -d postgres
    docker compose exec -T postgres psql -U postgres -d fidata < db/migrations/committed/000001.sql
-   docker compose exec -T postgres psql -U postgres -d fidata < db/migrations/committed/000002.sql
    ```
 6. **Transfer the existing data** from your local dev DB (~2.5 GB -- a
    one-time transfer beats re-running the full historical backfill against
