@@ -110,3 +110,67 @@ as $$
     order by coalesce(rating_standard, rating_rapid, rating_blitz, 0) desc, name
     limit p_limit offset p_offset;
 $$;
+
+-- Player detail page: one row with all 3 cadences (current + all-time max)
+-- plus country/world rank in standard. Exposed at /rpc/player_profile.
+--
+-- Sourced from latest_ratings (small, indexed, refreshed once a month by the
+-- scraper) rather than ratings directly -- a rank needs "how many players
+-- are rated above this one", and latest_ratings_type_rating_idx (rating_type,
+-- rating desc) makes that a cheap index range count instead of a full-table
+-- sort. Country rank has no matching index (rating_type, country, rating),
+-- so it scans the type partition down to this player's rating -- fine for a
+-- single-player lookup, would need a new index if this became a bulk query.
+--
+-- max_* pulls from ratings (not latest_ratings, which only has the latest
+-- snapshot): still cheap, ratings_fideid_type_period_idx scopes the scan to
+-- just this player's rows.
+create or replace function player_profile(p_fideid integer)
+returns table (
+    fideid                integer,
+    name                  text,
+    country               text,
+    title                 text,
+    age                   integer,
+    rating_standard       integer,
+    rating_rapid          integer,
+    rating_blitz          integer,
+    max_standard          integer,
+    max_rapid             integer,
+    max_blitz             integer,
+    rank_country_standard bigint,
+    rank_world_standard   bigint
+)
+language sql stable
+as $$
+    with base as (
+        select * from latest_ratings where fideid = p_fideid
+    ),
+    picked as (
+        select fideid, name, country, title, birthday
+        from base
+        order by case rating_type when 'standard' then 0 when 'rapid' then 1 else 2 end
+        limit 1
+    ),
+    std as (
+        select rating from base where rating_type = 'standard'
+    )
+    select
+        p.fideid, p.name, p.country, p.title,
+        extract(year from current_date)::int - p.birthday as age,
+        (select rating from base where rating_type = 'standard') as rating_standard,
+        (select rating from base where rating_type = 'rapid') as rating_rapid,
+        (select rating from base where rating_type = 'blitz') as rating_blitz,
+        (select max(rating) from ratings where fideid = p_fideid and rating_type = 'standard') as max_standard,
+        (select max(rating) from ratings where fideid = p_fideid and rating_type = 'rapid') as max_rapid,
+        (select max(rating) from ratings where fideid = p_fideid and rating_type = 'blitz') as max_blitz,
+        case when (select rating from std) is not null then
+            (select count(*) + 1 from latest_ratings lr
+             where lr.rating_type = 'standard' and lr.country = p.country and lr.rating > (select rating from std))
+        end as rank_country_standard,
+        case when (select rating from std) is not null then
+            (select count(*) + 1 from latest_ratings lr
+             where lr.rating_type = 'standard' and lr.rating > (select rating from std))
+        end as rank_world_standard
+    from picked p;
+$$;
