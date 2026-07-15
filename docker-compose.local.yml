@@ -1,0 +1,15 @@
+# Not auto-loaded (only docker-compose.override.yml would be) -- pass
+# explicitly with `-f` so this only applies when asked for, i.e. local dev.
+# Exposes ports directly on the host, skipping Caddy/TLS.
+services:
+  postgres:
+    ports:
+      - "5433:5432"
+
+  web:
+    ports:
+      - "3000:3000"
+
+  postgrest:
+    ports:
+      - "3001:3000"
