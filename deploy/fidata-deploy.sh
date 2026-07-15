@@ -14,4 +14,6 @@ fi
 git pull origin main
 docker compose -f docker-compose.yml -f docker-compose.prod.yml --profile cron build migrate
 docker compose -f docker-compose.yml -f docker-compose.prod.yml --profile cron run --rm migrate
+docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T postgres \
+  psql -U postgres -d fidata -c "NOTIFY pgrst, 'reload schema';"
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build web postgrest
