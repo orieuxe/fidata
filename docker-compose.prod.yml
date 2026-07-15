@@ -1,0 +1,7 @@
+# Applied on the VPS only (see deploy/fidata-deploy.sh) -- binds postgres to
+# the VPS's own loopback so it's reachable over an SSH tunnel, without
+# exposing it to the internet or colliding with a local dev postgres.
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
