@@ -5,5 +5,6 @@ Requires=docker.service
 
 [Service]
 Type=oneshot
+User=ubuntu
 WorkingDirectory=/opt/fidata
 ExecStart=/usr/bin/docker compose --profile cron run --rm scraper
