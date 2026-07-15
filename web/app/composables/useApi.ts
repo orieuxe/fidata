@@ -2,7 +2,8 @@ import { useRuntimeConfig } from "#app";
 
 /** Thin wrapper around the PostgREST API (auto-generated from the `ratings` table/view). */
 export function useApi() {
-  const { public: { apiBase } } = useRuntimeConfig();
+  const config = useRuntimeConfig();
+  const apiBase = import.meta.server ? config.apiBaseServer : config.public.apiBase;
 
   function get<T>(path: string, query?: Record<string, string>, opts?: { signal?: AbortSignal }) {
     return $fetch<T>(path, { baseURL: apiBase, query, signal: opts?.signal });
