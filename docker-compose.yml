@@ -62,6 +62,17 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/fidata
 
+  # One-shot: `docker compose run --rm migrate`, called by deploy/fidata-deploy.sh
+  # -- runs any un-executed committed migrations against the running DB.
+  migrate:
+    build: ./db
+    profiles: ["cron"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/fidata
+
 volumes:
   pgdata:
   caddy_data:

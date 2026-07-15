@@ -15,7 +15,7 @@
    *
    * RECOMMENDATION: use `DATABASE_URL` envvar instead.
    */
-  "connectionString": "postgres://postgres@localhost:5432/fidata",
+  // "connectionString": "postgres://postgres@localhost:5432/fidata",
 
   /*
    * shadowConnectionString: like connectionString, but this is used for the

@@ -15,10 +15,13 @@ stack: Postgres + PostgREST + Nuxt, behind Caddy in prod.
 - **`postgrest/`** -- auto-generated REST API over the schema.
 - **`web/`** -- Nuxt 4 + Vuetify frontend (rankings, most-active, rating
   movers, search, player profiles). i18n in en/fr/es/de/nl.
-- **`deploy/`** -- systemd unit + timer, runs monthly (3rd, 4am):
-  `docker compose --profile cron run --rm scraper` (the `scraper` service
-  in `docker-compose.yml` is `profiles: ["cron"]`, so it's excluded from
-  the always-on stack and only runs one-shot like this).
+- **`deploy/`** -- systemd units + timers:
+  - `fidata-scraper.*`: monthly (3rd, 4am), `docker compose --profile cron
+    run --rm scraper` (excluded from the always-on stack via `profiles:
+    ["cron"]`, one-shot only).
+  - `fidata-deploy.*`: polls every 5 min, pulls + rebuilds `web`/`postgrest`
+    + runs `migrate` (same `profiles: ["cron"]` pattern) if `origin/main`
+    moved. Auto-deploy without a webhook or exposed port.
 
 ## Local dev
 
@@ -48,6 +51,12 @@ Run from `db/` via `npm run <script>` (`watch`, `commit`, `migrate`,
 
 ## Deploying
 
-Live at https://fide-data.com/.
+Live at https://fide-data.com/, auto-deployed on push to `main` (see
+`fidata-deploy.*` above). One-time setup on the VPS:
+```
+sudo cp deploy/fidata-deploy.* /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now fidata-deploy.timer
+```
 
 See `TODO.md` for open work.
