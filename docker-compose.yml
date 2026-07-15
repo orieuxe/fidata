@@ -24,6 +24,7 @@ services:
       PGRST_DB_URI: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/fidata
       PGRST_DB_SCHEMA: public
       PGRST_DB_ANON_ROLE: web_anon
+      PGRST_LOG_LEVEL: info
 
   web:
     build: ./web
