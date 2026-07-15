@@ -11,6 +11,10 @@ export default defineNuxtConfig({
     plugins: [vuetify({ autoImport: true })],
   },
   runtimeConfig: {
+    // Server-only: used for SSR fetches from inside the container, where
+    // "localhost" would resolve to the container itself instead of the
+    // host. Defaults to the public value (single-process/prod setups).
+    apiBaseServer: process.env.NUXT_PUBLIC_API_BASE ?? "http://localhost:3001",
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? "http://localhost:3001",
     },

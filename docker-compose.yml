@@ -32,6 +32,7 @@ services:
       - postgrest
     environment:
       NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE}
+      NUXT_API_BASE_SERVER: ${NUXT_API_BASE_SERVER:-${NUXT_PUBLIC_API_BASE}}
 
   caddy:
     image: caddy:2-alpine
