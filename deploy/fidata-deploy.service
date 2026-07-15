@@ -1,0 +1,9 @@
+[Unit]
+Description=fidata auto-deploy (pull + rebuild + migrate if origin/main moved)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/fidata
+ExecStart=/opt/fidata/deploy/fidata-deploy.sh
