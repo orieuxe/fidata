@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "graphile-migrate watch",
-    "commit": "graphile-migrate commit",
-    "migrate": "graphile-migrate migrate",
-    "status": "graphile-migrate status"
+    "watch": "sh -c 'set -a; . ../.env; graphile-migrate watch'",
+    "commit": "sh -c 'set -a; . ../.env; graphile-migrate commit'",
+    "uncommit": "sh -c 'set -a; . ../.env; graphile-migrate uncommit'",
+    "migrate": "sh -c 'set -a; . ../.env; graphile-migrate migrate'",
+    "status": "sh -c 'set -a; . ../.env; graphile-migrate status'"
   },
   "keywords": [],
   "author": "",
