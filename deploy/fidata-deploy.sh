@@ -12,5 +12,5 @@ if [ "$LOCAL" = "$REMOTE" ]; then
 fi
 
 git pull origin main
-docker compose up -d --build web postgrest
 docker compose --profile cron run --rm migrate
+docker compose up -d --build web postgrest
