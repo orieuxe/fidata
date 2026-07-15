@@ -23,7 +23,7 @@
    *
    * RECOMMENDATION: use `SHADOW_DATABASE_URL` envvar instead.
    */
-  "shadowConnectionString": "postgres://postgres@localhost:5432/fidata_shadow",
+  // "shadowConnectionString": "postgres://postgres@localhost:5432/fidata_shadow",
 
   /*
    * rootConnectionString: like connectionString, but this is used for
@@ -32,7 +32,7 @@
    *
    * RECOMMENDATION: use `ROOT_DATABASE_URL` envvar instead.
    */
-  "rootConnectionString": "postgres://postgres@localhost:5432/postgres",
+  // "rootConnectionString": "postgres://postgres@localhost:5432/postgres",
 
   /*
    * pgSettings: key-value settings to be automatically loaded into PostgreSQL
