@@ -4,7 +4,6 @@ import { useI18n } from "#i18n";
 import type { RatingChange } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
-import { fideProfileUrl, lichessUrl } from "~/utils/links";
 import { TITLE_OPTIONS, LIMIT_OPTIONS } from "~/utils/filterOptions";
 
 const { get } = useApi();
@@ -152,15 +151,7 @@ const headers = computed(() => [
           >
             <template #item.name="{ item }">
               <div class="d-flex align-center" style="gap: 6px">
-                <a :href="fideProfileUrl(item.fideid)" target="_blank" rel="noopener" :title="t('links.fideProfile')">
-                  <img src="/icons/fide.png" width="14" height="14" alt="FIDE" />
-                </a>
-                <a :href="lichessUrl(item.fideid, item.name)" target="_blank" rel="noopener" :title="t('links.lichess')">
-                  <img src="/icons/lichess.png" width="14" height="14" alt="Lichess" />
-                </a>
-                <NuxtLink :to="`/player/${item.fideid}`" :title="t('links.playerProfile')">
-                  <v-icon size="14" icon="mdi-chart-line" />
-                </NuxtLink>
+                <PlayerLinks :fideid="item.fideid" :name="item.name" show-profile-link />
                 <span>{{ item.name }}</span>
               </div>
             </template>
