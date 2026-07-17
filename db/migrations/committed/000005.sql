@@ -1,21 +1,16 @@
--- Player detail page header: profile, current/peak ratings, Elo rank and
--- this-year activity rank, each with a total for the frontend to derive a
--- percentile from (rank / total * 100) -- no percentage math in SQL.
--- Exposed at /rpc/player_profile.
---
--- Elo rank/total reuse the same latest_ratings scan pattern as the
--- original rank columns (see rank_country_standard below) -- bundled into
--- one LATERAL per scope (country/world) so rank and total are computed in
--- a single pass instead of two.
---
--- Activity rank is scoped to the current calendar year, same convention as
--- player_yearly_stats. `ratings` only keeps rows where games > 0 (see
--- baseline migration), so year_games needs no extra "did they actually
--- play" filter. Filtered to the current year like most_active_players'
--- p_year branch, which is fast (~130-600ms) -- an all-time version would
--- hit the ~75s unfiltered full-table cost noted there.
-create or replace function public.player_profile(p_fideid integer)
- returns table(
+--! Previous: sha1:1c39bde71f8572378a6b7c797d8aa3c4389b0eea
+--! Hash: sha1:db741d3dbb9cdc74fb5ed832caa957504bb6af67
+
+-- Enter migration here
+
+-- Swaps the pre-computed percentile_* columns for raw rank + total pairs
+-- (rank_*/total_*) -- percentage is a one-line calc the frontend can do
+-- (rank / total * 100), no need to round/divide four times in SQL. The
+-- LATERAL joins already computed both rank and total in one pass; this
+-- just returns total instead of discarding it.
+drop function if exists player_profile(integer);
+create or replace function player_profile(p_fideid integer)
+returns table (
     fideid                  integer,
     name                    text,
     country                 text,
@@ -36,10 +31,9 @@ create or replace function public.player_profile(p_fideid integer)
     rank_activity_world     bigint,
     total_activity_country  bigint,
     total_activity_world    bigint
- )
- language sql
- stable
-as $function$
+)
+language sql stable
+as $$
     with base as (
         select * from latest_ratings where fideid = p_fideid
     ),
@@ -110,5 +104,4 @@ as $function$
             count(*) as total
         from year_games yg
     ) aw on true;
-$function$
-;
+$$;

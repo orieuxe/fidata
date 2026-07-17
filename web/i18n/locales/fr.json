@@ -33,7 +33,7 @@
     "country": "Pays",
     "title": "Titre",
     "rating": "Classement",
-    "age": "Âge",
+    "age": "ans",
     "games": "Parties",
     "start": "Début",
     "end": "Fin",
@@ -51,8 +51,8 @@
     "searchPlayers": "Rechercher un joueur",
     "searchHint": "Tapez au moins 2 caractères",
     "searchNoResults": "Aucun joueur trouvé",
-    "rankWorld": "Rang mondial",
-    "rankCountry": "Rang national",
+    "rankWorld": "Rang",
+    "rankCountry": "Rang",
     "maxRating": "Meilleur classement",
     "playerNotFound": "Joueur introuvable",
     "yearlyActivity": "Activité par année",
@@ -62,17 +62,17 @@
     "rangeAll": "Tout",
     "topPercent": "top {p} %",
     "activityThisYear": "Activité cette année",
-    "gamesThisYear": "{n} parties",
-    "activityRankWorld": "Rang mondial (parties)",
-    "activityRankCountry": "Rang national (parties)"
+    "gamesThisYear": "{n} parties cette année",
+    "activityRankWorld": "Rang (parties)",
+    "activityRankCountry": "Rang (parties)"
   },
   "links": {
-    "fideProfile": "Profil FIDE",
-    "fideProfileHint": "Profil officiel FIDE",
+    "fideProfile": "FIDE",
+    "fideProfileHint": "FIDE : Fiche officielle",
     "lichess": "Lichess",
-    "lichessHint": "Dernières parties retransmises",
+    "lichessHint": "lichess : Dernières parties retransmises",
     "grandRoque": "Grand Roque",
-    "grandRoqueHint": "Fiche fédération, tournois & parties",
+    "grandRoqueHint": "Grand Roque : club, tournois & parties",
     "playerProfile": "Fiche joueur"
   }
 }

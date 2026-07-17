@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useTheme } from "vuetify";
+import { ref } from "vue";
+import { useTheme, useDisplay } from "vuetify";
 import { useCookie } from "#app";
 import { useI18n } from "#i18n";
 
@@ -12,16 +13,27 @@ function toggleTheme() {
 }
 
 const { t, locale, locales, setLocale } = useI18n();
+const { mobile } = useDisplay();
+const drawer = ref(false);
+
+const navLinks = [
+  { to: "/", key: "topPlayers" },
+  { to: "/active", key: "mostActive" },
+  { to: "/movers", key: "ratingMovers" },
+  { to: "/search", key: "findPlayer" },
+] as const;
 </script>
 
 <template>
   <v-app>
     <NuxtLoadingIndicator color="#1976d2" />
     <v-app-bar :title="t('app.title')">
-      <v-btn to="/" :text="t('nav.topPlayers')" />
-      <v-btn to="/active" :text="t('nav.mostActive')" />
-      <v-btn to="/movers" :text="t('nav.ratingMovers')" />
-      <v-btn to="/search" :text="t('nav.findPlayer')" />
+      <template v-if="mobile" #prepend>
+        <v-app-bar-nav-icon @click="drawer = !drawer" />
+      </template>
+      <template v-if="!mobile">
+        <v-btn v-for="l in navLinks" :key="l.to" :to="l.to" :text="t(`nav.${l.key}`)" />
+      </template>
       <v-spacer />
       <v-menu>
         <template #activator="{ props }">
@@ -42,6 +54,17 @@ const { t, locale, locales, setLocale } = useI18n();
         @click="toggleTheme"
       />
     </v-app-bar>
+    <v-navigation-drawer v-if="mobile" v-model="drawer" temporary>
+      <v-list>
+        <v-list-item
+          v-for="l in navLinks"
+          :key="l.to"
+          :to="l.to"
+          :title="t(`nav.${l.key}`)"
+          @click="drawer = false"
+        />
+      </v-list>
+    </v-navigation-drawer>
     <v-main>
       <NuxtPage />
     </v-main>
