@@ -2,6 +2,6 @@
   "name": "fidata",
   "private": true,
   "scripts": {
-    "dev": "docker compose -f docker-compose.yml -f docker-compose.local.yml up postgres postgrest web"
+    "dev": "docker compose -f docker-compose.yml -f docker-compose.local.yml up --build postgres postgrest web"
   }
 }
