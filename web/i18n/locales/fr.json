@@ -60,6 +60,7 @@
   "links": {
     "fideProfile": "Profil FIDE",
     "lichess": "Lichess",
+    "grandRoque": "Grand Roque",
     "playerProfile": "Fiche joueur"
   }
 }

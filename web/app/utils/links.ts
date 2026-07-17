@@ -8,3 +8,7 @@ export function lichessUrl(fideid: number, name: string) {
   const slug = name.replace(", ", "_").replace(/ /g, "_");
   return `https://lichess.org/fide/${fideid}/${slug}`;
 }
+
+export function grandRoqueUrl(fideid: number) {
+  return `https://grandroque.com/profiles/${fideid}`;
+}
