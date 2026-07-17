@@ -38,7 +38,7 @@ export interface TopPlayer {
   age: number | null;
 }
 
-// Matches search_players() in db/migrations/current.sql -- one row per
+// Matches search_players() -- one row per
 // player with all 3 cadences, since the search page has no time control
 // picker.
 export interface SearchPlayer {
@@ -52,7 +52,9 @@ export interface SearchPlayer {
   age: number | null;
 }
 
-// Matches player_profile() in db/migrations/committed/000004-*.sql.
+// Matches player_profile(). Rank columns pair
+// with a total (not a pre-computed percentile) -- the frontend derives
+// "top X%" as rank / total * 100.
 export interface PlayerProfile {
   fideid: number;
   name: string;
@@ -67,16 +69,16 @@ export interface PlayerProfile {
   max_blitz: number | null;
   rank_country_standard: number | null;
   rank_world_standard: number | null;
-  percentile_country_standard: number | null;
-  percentile_world_standard: number | null;
+  total_country_standard: number | null;
+  total_world_standard: number | null;
   games_this_year: number | null;
   rank_activity_country: number | null;
   rank_activity_world: number | null;
-  percentile_activity_country: number | null;
-  percentile_activity_world: number | null;
+  total_activity_country: number | null;
+  total_activity_world: number | null;
 }
 
-// Matches player_yearly_stats() in db/migrations/current.sql.
+// Matches player_yearly_stats().
 export interface PlayerYearlyStat {
   year: number;
   games_standard: number;

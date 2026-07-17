@@ -94,7 +94,7 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
 <template>
   <v-container fluid>
     <v-card class="mb-4">
-      <v-card-title class="d-flex align-center">
+      <v-card-title class="d-flex flex-wrap align-center" style="gap: 12px">
         <span>{{ t('pages.topPlayersCard') }}</span>
         <v-select
           v-model="limit"
@@ -102,10 +102,8 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
           :label="t('filters.limit')"
           density="compact"
           hide-details
-          class="ml-4"
           style="max-width: 130px"
         />
-        <v-spacer />
       </v-card-title>
       <v-card-text>
         <v-row dense>
