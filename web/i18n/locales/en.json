@@ -55,7 +55,11 @@
     "rankCountry": "Country rank",
     "maxRating": "Peak rating",
     "playerNotFound": "Player not found",
-    "yearlyActivity": "Yearly activity"
+    "yearlyActivity": "Yearly activity",
+    "range1y": "1Y",
+    "range5y": "5Y",
+    "range10y": "10Y",
+    "rangeAll": "All"
   },
   "links": {
     "fideProfile": "FIDE profile",

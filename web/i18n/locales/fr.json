@@ -55,7 +55,11 @@
     "rankCountry": "Rang national",
     "maxRating": "Meilleur classement",
     "playerNotFound": "Joueur introuvable",
-    "yearlyActivity": "Activité par année"
+    "yearlyActivity": "Activité par année",
+    "range1y": "1 an",
+    "range5y": "5 ans",
+    "range10y": "10 ans",
+    "rangeAll": "Tout"
   },
   "links": {
     "fideProfile": "Profil FIDE",

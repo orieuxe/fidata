@@ -55,7 +55,11 @@
     "rankCountry": "Landelijke ranglijst",
     "maxRating": "Hoogste rating",
     "playerNotFound": "Speler niet gevonden",
-    "yearlyActivity": "Jaarlijkse activiteit"
+    "yearlyActivity": "Jaarlijkse activiteit",
+    "range1y": "1J",
+    "range5y": "5J",
+    "range10y": "10J",
+    "rangeAll": "Alles"
   },
   "links": {
     "fideProfile": "FIDE-profiel",
