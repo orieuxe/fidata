@@ -59,8 +59,11 @@
   },
   "links": {
     "fideProfile": "FIDE profile",
+    "fideProfileHint": "Official FIDE profile",
     "lichess": "Lichess",
+    "lichessHint": "Recent broadcasted games",
     "grandRoque": "Grand Roque",
+    "grandRoqueHint": "Federation record, tournaments & games",
     "playerProfile": "Player profile"
   }
 }

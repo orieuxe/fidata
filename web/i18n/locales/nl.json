@@ -59,8 +59,11 @@
   },
   "links": {
     "fideProfile": "FIDE-profiel",
+    "fideProfileHint": "Officieel FIDE-profiel",
     "lichess": "Lichess",
+    "lichessHint": "Laatst uitgezonden partijen",
     "grandRoque": "Grand Roque",
+    "grandRoqueHint": "Bondsprofiel, toernooien & partijen",
     "playerProfile": "Spelersprofiel"
   }
 }
