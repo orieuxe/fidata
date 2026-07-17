@@ -52,7 +52,7 @@ export interface SearchPlayer {
   age: number | null;
 }
 
-// Matches player_profile() in db/migrations/current.sql.
+// Matches player_profile() in db/migrations/committed/000004-*.sql.
 export interface PlayerProfile {
   fideid: number;
   name: string;
@@ -67,6 +67,13 @@ export interface PlayerProfile {
   max_blitz: number | null;
   rank_country_standard: number | null;
   rank_world_standard: number | null;
+  percentile_country_standard: number | null;
+  percentile_world_standard: number | null;
+  games_this_year: number | null;
+  rank_activity_country: number | null;
+  rank_activity_world: number | null;
+  percentile_activity_country: number | null;
+  percentile_activity_world: number | null;
 }
 
 // Matches player_yearly_stats() in db/migrations/current.sql.

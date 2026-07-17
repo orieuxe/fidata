@@ -1,3 +1,9 @@
+--! Previous: sha1:8230358304133d7c9753772972b6020af936be47
+--! Hash: sha1:1c39bde71f8572378a6b7c797d8aa3c4389b0eea
+--! Message: add elo/activity rank percentile to player_profile
+
+-- Enter migration here
+
 -- Player detail page header: profile, current/peak ratings, Elo rank (with
 -- percentile) and this-year activity rank (with percentile). Exposed at
 -- /rpc/player_profile.
@@ -13,8 +19,12 @@
 -- play" filter. Filtered to the current year like most_active_players'
 -- p_year branch, which is fast (~130-600ms) -- an all-time version would
 -- hit the ~75s unfiltered full-table cost noted there.
-create or replace function public.player_profile(p_fideid integer)
- returns table(
+--
+-- Dropped first: postgres refuses `create or replace` when the return type
+-- (OUT parameter row) changes, only when it's identical.
+drop function if exists player_profile(integer);
+create or replace function player_profile(p_fideid integer)
+returns table (
     fideid                       integer,
     name                         text,
     country                      text,
@@ -35,10 +45,9 @@ create or replace function public.player_profile(p_fideid integer)
     rank_activity_world          bigint,
     percentile_activity_country  numeric,
     percentile_activity_world    numeric
- )
- language sql
- stable
-as $function$
+)
+language sql stable
+as $$
     with base as (
         select * from latest_ratings where fideid = p_fideid
     ),
@@ -109,5 +118,4 @@ as $function$
             count(*) as total
         from year_games yg
     ) aw on true;
-$function$
-;
+$$;

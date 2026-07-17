@@ -59,7 +59,12 @@
     "range1y": "1A",
     "range5y": "5A",
     "range10y": "10A",
-    "rangeAll": "Todo"
+    "rangeAll": "Todo",
+    "topPercent": "top {p}%",
+    "activityThisYear": "Actividad este año",
+    "gamesThisYear": "{n} partidas",
+    "activityRankWorld": "Ranking mundial (partidas)",
+    "activityRankCountry": "Ranking nacional (partidas)"
   },
   "links": {
     "fideProfile": "Perfil FIDE",
