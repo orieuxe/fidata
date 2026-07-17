@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "scrape": "tsx src/index.ts",
+    "backfill-historical": "tsx src/backfill-historical.ts",
     "build": "tsc"
   },
   "keywords": [],
