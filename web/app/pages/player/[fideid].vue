@@ -91,6 +91,11 @@ function fmtDelta(delta: number | null) {
   if (delta == null) return "";
   return delta > 0 ? `+${delta}` : `${delta}`;
 }
+
+function fmtPercentile(p: number | null) {
+  if (p == null) return "";
+  return p < 0.1 ? "<0.1" : String(p);
+}
 </script>
 
 <template>
@@ -123,9 +128,15 @@ function fmtDelta(delta: number | null) {
             <div v-if="player.rank_world_standard != null" class="d-flex flex-wrap" style="gap: 8px">
               <v-chip variant="tonal" color="primary" prepend-icon="mdi-earth">
                 {{ t("pages.rankWorld") }} #{{ player.rank_world_standard }}
+                <span v-if="player.percentile_world_standard != null" class="text-medium-emphasis ml-1">
+                  ({{ t("pages.topPercent", { p: fmtPercentile(player.percentile_world_standard) }) }})
+                </span>
               </v-chip>
               <v-chip variant="tonal" prepend-icon="mdi-flag">
                 {{ t("pages.rankCountry") }} #{{ player.rank_country_standard }}
+                <span v-if="player.percentile_country_standard != null" class="text-medium-emphasis ml-1">
+                  ({{ t("pages.topPercent", { p: fmtPercentile(player.percentile_country_standard) }) }})
+                </span>
               </v-chip>
             </div>
           </div>
@@ -167,6 +178,23 @@ function fmtDelta(delta: number | null) {
             </div>
           </v-window-item>
           <v-window-item value="activity">
+            <div v-if="player.games_this_year != null" class="d-flex flex-wrap align-center pa-4 pb-0" style="gap: 8px">
+              <span class="text-body-2 text-medium-emphasis">
+                {{ t("pages.activityThisYear") }}: {{ t("pages.gamesThisYear", { n: player.games_this_year }) }}
+              </span>
+              <v-chip variant="tonal" color="primary" prepend-icon="mdi-earth" size="small">
+                {{ t("pages.activityRankWorld") }} #{{ player.rank_activity_world }}
+                <span v-if="player.percentile_activity_world != null" class="text-medium-emphasis ml-1">
+                  ({{ t("pages.topPercent", { p: fmtPercentile(player.percentile_activity_world) }) }})
+                </span>
+              </v-chip>
+              <v-chip variant="tonal" prepend-icon="mdi-flag" size="small">
+                {{ t("pages.activityRankCountry") }} #{{ player.rank_activity_country }}
+                <span v-if="player.percentile_activity_country != null" class="text-medium-emphasis ml-1">
+                  ({{ t("pages.topPercent", { p: fmtPercentile(player.percentile_activity_country) }) }})
+                </span>
+              </v-chip>
+            </div>
             <v-table density="compact">
               <thead>
                 <tr>

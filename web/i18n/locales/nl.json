@@ -59,7 +59,12 @@
     "range1y": "1J",
     "range5y": "5J",
     "range10y": "10J",
-    "rangeAll": "Alles"
+    "rangeAll": "Alles",
+    "topPercent": "top {p}%",
+    "activityThisYear": "Activiteit dit jaar",
+    "gamesThisYear": "{n} partijen",
+    "activityRankWorld": "Wereldrang (partijen)",
+    "activityRankCountry": "Landelijke rang (partijen)"
   },
   "links": {
     "fideProfile": "FIDE-profiel",
