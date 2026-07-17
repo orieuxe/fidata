@@ -91,9 +91,11 @@ function fmtDelta(delta: number | null) {
             style="font-size: 1.4em"
           />
           <span>{{ player.title ? `${player.title} ` : "" }}{{ player.name }}</span>
-          <PlayerLinks :fideid="player.fideid" :name="player.name" :size="16" />
         </v-card-title>
         <v-card-text>
+          <div class="d-flex flex-wrap mb-3" style="gap: 16px">
+            <PlayerLinks :fideid="player.fideid" :name="player.name" :size="16" detailed />
+          </div>
           <p v-if="player.age != null">{{ t("table.age") }}: {{ player.age }}</p>
           <p v-if="player.rank_world_standard != null">
             {{ t("pages.rankWorld") }}: #{{ player.rank_world_standard }} &middot;
