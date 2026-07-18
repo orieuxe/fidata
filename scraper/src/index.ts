@@ -1,6 +1,6 @@
 import { fetchRatingXml } from "./fetch.js";
 import { parsePlayers } from "./parse.js";
-import { upsertRatings, flagInactivePlayers, refreshLatestRatings, closeDb } from "./db.js";
+import { upsertRatings, flagInactivePlayers, refreshLatestRatings, refreshDerivedViews, closeDb } from "./db.js";
 import { allPeriods, currentPeriod, parsePeriodArg, type Period } from "./periods.js";
 
 const KINDS = ["standard", "rapid", "blitz"] as const;
@@ -34,6 +34,8 @@ async function main(): Promise<void> {
   await flagInactivePlayers();
   console.log("refreshing latest_ratings...");
   await refreshLatestRatings();
+  console.log("refreshing player_activity_12m, player_ranks...");
+  await refreshDerivedViews();
   await closeDb();
 }
 
