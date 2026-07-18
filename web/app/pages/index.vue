@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { useAsyncData } from "#app";
 import { useI18n } from "#i18n";
+import { useDisplay } from "vuetify";
 import { Line } from "vue-chartjs";
 import type { TopPlayer, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
@@ -10,6 +11,7 @@ import { TITLE_OPTIONS, LIMIT_OPTIONS_WIDE } from "~/utils/filterOptions";
 
 const { get } = useApi();
 const { t } = useI18n();
+const { xs } = useDisplay();
 
 const { currentYear, yearOptions } = useYearOptions(false);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
@@ -60,12 +62,22 @@ const { data: history, pending: historyPending } = await useAsyncData(
   { watch: [topIds, ratingType, year, country, titles, minAge, maxAge, limit] },
 );
 
+// Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
+// right before the name instead of trailing after rating/age -- local to
+// this page, doesn't touch the shared composable.
 const baseHeaders = useBaseHeaders();
-const headers = computed(() => [
-  ...baseHeaders.value,
-  { title: t("table.rating"), key: "rating" },
-  { title: t("table.age"), key: "age" },
-]);
+const headers = computed(() => {
+  const base = baseHeaders.value;
+  const byKey = (key: string) => base.find((h) => h.key === key)!;
+  return [
+    { ...byKey("rank"), width: 50 },
+    { ...byKey("country"), width: 50 },
+    { ...byKey("title"), width: 70 },
+    byKey("name"),
+    { title: t("table.rating"), key: "rating", width: 100 },
+    { title: t("table.age"), key: "age", width: 80 },
+  ].filter((h) => !xs.value || h.key !== "title");
+});
 
 const chartData = computed(() => {
   const rows = history.value ?? [];
@@ -88,7 +100,7 @@ const chartData = computed(() => {
   return { labels, datasets };
 });
 
-const chartOptions = { responsive: true, plugins: { legend: { position: "bottom" as const } } };
+const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" as const } } };
 </script>
 
 <template>
@@ -139,30 +151,48 @@ const chartOptions = { responsive: true, plugins: { legend: { position: "bottom"
         </v-row>
       </v-card-text>
     </v-card>
-    <v-card class="mb-4">
-      <v-data-table :headers="headers" :items="rows" :loading="pending" :items-per-page="-1" hide-default-footer density="compact">
-        <template #item.name="{ item }">
-          <div class="d-flex align-center" style="gap: 6px">
-            <PlayerLinks :fideid="item.fideid" :name="item.name" show-profile-link />
-            <span>{{ item.name }}</span>
-          </div>
-        </template>
-        <template #item.country="{ item }">
-          <span
-            v-if="countryFlag(item.country)"
-            :class="countryFlag(item.country)"
-            :title="countryName(item.country)"
-            style="font-size: 1.2em"
-          />
-          <span v-else :title="item.country">{{ item.country }}</span>
-        </template>
-      </v-data-table>
-    </v-card>
-    <v-card>
-      <div class="pa-4">
-        <Line v-if="!historyPending && chartData.labels.length" :data="chartData" :options="chartOptions" />
-        <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
-      </div>
-    </v-card>
+    <div class="d-flex flex-wrap align-start" style="gap: 16px">
+      <v-card style="width: 620px; max-width: 100%">
+        <v-data-table
+          :headers="headers"
+          :items="rows"
+          :loading="pending"
+          :items-per-page="-1"
+          hide-default-footer
+          density="compact"
+        >
+          <template #header.country="{ column }">
+            <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
+          </template>
+          <template #item.name="{ item }">
+            <NuxtLink :to="`/player/${item.fideid}`" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+          </template>
+          <template #item.country="{ item }">
+            <span
+              v-if="countryFlag(item.country)"
+              :class="countryFlag(item.country)"
+              :title="countryName(item.country)"
+              style="font-size: 1.2em"
+            />
+            <span v-else :title="item.country">{{ item.country }}</span>
+          </template>
+        </v-data-table>
+      </v-card>
+      <v-card class="flex-grow-1" style="min-width: 320px">
+        <div class="pa-4" style="height: 420px">
+          <Line v-if="!historyPending && chartData.labels.length" :data="chartData" :options="chartOptions" />
+          <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
+        </div>
+      </v-card>
+    </div>
   </v-container>
 </template>
+
+<style scoped>
+.player-name-link {
+  text-decoration: none;
+}
+.player-name-link:hover {
+  text-decoration: underline;
+}
+</style>
