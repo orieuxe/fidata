@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useI18n } from "#i18n";
+import { useDisplay } from "vuetify";
 import type { ActivePlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
@@ -8,6 +9,7 @@ import { TITLE_OPTIONS, LIMIT_OPTIONS, yearFilterRange, type YearFilterValue } f
 
 const { get } = useApi();
 const { t } = useI18n();
+const { xs } = useDisplay();
 
 const { defaultYear, yearOptions } = useYearOptions(true, true);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
@@ -85,13 +87,23 @@ async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => vo
 
 const rows = computed(() => allRows.value.map((p, i) => ({ ...p, rank: i + 1 })));
 
+// Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
+// right before the name -- same compact layout as index.vue, local to this
+// page so it doesn't touch the shared composable.
 const baseHeaders = useBaseHeaders();
-const headers = computed(() => [
-  ...baseHeaders.value,
-  { title: t("table.rating"), key: "rating" },
-  { title: t("table.age"), key: "age" },
-  { title: t("table.games"), key: "total_games" },
-]);
+const headers = computed(() => {
+  const base = baseHeaders.value;
+  const byKey = (key: string) => base.find((h) => h.key === key)!;
+  return [
+    { ...byKey("rank"), width: 50 },
+    { ...byKey("country"), width: 50 },
+    { ...byKey("title"), width: 70 },
+    byKey("name"),
+    { title: t("table.rating"), key: "rating", width: 100 },
+    { title: t("table.age"), key: "age", width: 80 },
+    { title: t("table.games"), key: "total_games", width: 100 },
+  ].filter((h) => !xs.value || h.key !== "title");
+});
 </script>
 
 <template>
@@ -133,7 +145,7 @@ const headers = computed(() => [
           {{ t("pages.allTimeWarning") }}
         </p>
       </v-card-text>
-      <v-infinite-scroll @load="onLoad">
+      <v-infinite-scroll @load="onLoad" style="max-width: 700px">
         <template #default>
           <v-data-table
             :headers="headers"
@@ -143,11 +155,11 @@ const headers = computed(() => [
             hide-default-footer
             density="compact"
           >
+            <template #header.country="{ column }">
+              <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
+            </template>
             <template #item.name="{ item }">
-              <div class="d-flex align-center" style="gap: 6px">
-                <PlayerLinks :fideid="item.fideid" :name="item.name" show-profile-link />
-                <span>{{ item.name }}</span>
-              </div>
+              <NuxtLink :to="`/player/${item.fideid}`" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
             </template>
             <template #item.country="{ item }">
               <span
@@ -164,3 +176,12 @@ const headers = computed(() => [
     </v-card>
   </v-container>
 </template>
+
+<style scoped>
+.player-name-link {
+  text-decoration: none;
+}
+.player-name-link:hover {
+  text-decoration: underline;
+}
+</style>
