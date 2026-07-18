@@ -53,14 +53,18 @@ export async function upsertRatings(
 
 // FIDE flags a player inactive on the monthly carry-forward row after they
 // stop playing (games = 0) -- exactly the rows upsertRatings prunes above.
-// A player whose last-ever row for a rating_type predates our own scraper's
-// coverage has no such row in this table at all, so their last real-game
-// row looks "current" and slips past every `flag not like '%i%'` filter
-// (top_players, search_players, player_profile's rank via latest_ratings --
-// see fideid 4100018, Garry Kasparov, who briefly re-entered the standard
-// top players list after the historical backfill for this exact reason).
-// Tag that row here instead.
-export async function flagStaleHistoricalPlayers(periodCutoff: string): Promise<void> {
+// A player whose last-ever row for a rating_type is more than 2 years old
+// has no such carry-forward row in this table at all, so their last
+// real-game row looks "current" and slips past every `flag not like '%i%'`
+// filter (top_players, search_players, player_profile's rank via
+// latest_ratings -- see fideid 4100018, Garry Kasparov, who briefly
+// re-entered the standard top players list after the historical backfill
+// for this exact reason). Tag that row here instead.
+//
+// Runs after every scrape (not just the one-off historical backfill) --
+// otherwise a player who goes quiet between two regular monthly runs never
+// gets flagged and keeps climbing the rankings as if still active.
+export async function flagInactivePlayers(): Promise<void> {
   const result = await sql`
     with last_period as (
       select fideid, rating_type, max(period) as period
@@ -73,10 +77,10 @@ export async function flagStaleHistoricalPlayers(periodCutoff: string): Promise<
     where r.fideid = lp.fideid
       and r.rating_type = lp.rating_type
       and r.period = lp.period
-      and r.period < ${periodCutoff}
+      and r.period < current_date - interval '2 years'
       and coalesce(r.flag, '') not like '%i%'
   `;
-  console.log(`  flagged ${result.count} stale historical rows as inactive`);
+  console.log(`  flagged ${result.count} inactive (2+ years) rows as inactive`);
 }
 
 export async function refreshLatestRatings(): Promise<void> {

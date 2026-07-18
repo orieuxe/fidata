@@ -1,7 +1,6 @@
 import type { RatingKind } from "./fetch.js";
 import type { PlayerRow } from "./parse.js";
-import { upsertRatings, flagStaleHistoricalPlayers, refreshLatestRatings, closeDb } from "./db.js";
-import { allPeriods } from "./periods.js";
+import { upsertRatings, flagInactivePlayers, refreshLatestRatings, closeDb } from "./db.js";
 
 // FIDE's official archive only goes back to Feb 2015 (see periods.ts). This
 // backs that up with anujdahiya24/FIDE's "Step 2 - Reformat" mirror, which
@@ -195,6 +194,22 @@ function toStrOrNull(v: string | undefined): string | null {
   return s ? s : null;
 }
 
+// Pre-2015 archives abbreviate titles as single/double lowercase letters
+// (g/m/f/c, wg/wm/wf/wc) instead of FIDE's standard GM/IM/FM/CM/WGM/WIM/
+// WFM/WCM codes the live XML feed (parse.ts) already uses -- normalize so
+// both sources agree.
+const TITLE_ABBREVIATIONS: Record<string, string> = {
+  g: "GM", m: "IM", f: "FM", c: "CM", gm: "GM",
+  wg: "WGM", wm: "WIM", wf: "WFM", wc: "WCM",
+};
+
+function normalizeTitle(raw: string | null): string | null {
+  if (!raw) return raw;
+  return TITLE_ABBREVIATIONS[raw.toLowerCase()] ?? raw;
+}
+
+const VALID_TITLES = new Set(["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM"]);
+
 function splitCsvLine(line: string): string[] {
   const cells: string[] = [];
   let cur = "";
@@ -275,16 +290,29 @@ function parseHistoricalFile(text: string, delim: "*" | ","): PlayerRow[] {
   for (const line of lines.slice(1)) {
     const cells = splitLine(line);
     const fideid = toIntOrNull(cells[col.fideid]);
-    const name = toStrOrNull(cells[col.name]);
+    let name = toStrOrNull(cells[col.name]);
     if (fideid === null || !name) continue;
+
+    // The Standard archive's fixed-width name column is too narrow for some
+    // players' full names (e.g. fideid 2211823, "De La Fuente Arias,
+    // Fernando J." gets cut to "...Fernando" with "J." spilling into the
+    // title column) -- anything left in title that isn't a real title code
+    // is that overflow, so reattach it to the name instead of storing it as
+    // a fake title.
+    let title = normalizeTitle(toStrOrNull(cells[col.title]));
+    if (title && !VALID_TITLES.has(title)) {
+      name = `${name} ${title}`;
+      title = null;
+    }
+
     byFideid.set(fideid, {
       fideid,
       name,
       country: toStrOrNull(cells[col.country]),
       sex: toStrOrNull(cells[col.sex]),
-      title: toStrOrNull(cells[col.title]),
-      w_title: toStrOrNull(cells[col.w_title]),
-      o_title: toStrOrNull(cells[col.o_title]),
+      title,
+      w_title: normalizeTitle(toStrOrNull(cells[col.w_title])),
+      o_title: normalizeTitle(toStrOrNull(cells[col.o_title])),
       birthday: toIntOrNull(cells[col.birthday]),
       rating: toIntOrNull(cells[col.rating]),
       games: toIntOrNull(cells[col.games]),
@@ -318,8 +346,8 @@ async function main(): Promise<void> {
       await sleep(200); // be polite to raw.githubusercontent.com
     }
   }
-  console.log("flagging stale historical players as inactive...");
-  await flagStaleHistoricalPlayers(allPeriods()[0].period);
+  console.log("flagging inactive (2+ years) players...");
+  await flagInactivePlayers();
   console.log("refreshing latest_ratings...");
   await refreshLatestRatings();
   await closeDb();
