@@ -4,6 +4,7 @@ import { useI18n } from "#i18n";
 import type { SearchPlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions } from "~/composables/useFilterOptions";
+import { useUrlFilters } from "~/composables/useUrlFilters";
 import PlayerLinks from "~/components/PlayerLinks.vue";
 
 const { get } = useApi();
@@ -14,6 +15,7 @@ const { countryName, countryFlag } = await useCountryOptions();
 const PAGE_SIZE = 25;
 
 const name = ref("");
+useUrlFilters({ name });
 const debouncedName = ref("");
 let debounceTimer: ReturnType<typeof setTimeout>;
 watch(name, (value) => {

@@ -1,0 +1,7 @@
+:3000
+
+root * /srv/web
+# Fallback for client-only routes (/player/**, routeRules ssr:false in
+# nuxt.config.ts) that aren't prerendered as their own static file.
+try_files {path} /200.html
+file_server
