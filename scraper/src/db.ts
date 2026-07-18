@@ -110,7 +110,7 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
   await sql`delete from rating_change_snapshots where bucket = 'rolling'`;
   await sql`
     insert into rating_change_snapshots
-      (bucket, fideid, rating_type, name, country, title, birthday, start_rating, end_rating)
+      (bucket, fideid, rating_type, name, country, title, birthday, start_rating, end_rating, total_games)
     select
       'rolling', fideid, rating_type,
       (array_agg(name order by period desc))[1],
@@ -118,7 +118,8 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
       (array_agg(title order by period desc))[1],
       (array_agg(birthday order by period desc))[1],
       (array_agg(rating order by period asc))[1],
-      (array_agg(rating order by period desc))[1]
+      (array_agg(rating order by period desc))[1],
+      sum(coalesce(games, 0))
     from ratings
     where games > 0
       and period >= (date_trunc('month', current_date) + interval '1 month' - interval '12 months')::date
@@ -129,8 +130,8 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
     const year = String(new Date().getFullYear());
     await sql`
       insert into rating_change_snapshots
-        (bucket, fideid, rating_type, name, country, title, birthday, start_rating, end_rating)
-      select ${year}, fideid, rating_type, name, country, title, birthday, start_rating, end_rating
+        (bucket, fideid, rating_type, name, country, title, birthday, start_rating, end_rating, total_games)
+      select ${year}, fideid, rating_type, name, country, title, birthday, start_rating, end_rating, total_games
       from rating_change_snapshots
       where bucket = 'rolling'
       on conflict (bucket, fideid, rating_type) do nothing

@@ -1,3 +1,18 @@
+--! Previous: sha1:4307ce1e3fcd7b7b06a5b32f2e57faa127ec4985
+--! Hash: sha1:7ba04edebb5e2661166dbcdb84d59346517fb6a1
+
+-- most_active_players (see most_active_players.sql) needs the same
+-- rolling-12-months/frozen-calendar-year totals rating_change already
+-- computes off the same GROUP BY fideid, rating_type -- one extra column
+-- instead of a second parallel snapshot table.
+alter table rating_change_snapshots add column if not exists total_games bigint;
+
+create index if not exists rating_change_snapshots_type_games_idx
+    on rating_change_snapshots (bucket, rating_type, total_games desc);
+create index if not exists rating_change_snapshots_type_country_games_idx
+    on rating_change_snapshots (bucket, rating_type, country, total_games desc);
+
+--! Included functions/most_active_players.sql
 -- Most active players by games played ("active" page). Exposed at
 -- /rpc/most_active_players.
 --
@@ -99,3 +114,4 @@ begin
 end;
 $function$
 ;
+--! EndIncluded functions/most_active_players.sql
