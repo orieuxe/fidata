@@ -4,6 +4,8 @@ import vuetify from "vite-plugin-vuetify";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+  imports: { autoImport: false },
+  components: false,
   modules: ["@nuxtjs/i18n"],
   css: ["vuetify/styles", "@mdi/font/css/materialdesignicons.css", "flag-icons/css/flag-icons.min.css"],
   build: { transpile: ["vuetify"] },
