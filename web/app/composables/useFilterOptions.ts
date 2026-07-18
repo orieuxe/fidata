@@ -38,6 +38,14 @@ export function useRatingTypeOptions(includeAllTimeControls: boolean) {
   ]);
 }
 
+export function useSexOptions() {
+  const { t } = useI18n();
+  return computed(() => [
+    { title: t("filters.male"), value: "M" },
+    { title: t("filters.female"), value: "F" },
+  ]);
+}
+
 export async function useCountryOptions() {
   const { get } = useApi();
   const { t, locale } = useI18n();
