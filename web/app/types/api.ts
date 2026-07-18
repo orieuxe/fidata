@@ -71,11 +71,21 @@ export interface PlayerProfile {
   rank_world_standard: number | null;
   total_country_standard: number | null;
   total_world_standard: number | null;
-  games_this_year: number | null;
-  rank_activity_country: number | null;
-  rank_activity_world: number | null;
-  total_activity_country: number | null;
-  total_activity_world: number | null;
+  games_12m_standard: number | null;
+  games_12m_rapid: number | null;
+  games_12m_blitz: number | null;
+  rank_activity_country_standard: number | null;
+  rank_activity_world_standard: number | null;
+  total_activity_country_standard: number | null;
+  total_activity_world_standard: number | null;
+  rank_activity_country_rapid: number | null;
+  rank_activity_world_rapid: number | null;
+  total_activity_country_rapid: number | null;
+  total_activity_world_rapid: number | null;
+  rank_activity_country_blitz: number | null;
+  rank_activity_world_blitz: number | null;
+  total_activity_country_blitz: number | null;
+  total_activity_world_blitz: number | null;
 }
 
 // Matches player_yearly_stats().

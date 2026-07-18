@@ -4,6 +4,7 @@ import { useI18n } from "#i18n";
 import type { SearchPlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions } from "~/composables/useFilterOptions";
+import PlayerLinks from "~/components/PlayerLinks.vue";
 
 const { get } = useApi();
 const { t } = useI18n();

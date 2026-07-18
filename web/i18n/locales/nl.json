@@ -62,8 +62,7 @@
     "range10y": "10J",
     "rangeAll": "Alles",
     "topPercent": "top {p}%",
-    "activityThisYear": "Activiteit dit jaar",
-    "gamesThisYear": "{n} partijen",
+    "gamesLast12m": "{n} partijen (12 maanden)",
     "activityRankWorld": "Wereldrang (partijen)",
     "activityRankCountry": "Landelijke rang (partijen)"
   },

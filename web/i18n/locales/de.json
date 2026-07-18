@@ -62,8 +62,7 @@
     "range10y": "10J",
     "rangeAll": "Alle",
     "topPercent": "Top {p}%",
-    "activityThisYear": "Aktivität dieses Jahr",
-    "gamesThisYear": "{n} Partien",
+    "gamesLast12m": "{n} Partien (12 Monate)",
     "activityRankWorld": "Weltrang (Partien)",
     "activityRankCountry": "Landesrang (Partien)"
   },

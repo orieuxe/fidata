@@ -6,6 +6,7 @@ import { Line } from "vue-chartjs";
 import type { PlayerProfile, PlayerYearlyStat, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions } from "~/composables/useFilterOptions";
+import PlayerLinks from "~/components/PlayerLinks.vue";
 
 const route = useRoute();
 const { get } = useApi();
@@ -46,9 +47,24 @@ const cadenceRows = computed(() => {
   if (!player.value) return [];
   const p = player.value;
   return [
-    { key: "standard", label: t("filters.standard"), rating: p.rating_standard, max: p.max_standard },
-    { key: "rapid", label: t("filters.rapid"), rating: p.rating_rapid, max: p.max_rapid },
-    { key: "blitz", label: t("filters.blitz"), rating: p.rating_blitz, max: p.max_blitz },
+    {
+      key: "standard", label: t("filters.standard"), rating: p.rating_standard, max: p.max_standard,
+      games12m: p.games_12m_standard,
+      rankCountry: p.rank_activity_country_standard, totalCountry: p.total_activity_country_standard,
+      rankWorld: p.rank_activity_world_standard, totalWorld: p.total_activity_world_standard,
+    },
+    {
+      key: "rapid", label: t("filters.rapid"), rating: p.rating_rapid, max: p.max_rapid,
+      games12m: p.games_12m_rapid,
+      rankCountry: p.rank_activity_country_rapid, totalCountry: p.total_activity_country_rapid,
+      rankWorld: p.rank_activity_world_rapid, totalWorld: p.total_activity_world_rapid,
+    },
+    {
+      key: "blitz", label: t("filters.blitz"), rating: p.rating_blitz, max: p.max_blitz,
+      games12m: p.games_12m_blitz,
+      rankCountry: p.rank_activity_country_blitz, totalCountry: p.total_activity_country_blitz,
+      rankWorld: p.rank_activity_world_blitz, totalWorld: p.total_activity_world_blitz,
+    },
   ] as const;
 });
 
@@ -123,9 +139,6 @@ function fmtPercentile(rank: number | null, total: number | null) {
                   {{ countryName(player.country) }}
                   <template v-if="player.age != null"> &middot; {{ player.age }} {{ t("table.age") }} </template>
                 </div>
-                <div class="text-body-2 text-medium-emphasis">
-                  {{ t("pages.gamesThisYear", { n: player.games_this_year }) }}
-                </div>
               </div>
               <div>
                 <PlayerLinks :fideid="player.fideid" :name="player.name" :size="16" detailed />
@@ -146,20 +159,6 @@ function fmtPercentile(rank: number | null, total: number | null) {
                     </span>
                   </v-chip>
               </div>
-              <div v-if="player.games_this_year != null" class="d-flex flex-wrap" style="gap: 8px">
-                <v-chip variant="tonal" color="primary" prepend-icon="mdi-earth" class="rank-chip">
-                  {{ t("pages.activityRankWorld") }} #{{ player.rank_activity_world }}
-                  <span v-if="player.total_activity_world" class="text-medium-emphasis ml-1">
-                    ({{ t("pages.topPercent", { p: fmtPercentile(player.rank_activity_world, player.total_activity_world) }) }})
-                  </span>
-                </v-chip>
-                <v-chip variant="tonal" prepend-icon="mdi-flag" class="rank-chip">
-                  {{ t("pages.activityRankCountry") }} #{{ player.rank_activity_country }}
-                  <span v-if="player.total_activity_country" class="text-medium-emphasis ml-1">
-                    ({{ t("pages.topPercent", { p: fmtPercentile(player.rank_activity_country, player.total_activity_country) }) }})
-                  </span>
-                </v-chip>
-              </div>
             </div>
           </div>
         </v-card-text>
@@ -171,6 +170,18 @@ function fmtPercentile(rank: number | null, total: number | null) {
             <div class="text-caption text-uppercase text-medium-emphasis">{{ c.label }}</div>
             <div class="text-h5 text-sm-h4 font-weight-bold my-1">{{ c.rating ?? "—" }}</div>
             <div v-if="c.max != null" class="text-caption text-medium-emphasis">{{ t("pages.maxRating") }} {{ c.max }}</div>
+            <template v-if="c.games12m != null">
+              <v-divider class="my-2" />
+              <div class="text-caption text-medium-emphasis">{{ t("pages.gamesLast12m", { n: c.games12m }) }}</div>
+              <div class="text-caption text-medium-emphasis">
+                {{ t("pages.activityRankWorld") }} #{{ c.rankWorld }}
+                <span v-if="c.totalWorld">({{ t("pages.topPercent", { p: fmtPercentile(c.rankWorld, c.totalWorld) }) }})</span>
+              </div>
+              <div class="text-caption text-medium-emphasis">
+                {{ t("pages.activityRankCountry") }} #{{ c.rankCountry }}
+                <span v-if="c.totalCountry">({{ t("pages.topPercent", { p: fmtPercentile(c.rankCountry, c.totalCountry) }) }})</span>
+              </div>
+            </template>
           </v-card>
         </v-col>
       </v-row>

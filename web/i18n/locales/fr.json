@@ -62,8 +62,7 @@
     "range10y": "10 ans",
     "rangeAll": "Tout",
     "topPercent": "top {p} %",
-    "activityThisYear": "Activité cette année",
-    "gamesThisYear": "{n} parties cette année",
+    "gamesLast12m": "{n} parties (12 mois)",
     "activityRankWorld": "Rang (parties)",
     "activityRankCountry": "Rang (parties)"
   },

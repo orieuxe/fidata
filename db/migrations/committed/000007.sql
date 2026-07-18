@@ -1,3 +1,17 @@
+--! Previous: sha1:9e1293bc8c2d6ed6b8c77d0b3dc84891ac7cbdbe
+--! Hash: sha1:3682c0d5f7bc687a8bf76a14b6f04b9063274043
+
+-- Enter migration here
+
+-- Swaps the single calendar-year, standard-only activity rank block for a
+-- per-cadence (standard/rapid/blitz) rolling-12-month one, each with its
+-- own games count, country/world rank and total -- see
+-- fixtures/functions/player_profile.sql for the query.
+--
+-- Dropped first: postgres refuses `create or replace` when the return type
+-- (OUT parameter row) changes, only when it's identical.
+drop function if exists player_profile(integer);
+--! Included functions/player_profile.sql
 -- Player detail page header: profile, current/peak ratings, Elo rank (per
 -- cadence a player has a rating in is out of scope here, only standard) and
 -- per-cadence (standard/rapid/blitz) rolling-12-month activity rank, each
@@ -161,3 +175,4 @@ as $function$
     ) awb on true;
 $function$
 ;
+--! EndIncluded functions/player_profile.sql

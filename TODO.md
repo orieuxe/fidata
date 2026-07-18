@@ -4,11 +4,6 @@
   per title.
 - Male/female filter (`ratings.sex` already scraped, not exposed as a
   filter anywhere yet).
-- make vue import components for better ide human experience
-- instead of activity stats on player profile decline thoses in std, rapide and blitz card with each of them  : 
-  - stats of games played last 12 months
-  - rank among (n total active std/rpd/bltz of country world) and in %
-  - 
 - 'ans' trad sometimes should be age, maybe set up two trad
 - align search page with revamp from other pages
 - 
