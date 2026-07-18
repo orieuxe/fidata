@@ -87,6 +87,57 @@ export async function refreshLatestRatings(): Promise<void> {
   await sql`refresh materialized view concurrently latest_ratings`;
 }
 
+// player_activity_12m and player_ranks both read from latest_ratings (ranks
+// also read player_activity_12m), so must refresh in this order, after it.
+export async function refreshDerivedViews(): Promise<void> {
+  await sql`refresh materialized view concurrently player_activity_12m`;
+  await sql`refresh materialized view concurrently player_ranks`;
+  await refreshRatingChangeSnapshots();
+}
+
+// Rolling 12-month rating-change snapshot for the "movers" page (see
+// rating_change.sql), rewritten every scrape. The window matches
+// web/app/utils/filterOptions.ts' yearFilterRange("last12") exactly, so
+// rating_change() can recognize and reuse it.
+//
+// The scraper runs on the 3rd of the month (deploy/fidata-scraper.timer),
+// after the 1st -- so in December this window already lands exactly on
+// Jan-Dec of the current year (excludes last December's row, includes this
+// one, both already scraped). Freeze it under its own year bucket then,
+// once -- `on conflict do nothing` makes this safe to leave running every
+// December going forward without ever overwriting a frozen year.
+async function refreshRatingChangeSnapshots(): Promise<void> {
+  await sql`delete from rating_change_snapshots where bucket = 'rolling'`;
+  await sql`
+    insert into rating_change_snapshots
+      (bucket, fideid, rating_type, name, country, title, birthday, start_rating, end_rating)
+    select
+      'rolling', fideid, rating_type,
+      (array_agg(name order by period desc))[1],
+      (array_agg(country order by period desc))[1],
+      (array_agg(title order by period desc))[1],
+      (array_agg(birthday order by period desc))[1],
+      (array_agg(rating order by period asc))[1],
+      (array_agg(rating order by period desc))[1]
+    from ratings
+    where games > 0
+      and period >= (date_trunc('month', current_date) + interval '1 month' - interval '12 months')::date
+    group by fideid, rating_type
+  `;
+
+  if (new Date().getMonth() === 11) {
+    const year = String(new Date().getFullYear());
+    await sql`
+      insert into rating_change_snapshots
+        (bucket, fideid, rating_type, name, country, title, birthday, start_rating, end_rating)
+      select ${year}, fideid, rating_type, name, country, title, birthday, start_rating, end_rating
+      from rating_change_snapshots
+      where bucket = 'rolling'
+      on conflict (bucket, fideid, rating_type) do nothing
+    `;
+  }
+}
+
 export async function closeDb(): Promise<void> {
   await sql.end();
 }
