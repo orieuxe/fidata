@@ -9,7 +9,7 @@
 -- Both branches' WHERE conditions are constant (don't reference table
 -- columns), so Postgres proves one side always-false and skips scanning it
 -- entirely instead of paying for both.
-create or replace function public.top_players(p_year integer default null::integer, p_country text default null::text, p_rating_type rating_type default 'standard'::rating_type, p_titles text[] default null::text[], p_min_age integer default null::integer, p_max_age integer default null::integer, p_limit integer default 25)
+create or replace function public.top_players(p_year integer default null::integer, p_country text default null::text, p_sex text default null::text, p_rating_type rating_type default 'standard'::rating_type, p_titles text[] default null::text[], p_min_age integer default null::integer, p_max_age integer default null::integer, p_limit integer default 25)
  returns table(fideid integer, name text, country text, title text, rating integer, age integer)
  language sql
  stable
@@ -21,6 +21,7 @@ as $function$
           and (p_year is null or p_year >= extract(year from current_date)::int)
           and coalesce(flag, '') not like '%i%'
           and (p_country is null or country = p_country)
+          and (p_sex is null or sex = p_sex)
           and (
               p_titles is null or cardinality(p_titles) = 0
               or title = any(p_titles)
@@ -37,6 +38,7 @@ as $function$
               and r.period <= make_date(p_year, 12, 1)
               and coalesce(r.flag, '') not like '%i%'
               and (p_country is null or r.country = p_country)
+              and (p_sex is null or r.sex = p_sex)
               and (
                   p_titles is null or cardinality(p_titles) = 0
                   or r.title = any(p_titles)

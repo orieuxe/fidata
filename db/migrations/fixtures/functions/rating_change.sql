@@ -7,7 +7,7 @@
 -- the original live scan otherwise -- a custom range via direct API use, or
 -- a year that hasn't been frozen yet (the current in-progress year before
 -- December, or a year older than this feature).
-create or replace function public.rating_change(p_from date, p_to date, p_country text default null::text, p_rating_type rating_type default null::rating_type, p_titles text[] default null::text[], p_min_age integer default null::integer, p_max_age integer default null::integer, p_direction text default 'gain'::text, p_limit integer default 50, p_offset integer default 0)
+create or replace function public.rating_change(p_from date, p_to date, p_country text default null::text, p_sex text default null::text, p_rating_type rating_type default null::rating_type, p_titles text[] default null::text[], p_min_age integer default null::integer, p_max_age integer default null::integer, p_direction text default 'gain'::text, p_limit integer default 50, p_offset integer default 0)
  returns table(fideid integer, name text, country text, title text, start_rating integer, end_rating integer, delta integer, age integer)
  language plpgsql
  stable
@@ -38,6 +38,7 @@ begin
             where s.bucket = v_bucket
               and s.rating_type = p_rating_type
               and (p_country is null or s.country = p_country)
+              and (p_sex is null or s.sex = p_sex)
               and (
                   p_titles is null or cardinality(p_titles) = 0
                   or s.title = any(p_titles)
@@ -65,6 +66,7 @@ begin
               and r.period < p_to
               and r.games > 0
               and (p_country is null or r.country = p_country)
+              and (p_sex is null or r.sex = p_sex)
               and (p_rating_type is null or r.rating_type = p_rating_type)
               and (
                   p_titles is null or cardinality(p_titles) = 0
