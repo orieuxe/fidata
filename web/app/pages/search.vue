@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useI18n } from "#i18n";
+import { useDisplay } from "vuetify";
 import type { SearchPlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions } from "~/composables/useFilterOptions";
@@ -9,6 +10,7 @@ import PlayerLinks from "~/components/PlayerLinks.vue";
 
 const { get } = useApi();
 const { t } = useI18n();
+const { xs } = useDisplay();
 
 const { countryName, countryFlag } = await useCountryOptions();
 
@@ -80,21 +82,23 @@ async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => vo
   }
 }
 
-const headers = [
-  { title: t("table.name"), key: "name" },
-  { title: t("table.country"), key: "country" },
-  { title: t("table.title"), key: "title" },
-  { title: t("filters.standard"), key: "rating_standard" },
-  { title: t("filters.rapid"), key: "rating_rapid" },
-  { title: t("filters.blitz"), key: "rating_blitz" },
-  { title: t("table.age"), key: "age" },
-];
+const headers = computed(() =>
+  [
+    { title: t("table.name"), key: "name" },
+    { title: t("table.country"), key: "country", width: 50 },
+    { title: t("table.title"), key: "title", width: 70 },
+    { title: t("filters.standard"), key: "rating_standard" },
+    { title: t("filters.rapid"), key: "rating_rapid" },
+    { title: t("filters.blitz"), key: "rating_blitz" },
+    { title: t("table.age"), key: "age" },
+  ].filter((h) => !xs.value || h.key !== "title"),
+);
 </script>
 
 <template>
   <v-container fluid>
     <v-card :title="t('pages.searchPlayers')">
-      <v-card-text>
+      <v-card-text class="d-flex flex-column align-center">
         <v-text-field
           v-model="name"
           :label="t('filters.playerName')"
@@ -102,6 +106,7 @@ const headers = [
           density="compact"
           clearable
           autofocus
+          style="max-width: 400px; width: 100%"
         />
         <p v-if="name.trim().length > 0 && name.trim().length < 2" class="text-caption text-medium-emphasis">
           {{ t("pages.searchHint") }}
@@ -118,10 +123,13 @@ const headers = [
             density="compact"
             :no-data-text="t('pages.searchNoResults')"
           >
+            <template #header.country="{ column }">
+              <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
+            </template>
             <template #item.name="{ item }">
               <div class="d-flex align-center" style="gap: 6px">
-                <PlayerLinks :fideid="item.fideid" :name="item.name" show-profile-link />
-                <span>{{ item.name }}</span>
+                <PlayerLinks :fideid="item.fideid" :name="item.name" />
+                <NuxtLink :to="`/player/${item.fideid}`" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
               </div>
             </template>
             <template #item.country="{ item }">
@@ -139,3 +147,12 @@ const headers = [
     </v-card>
   </v-container>
 </template>
+
+<style scoped>
+.player-name-link {
+  text-decoration: none;
+}
+.player-name-link:hover {
+  text-decoration: underline;
+}
+</style>
