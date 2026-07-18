@@ -7,6 +7,7 @@ import { Line } from "vue-chartjs";
 import type { TopPlayer, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
+import { useUrlFilters } from "~/composables/useUrlFilters";
 import { TITLE_OPTIONS, LIMIT_OPTIONS_WIDE } from "~/utils/filterOptions";
 
 const { get } = useApi();
@@ -27,6 +28,8 @@ const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
 const limit = ref<number>(10);
+
+useUrlFilters({ year, country, ratingType, titles, minAge, maxAge, limit });
 
 const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   "top-players",

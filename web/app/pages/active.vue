@@ -5,6 +5,7 @@ import { useDisplay } from "vuetify";
 import type { ActivePlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
+import { useUrlFilters } from "~/composables/useUrlFilters";
 import { TITLE_OPTIONS, LIMIT_OPTIONS, yearFilterRange, type YearFilterValue } from "~/utils/filterOptions";
 
 const { get } = useApi();
@@ -25,6 +26,8 @@ const titles = ref<string[]>([]);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
 const limit = ref<number>(25);
+
+useUrlFilters({ year, country, ratingType, titles, minAge, maxAge, limit });
 
 const allRows = ref<ActivePlayer[]>([]);
 const offset = ref(0);

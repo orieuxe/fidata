@@ -19,10 +19,16 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? "http://localhost:3001",
     },
   },
+  routeRules: {
+    // Too many players to prerender (one DB fetch per fideid, no fixed
+    // "default" state) -- fetched client-side like today, just without SSR.
+    // `prerender: false` is what actually keeps the generate crawler from
+    // following every player link it finds on the list pages.
+    "/player/**": { ssr: false, prerender: false },
+  },
   i18n: {
-    strategy: "no_prefix",
+    strategy: "prefix_except_default",
     defaultLocale: "en",
-    fallbackLocale: "en",
     locales: [
       { code: "en", name: "English", file: "en.json" },
       { code: "fr", name: "Français", file: "fr.json" },

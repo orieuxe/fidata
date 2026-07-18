@@ -34,6 +34,8 @@ services:
     environment:
       NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE}
       NUXT_API_BASE_SERVER: ${NUXT_API_BASE_SERVER:-${NUXT_PUBLIC_API_BASE}}
+    volumes:
+      - web_static:/srv/web:ro
 
   caddy:
     image: caddy:2-alpine
@@ -73,7 +75,26 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/fidata
 
+  # One-shot: `docker compose run --rm web-generate`, called by
+  # deploy/fidata-deploy.sh (code changes) and fidata-scraper.service (data
+  # changes) -- (re)builds the static site into `web_static`, which `web`
+  # serves. No restart of `web` needed: Caddy reads the volume from disk.
+  web-generate:
+    build:
+      context: ./web
+      target: build
+    profiles: ["cron"]
+    depends_on:
+      - postgrest
+    environment:
+      NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE}
+      NUXT_API_BASE_SERVER: ${NUXT_API_BASE_SERVER:-${NUXT_PUBLIC_API_BASE}}
+    command: npm run generate
+    volumes:
+      - web_static:/app/.output/public
+
 volumes:
   pgdata:
   caddy_data:
   caddy_config:
+  web_static:
