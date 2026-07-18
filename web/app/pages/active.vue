@@ -148,7 +148,7 @@ const headers = computed(() => {
           {{ t("pages.allTimeWarning") }}
         </p>
       </v-card-text>
-      <v-infinite-scroll @load="onLoad" style="max-width: 700px">
+      <v-infinite-scroll @load="onLoad" style="max-width: 700px; margin: 0 auto">
         <template #default>
           <v-data-table
             :headers="headers"

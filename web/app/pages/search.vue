@@ -6,7 +6,6 @@ import type { SearchPlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions } from "~/composables/useFilterOptions";
 import { useUrlFilters } from "~/composables/useUrlFilters";
-import PlayerLinks from "~/components/PlayerLinks.vue";
 
 const { get } = useApi();
 const { t } = useI18n();
@@ -112,7 +111,7 @@ const headers = computed(() =>
           {{ t("pages.searchHint") }}
         </p>
       </v-card-text>
-      <v-infinite-scroll v-if="debouncedName.length >= 2" @load="onLoad">
+      <v-infinite-scroll v-if="debouncedName.length >= 2" @load="onLoad" style="max-width: 800px; margin: 0 auto">
         <template #default>
           <v-data-table
             :headers="headers"
@@ -127,10 +126,7 @@ const headers = computed(() =>
               <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
             </template>
             <template #item.name="{ item }">
-              <div class="d-flex align-center" style="gap: 6px">
-                <PlayerLinks :fideid="item.fideid" :name="item.name" />
-                <NuxtLink :to="`/player/${item.fideid}`" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
-              </div>
+              <NuxtLink :to="`/player/${item.fideid}`" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
             </template>
             <template #item.country="{ item }">
               <span
