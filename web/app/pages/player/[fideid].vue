@@ -7,6 +7,7 @@ import type { PlayerProfile, PlayerYearlyStat, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions } from "~/composables/useFilterOptions";
 import PlayerLinks from "~/components/PlayerLinks.vue";
+import PlayerCadenceCard from "~/components/PlayerCadenceCard.vue";
 
 const route = useRoute();
 const { get } = useApi();
@@ -15,7 +16,7 @@ const { countryName, countryFlag } = await useCountryOptions();
 
 const fideid = computed(() => Number(route.params.fideid));
 
-const { data: profileRows } = await useAsyncData(
+const { data: profileRows } = await useAsyncData<PlayerProfile[]>(
   () => `player-profile-${fideid.value}`,
   (_nuxtApp, { signal }) =>
     get<PlayerProfile[]>("/rpc/player_profile", { p_fideid: String(fideid.value) }, { signal }),
@@ -23,7 +24,7 @@ const { data: profileRows } = await useAsyncData(
 );
 const player = computed(() => profileRows.value?.[0] ?? null);
 
-const { data: history, pending: historyPending } = await useAsyncData(
+const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
   () => `player-history-${fideid.value}`,
   (_nuxtApp, { signal }) =>
     get<Rating[]>("/ratings", {
@@ -34,7 +35,7 @@ const { data: history, pending: historyPending } = await useAsyncData(
   { watch: [fideid] },
 );
 
-const { data: yearlyStats } = await useAsyncData(
+const { data: yearlyStats } = await useAsyncData<PlayerYearlyStat[]>(
   () => `player-yearly-${fideid.value}`,
   (_nuxtApp, { signal }) =>
     get<PlayerYearlyStat[]>("/rpc/player_yearly_stats", { p_fideid: String(fideid.value) }, { signal }),
@@ -48,22 +49,46 @@ const cadenceRows = computed(() => {
   const p = player.value;
   return [
     {
-      key: "standard", label: t("filters.standard"), rating: p.rating_standard, max: p.max_standard,
+      key: "standard",
+      label: t("filters.standard"),
+      color: CADENCE_COLORS.standard,
+      rating: p.rating_standard,
+      max: p.max_standard,
       games12m: p.games_12m_standard,
-      rankCountry: p.rank_activity_country_standard, totalCountry: p.total_activity_country_standard,
-      rankWorld: p.rank_activity_world_standard, totalWorld: p.total_activity_world_standard,
+      eloRankWorld: p.rank_world_standard,
+      eloRankCountry: p.rank_country_standard,
+      activityRankWorld: p.rank_activity_world_standard,
+      activityRankCountry: p.rank_activity_country_standard,
+      totalWorld: p.total_activity_world_standard,
+      totalCountry: p.total_activity_country_standard,
     },
     {
-      key: "rapid", label: t("filters.rapid"), rating: p.rating_rapid, max: p.max_rapid,
+      key: "rapid",
+      label: t("filters.rapid"),
+      color: CADENCE_COLORS.rapid,
+      rating: p.rating_rapid,
+      max: p.max_rapid,
       games12m: p.games_12m_rapid,
-      rankCountry: p.rank_activity_country_rapid, totalCountry: p.total_activity_country_rapid,
-      rankWorld: p.rank_activity_world_rapid, totalWorld: p.total_activity_world_rapid,
+      eloRankWorld: p.rank_world_rapid,
+      eloRankCountry: p.rank_country_rapid,
+      activityRankWorld: p.rank_activity_world_rapid,
+      activityRankCountry: p.rank_activity_country_rapid,
+      totalWorld: p.total_activity_world_rapid,
+      totalCountry: p.total_activity_country_rapid,
     },
     {
-      key: "blitz", label: t("filters.blitz"), rating: p.rating_blitz, max: p.max_blitz,
+      key: "blitz",
+      label: t("filters.blitz"),
+      color: CADENCE_COLORS.blitz,
+      rating: p.rating_blitz,
+      max: p.max_blitz,
       games12m: p.games_12m_blitz,
-      rankCountry: p.rank_activity_country_blitz, totalCountry: p.total_activity_country_blitz,
-      rankWorld: p.rank_activity_world_blitz, totalWorld: p.total_activity_world_blitz,
+      eloRankWorld: p.rank_world_blitz,
+      eloRankCountry: p.rank_country_blitz,
+      activityRankWorld: p.rank_activity_world_blitz,
+      activityRankCountry: p.rank_activity_country_blitz,
+      totalWorld: p.total_activity_world_blitz,
+      totalCountry: p.total_activity_country_blitz,
     },
   ] as const;
 });
@@ -108,11 +133,6 @@ function fmtDelta(delta: number | null) {
   return delta > 0 ? `+${delta}` : `${delta}`;
 }
 
-function fmtPercentile(rank: number | null, total: number | null) {
-  if (rank == null || !total) return "";
-  const pct = (rank / total) * 100;
-  return pct < 0.1 ? "<0.1" : pct.toFixed(1);
-}
 </script>
 
 <template>
@@ -140,25 +160,9 @@ function fmtPercentile(rank: number | null, total: number | null) {
                   <template v-if="player.age != null"> &middot; {{ player.age }} {{ t("table.age") }} </template>
                 </div>
               </div>
-              <div>
-                <PlayerLinks :fideid="player.fideid" :name="player.name" :size="16" detailed />
-              </div>
             </div>
             <div>
-              <div v-if="player.rank_world_standard != null" class="d-flex flex-wrap mb-1" style="gap: 8px">
-                  <v-chip variant="tonal" color="primary" prepend-icon="mdi-earth" class="rank-chip">
-                    {{ t("pages.rankWorld") }} #{{ player.rank_world_standard }}
-                    <span v-if="player.total_world_standard" class="text-medium-emphasis ml-1">
-                      ({{ t("pages.topPercent", { p: fmtPercentile(player.rank_world_standard, player.total_world_standard) }) }})
-                    </span>
-                  </v-chip>
-                  <v-chip variant="tonal" prepend-icon="mdi-flag" class="rank-chip">
-                    {{ t("pages.rankCountry") }} #{{ player.rank_country_standard }}
-                    <span v-if="player.total_country_standard" class="text-medium-emphasis ml-1">
-                      ({{ t("pages.topPercent", { p: fmtPercentile(player.rank_country_standard, player.total_country_standard) }) }})
-                    </span>
-                  </v-chip>
-              </div>
+              <PlayerLinks :fideid="player.fideid" :name="player.name" :size="16" detailed />
             </div>
           </div>
         </v-card-text>
@@ -166,23 +170,23 @@ function fmtPercentile(rank: number | null, total: number | null) {
 
       <v-row class="mb-4" dense>
         <v-col v-for="c in cadenceRows" :key="c.key" cols="4">
-          <v-card class="text-center pa-2 pa-sm-4" :style="{ borderTop: `3px solid ${CADENCE_COLORS[c.key]}` }">
-            <div class="text-caption text-uppercase text-medium-emphasis">{{ c.label }}</div>
-            <div class="text-h5 text-sm-h4 font-weight-bold my-1">{{ c.rating ?? "—" }}</div>
-            <div v-if="c.max != null" class="text-caption text-medium-emphasis">{{ t("pages.maxRating") }} {{ c.max }}</div>
-            <template v-if="c.games12m != null">
-              <v-divider class="my-2" />
-              <div class="text-caption text-medium-emphasis">{{ t("pages.gamesLast12m", { n: c.games12m }) }}</div>
-              <div class="text-caption text-medium-emphasis">
-                {{ t("pages.activityRankWorld") }} #{{ c.rankWorld }}
-                <span v-if="c.totalWorld">({{ t("pages.topPercent", { p: fmtPercentile(c.rankWorld, c.totalWorld) }) }})</span>
-              </div>
-              <div class="text-caption text-medium-emphasis">
-                {{ t("pages.activityRankCountry") }} #{{ c.rankCountry }}
-                <span v-if="c.totalCountry">({{ t("pages.topPercent", { p: fmtPercentile(c.rankCountry, c.totalCountry) }) }})</span>
-              </div>
-            </template>
-          </v-card>
+          <PlayerCadenceCard
+            :label="c.label"
+            :color="c.color"
+            :rating="c.rating"
+            :max="c.max"
+            :elo-rank-world="c.eloRankWorld"
+            :elo-rank-country="c.eloRankCountry"
+            :elo-total-world="c.totalWorld"
+            :elo-total-country="c.totalCountry"
+            :games12m="c.games12m"
+            :activity-rank-world="c.activityRankWorld"
+            :activity-rank-country="c.activityRankCountry"
+            :activity-total-world="c.totalWorld"
+            :activity-total-country="c.totalCountry"
+            :country-name="countryName(player.country)"
+            :country-flag-class="countryFlag(player.country)"
+          />
         </v-col>
       </v-row>
 
@@ -210,31 +214,31 @@ function fmtPercentile(rank: number | null, total: number | null) {
           <v-window-item value="activity">
             <v-table density="compact">
               <thead>
-                <tr>
-                  <th>{{ t("filters.year") }}</th>
-                  <th>{{ t("filters.standard") }}</th>
-                  <th>{{ t("filters.rapid") }}</th>
-                  <th>{{ t("filters.blitz") }}</th>
-                  <th>{{ t("table.gamesTotal") }}</th>
-                </tr>
+              <tr>
+                <th>{{ t("filters.year") }}</th>
+                <th>{{ t("filters.standard") }}</th>
+                <th>{{ t("filters.rapid") }}</th>
+                <th>{{ t("filters.blitz") }}</th>
+                <th>{{ t("table.gamesTotal") }}</th>
+              </tr>
               </thead>
               <tbody>
-                <tr v-for="y in yearlyStats" :key="y.year">
-                  <td>{{ y.year }}</td>
-                  <td>
-                    <span class="d-inline-block text-right" style="width: 2em">{{ y.games_standard }}</span>
-                    <span class="ml-1" :class="{ 'text-red': (y.delta_standard ?? 0) < 0, 'text-green': (y.delta_standard ?? 0) > 0 }">{{ fmtDelta(y.delta_standard) }}</span>
-                  </td>
-                  <td>
-                    <span class="d-inline-block text-right" style="width: 2em">{{ y.games_rapid }}</span>
-                    <span class="ml-1" :class="{ 'text-red': (y.delta_rapid ?? 0) < 0, 'text-green': (y.delta_rapid ?? 0) > 0 }">{{ fmtDelta(y.delta_rapid) }}</span>
-                  </td>
-                  <td>
-                    <span class="d-inline-block text-right" style="width: 2em">{{ y.games_blitz }}</span>
-                    <span class="ml-1" :class="{ 'text-red': (y.delta_blitz ?? 0) < 0, 'text-green': (y.delta_blitz ?? 0) > 0 }">{{ fmtDelta(y.delta_blitz) }}</span>
-                  </td>
-                  <td>{{ y.games_total }}</td>
-                </tr>
+              <tr v-for="y in yearlyStats" :key="y.year">
+                <td>{{ y.year }}</td>
+                <td>
+                  <span class="d-inline-block text-right" style="width: 2em">{{ y.games_standard }}</span>
+                  <span class="ml-1" :class="{ 'text-red': (y.delta_standard ?? 0) < 0, 'text-green': (y.delta_standard ?? 0) > 0 }">{{ fmtDelta(y.delta_standard) }}</span>
+                </td>
+                <td>
+                  <span class="d-inline-block text-right" style="width: 2em">{{ y.games_rapid }}</span>
+                  <span class="ml-1" :class="{ 'text-red': (y.delta_rapid ?? 0) < 0, 'text-green': (y.delta_rapid ?? 0) > 0 }">{{ fmtDelta(y.delta_rapid) }}</span>
+                </td>
+                <td>
+                  <span class="d-inline-block text-right" style="width: 2em">{{ y.games_blitz }}</span>
+                  <span class="ml-1" :class="{ 'text-red': (y.delta_blitz ?? 0) < 0, 'text-green': (y.delta_blitz ?? 0) > 0 }">{{ fmtDelta(y.delta_blitz) }}</span>
+                </td>
+                <td>{{ y.games_total }}</td>
+              </tr>
               </tbody>
             </v-table>
           </v-window-item>

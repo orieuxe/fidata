@@ -1,3 +1,10 @@
+--! Previous: sha1:3682c0d5f7bc687a8bf76a14b6f04b9063274043
+--! Hash: sha1:fd5e7337923988dbfc9a38ec9420af6aed9db2a4
+
+-- Enter migration here
+
+drop function if exists player_profile(integer);
+--! Included functions/player_profile.sql
 -- Player detail page header: profile, current/peak ratings, per-cadence Elo
 -- rank and per-cadence (standard/rapid/blitz) rolling-12-month activity
 -- rank, each with a total for the frontend to derive a percentile from
@@ -195,3 +202,4 @@ as $function$
     ) awb on true;
 $function$
 ;
+--! EndIncluded functions/player_profile.sql

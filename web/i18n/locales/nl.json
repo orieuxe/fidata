@@ -55,6 +55,7 @@
     "rankWorld": "Wereldranglijst",
     "rankCountry": "Landelijke ranglijst",
     "maxRating": "Hoogste rating",
+    "maxShort": "max",
     "playerNotFound": "Speler niet gevonden",
     "yearlyActivity": "Jaarlijkse activiteit",
     "range1y": "1J",
@@ -62,9 +63,11 @@
     "range10y": "10J",
     "rangeAll": "Alles",
     "topPercent": "top {p}%",
-    "gamesLast12m": "{n} partijen (12 maanden)",
-    "activityRankWorld": "Wereldrang (partijen)",
-    "activityRankCountry": "Landelijke rang (partijen)"
+    "gamesLast12m": "{n} partijen gespeeld in de afgelopen 12 maanden",
+    "activityChip": "#{rank}/{total} (top {p}%)",
+    "activityChipShort": "#{rank} (top {p}%)",
+    "totalActivePlayersWorld": "{n} actieve spelers wereldwijd",
+    "totalActivePlayersCountry": "{n} actieve spelers ({country})"
   },
   "links": {
     "fideProfile": "FIDE-profiel",

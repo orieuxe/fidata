@@ -24,6 +24,7 @@
   "devDependencies": {
     "openapi-typescript": "^7.13.0",
     "swagger2openapi": "^7.0.8",
+    "typescript": "^5.0.4",
     "vite-plugin-vuetify": "^2.1.3"
   }
 }
