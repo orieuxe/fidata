@@ -69,8 +69,10 @@ export interface PlayerProfile {
   max_blitz: number | null;
   rank_country_standard: number | null;
   rank_world_standard: number | null;
-  total_country_standard: number | null;
-  total_world_standard: number | null;
+  rank_country_rapid: number | null;
+  rank_world_rapid: number | null;
+  rank_country_blitz: number | null;
+  rank_world_blitz: number | null;
   games_12m_standard: number | null;
   games_12m_rapid: number | null;
   games_12m_blitz: number | null;

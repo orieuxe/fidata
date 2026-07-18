@@ -32,7 +32,7 @@ export async function useCountryOptions() {
   const { get } = useApi();
   const { t, locale } = useI18n();
 
-  const { data: countries } = await useAsyncData("countries", () =>
+  const { data: countries } = await useAsyncData<Country[]>("countries", () =>
     get<Country[]>("/countries"),
   );
 

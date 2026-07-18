@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "sh -c 'set -a; . ../.env; graphile-migrate watch'",
     "commit": "sh -c 'set -a; . ../.env; graphile-migrate commit'",
+    "current": "sh -c 'set -a; . ../.env; graphile-migrate current'",
     "uncommit": "sh -c 'set -a; . ../.env; graphile-migrate uncommit'",
     "migrate": "sh -c 'set -a; . ../.env; graphile-migrate migrate'",
     "status": "sh -c 'set -a; . ../.env; graphile-migrate status'"

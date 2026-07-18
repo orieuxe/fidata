@@ -50,7 +50,7 @@ const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1
 
 const topIds = computed(() => (top.value ?? []).slice(0, 15).map((r) => r.fideid));
 
-const { data: history, pending: historyPending } = await useAsyncData(
+const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
   "rating-history",
   (_nuxtApp, { signal }) =>
     topIds.value.length

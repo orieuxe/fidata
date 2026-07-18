@@ -55,6 +55,7 @@
     "rankWorld": "Weltrang",
     "rankCountry": "Landesrang",
     "maxRating": "Bestwertung",
+    "maxShort": "max",
     "playerNotFound": "Spieler nicht gefunden",
     "yearlyActivity": "Jährliche Aktivität",
     "range1y": "1J",
@@ -62,9 +63,11 @@
     "range10y": "10J",
     "rangeAll": "Alle",
     "topPercent": "Top {p}%",
-    "gamesLast12m": "{n} Partien (12 Monate)",
-    "activityRankWorld": "Weltrang (Partien)",
-    "activityRankCountry": "Landesrang (Partien)"
+    "gamesLast12m": "{n} Partien in den letzten 12 Monaten",
+    "activityChip": "#{rank}/{total} (Top {p}%)",
+    "activityChipShort": "#{rank} (Top {p}%)",
+    "totalActivePlayersWorld": "{n} aktive Spieler weltweit",
+    "totalActivePlayersCountry": "{n} aktive Spieler ({country})"
   },
   "links": {
     "fideProfile": "FIDE-Profil",
