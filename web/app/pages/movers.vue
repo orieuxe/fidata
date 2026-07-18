@@ -4,9 +4,10 @@ import { useI18n } from "#i18n";
 import { useDisplay } from "vuetify";
 import type { RatingChange } from "~/types/api";
 import { useApi } from "~/composables/useApi";
-import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders, useTitleOptions } from "~/composables/useFilterOptions";
+import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders, useTitleOptions, useSexOptions } from "~/composables/useFilterOptions";
 import { useUrlFilters } from "~/composables/useUrlFilters";
 import { LIMIT_OPTIONS, yearFilterRange, type YearFilterValue } from "~/utils/filterOptions";
+import FilterBar from "~/components/FilterBar.vue";
 
 const { get } = useApi();
 const { t } = useI18n();
@@ -17,23 +18,20 @@ const { countryOptions, countryName, countryFlag } = await useCountryOptions();
 const ratingTypeOptions = useRatingTypeOptions(false);
 
 const titleOptions = useTitleOptions();
+const sexOptions = useSexOptions();
 const limitOptions = LIMIT_OPTIONS;
-
-const directionOptions = computed(() => [
-  { title: t("filters.mostImproved"), value: "gain" },
-  { title: t("filters.biggestLoss"), value: "loss" },
-]);
 
 const year = ref<YearFilterValue>(defaultYear);
 const country = ref<string | null>(null);
 const ratingType = ref<string>("standard");
 const titles = ref<string[]>([]);
+const sex = ref<string | null>(null);
 const minAge = ref<number | null>(null);
 const maxAge = ref<number | null>(null);
 const direction = ref<"gain" | "loss">("gain");
 const limit = ref<number>(25);
 
-useUrlFilters({ year, country, ratingType, titles, minAge, maxAge, direction, limit });
+useUrlFilters({ year, country, ratingType, titles, sex, minAge, maxAge, direction, limit });
 
 const allRows = ref<RatingChange[]>([]);
 const offset = ref(0);
@@ -46,6 +44,7 @@ function buildParams(off: number) {
     ...(from && { p_from: from }),
     ...(to && { p_to: to }),
     ...(country.value && { p_country: country.value }),
+    ...(sex.value && { p_sex: sex.value }),
     ...(ratingType.value && { p_rating_type: ratingType.value }),
     ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
     ...(minAge.value != null && { p_min_age: String(minAge.value) }),
@@ -71,7 +70,7 @@ async function loadInitial() {
   pending.value = false;
 }
 
-watch([year, country, ratingType, titles, minAge, maxAge, direction, limit], loadInitial);
+watch([year, country, ratingType, titles, sex, minAge, maxAge, direction, limit], loadInitial);
 await loadInitial();
 
 async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => void }) {
@@ -119,42 +118,38 @@ const headers = computed(() => {
 
 <template>
   <v-container fluid>
-    <v-card :title="t('pages.ratingMovers')">
+    <v-card>
+      <v-card-title class="d-flex flex-wrap align-center" style="gap: 12px">
+        <span>{{ t('pages.ratingMovers') }}</span>
+        <v-btn-toggle
+          v-model="direction"
+          mandatory
+          density="compact"
+          color="primary"
+          divided
+          elevation="3"
+          :class="{ 'w-100': xs }"
+        >
+          <v-btn value="gain" prepend-icon="mdi-trending-up" :class="{ 'flex-grow-1': xs }">{{ t('filters.mostImproved') }}</v-btn>
+          <v-btn value="loss" prepend-icon="mdi-trending-down" :class="{ 'flex-grow-1': xs }">{{ t('filters.biggestLoss') }}</v-btn>
+        </v-btn-toggle>
+      </v-card-title>
       <v-card-text>
-        <v-row dense>
-          <v-col cols="12" sm="6" md="2">
-            <v-select v-model="direction" :items="directionOptions" :label="t('filters.direction')" density="compact" />
-          </v-col>
-          <v-col cols="12" sm="6" md="2">
-            <v-select v-model="year" :items="yearOptions" :label="t('filters.year')" density="compact" />
-          </v-col>
-          <v-col cols="12" sm="6" md="2">
-            <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact">
-              <template #item="{ props, item }">
-                <v-list-item v-bind="props" title="">
-                  <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
-                  {{ item.raw?.title ?? item.title }}
-                </v-list-item>
-              </template>
-              <template #selection="{ item }">
-                <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
-                {{ item.raw?.title ?? item.title }}
-              </template>
-            </v-autocomplete>
-          </v-col>
-          <v-col cols="12" sm="6" md="2">
-            <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" />
-          </v-col>
-          <v-col cols="12" sm="6" md="2">
-            <v-select v-model="titles" :items="titleOptions" :label="t('filters.title')" multiple chips density="compact" />
-          </v-col>
-          <v-col cols="6" md="1">
-            <v-text-field v-model.number="minAge" type="number" :label="t('filters.minAge')" density="compact" />
-          </v-col>
-          <v-col cols="6" md="1">
-            <v-text-field v-model.number="maxAge" type="number" :label="t('filters.maxAge')" density="compact" />
-          </v-col>
-        </v-row>
+        <FilterBar
+          v-model:year="year"
+          v-model:country="country"
+          v-model:rating-type="ratingType"
+          v-model:titles="titles"
+          v-model:sex="sex"
+          v-model:min-age="minAge"
+          v-model:max-age="maxAge"
+          :year-options="yearOptions"
+          :country-options="countryOptions"
+          :country-flag="countryFlag"
+          :rating-type-options="ratingTypeOptions"
+          :title-options="titleOptions"
+          :sex-options="sexOptions"
+        />
       </v-card-text>
       <v-infinite-scroll @load="onLoad" style="max-width: 900px; margin: 0 auto">
         <template #default>
