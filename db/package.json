@@ -17,6 +17,6 @@
   "type": "commonjs",
   "private": "true",
   "devDependencies": {
-    "graphile-migrate": "^1.4.1"
+    "graphile-migrate": "2.0.0-rc.3"
   }
 }

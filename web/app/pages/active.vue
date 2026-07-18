@@ -4,19 +4,19 @@ import { useI18n } from "#i18n";
 import type { ActivePlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
-import { TITLE_OPTIONS, LIMIT_OPTIONS } from "~/utils/filterOptions";
+import { TITLE_OPTIONS, LIMIT_OPTIONS, yearFilterRange, type YearFilterValue } from "~/utils/filterOptions";
 
 const { get } = useApi();
 const { t } = useI18n();
 
-const { currentYear, yearOptions } = useYearOptions(true);
+const { defaultYear, yearOptions } = useYearOptions(true, true);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
 const ratingTypeOptions = useRatingTypeOptions(true);
 
 const titleOptions = TITLE_OPTIONS;
 const limitOptions = LIMIT_OPTIONS;
 
-const year = ref<number | null>(currentYear);
+const year = ref<YearFilterValue>(defaultYear);
 const country = ref<string | null>(null);
 const ratingType = ref<string | null>("standard");
 const titles = ref<string[]>([]);
@@ -30,8 +30,10 @@ const finished = ref(false);
 const pending = ref(false);
 
 function buildParams(off: number) {
+  const { from, to } = yearFilterRange(year.value);
   return {
-    ...(year.value != null && { p_year: String(year.value) }),
+    ...(from && { p_from: from }),
+    ...(to && { p_to: to }),
     ...(country.value && { p_country: country.value }),
     ...(ratingType.value && { p_rating_type: ratingType.value }),
     ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
