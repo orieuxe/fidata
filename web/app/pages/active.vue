@@ -4,9 +4,9 @@ import { useI18n } from "#i18n";
 import { useDisplay } from "vuetify";
 import type { ActivePlayer } from "~/types/api";
 import { useApi } from "~/composables/useApi";
-import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
+import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders, useTitleOptions } from "~/composables/useFilterOptions";
 import { useUrlFilters } from "~/composables/useUrlFilters";
-import { TITLE_OPTIONS, LIMIT_OPTIONS, yearFilterRange, type YearFilterValue } from "~/utils/filterOptions";
+import { LIMIT_OPTIONS, yearFilterRange, type YearFilterValue } from "~/utils/filterOptions";
 
 const { get } = useApi();
 const { t } = useI18n();
@@ -16,7 +16,7 @@ const { defaultYear, yearOptions } = useYearOptions(true, true);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
 const ratingTypeOptions = useRatingTypeOptions(true);
 
-const titleOptions = TITLE_OPTIONS;
+const titleOptions = useTitleOptions();
 const limitOptions = LIMIT_OPTIONS;
 
 const year = ref<YearFilterValue>(defaultYear);

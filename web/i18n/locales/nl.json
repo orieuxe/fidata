@@ -20,6 +20,7 @@
     "rapid": "Rapid",
     "blitz": "Blitz",
     "title": "Titel",
+    "untitled": "Zonder titel",
     "minAge": "Min. leeftijd",
     "maxAge": "Max. leeftijd",
     "limit": "Tonen",
@@ -67,7 +68,8 @@
     "activityChip": "#{rank}/{total} (top {p}%)",
     "activityChipShort": "#{rank} (top {p}%)",
     "totalActivePlayersWorld": "{n} actieve spelers wereldwijd",
-    "totalActivePlayersCountry": "{n} actieve spelers ({country})"
+    "totalActivePlayersCountry": "{n} actieve spelers ({country})",
+    "ageYears": "{n} jaar"
   },
   "links": {
     "fideProfile": "FIDE-profiel",

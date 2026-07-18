@@ -6,9 +6,9 @@ import { useDisplay } from "vuetify";
 import { Line } from "vue-chartjs";
 import type { TopPlayer, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
-import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders } from "~/composables/useFilterOptions";
+import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders, useTitleOptions } from "~/composables/useFilterOptions";
 import { useUrlFilters } from "~/composables/useUrlFilters";
-import { TITLE_OPTIONS, LIMIT_OPTIONS_WIDE } from "~/utils/filterOptions";
+import { LIMIT_OPTIONS_WIDE } from "~/utils/filterOptions";
 
 const { get } = useApi();
 const { t } = useI18n();
@@ -18,7 +18,7 @@ const { currentYear, yearOptions } = useYearOptions(false);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
 const ratingTypeOptions = useRatingTypeOptions(false);
 
-const titleOptions = TITLE_OPTIONS;
+const titleOptions = useTitleOptions();
 const limitOptions = LIMIT_OPTIONS_WIDE;
 
 const year = ref<number>(currentYear);
