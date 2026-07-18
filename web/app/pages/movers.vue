@@ -156,7 +156,7 @@ const headers = computed(() => {
           </v-col>
         </v-row>
       </v-card-text>
-      <v-infinite-scroll @load="onLoad" style="max-width: 900px">
+      <v-infinite-scroll @load="onLoad" style="max-width: 900px; margin: 0 auto">
         <template #default>
           <v-data-table
             :headers="headers"
