@@ -12,7 +12,7 @@
 -- ponytail note this function used to carry (~75s, upgrade to a rollup
 -- table if that becomes a real access pattern -- it isn't the default and
 -- isn't covered here).
-create or replace function public.most_active_players(p_from date default null::date, p_to date default null::date, p_country text default null::text, p_rating_type rating_type default null::rating_type, p_titles text[] default null::text[], p_min_age integer default null::integer, p_max_age integer default null::integer, p_limit integer default 50, p_offset integer default 0)
+create or replace function public.most_active_players(p_from date default null::date, p_to date default null::date, p_country text default null::text, p_sex text default null::text, p_rating_type rating_type default null::rating_type, p_titles text[] default null::text[], p_min_age integer default null::integer, p_max_age integer default null::integer, p_limit integer default 50, p_offset integer default 0)
  returns table(fideid integer, name text, country text, title text, total_games bigint, rating integer, age integer)
  language plpgsql
  stable
@@ -42,6 +42,7 @@ begin
             where s.bucket = v_bucket
               and s.rating_type = p_rating_type
               and (p_country is null or s.country = p_country)
+              and (p_sex is null or s.sex = p_sex)
               and (
                   p_titles is null or cardinality(p_titles) = 0
                   or s.title = any(p_titles)
@@ -68,6 +69,7 @@ begin
             where r.period >= coalesce(p_from, '-infinity'::date)
               and r.period <  coalesce(p_to, 'infinity'::date)
               and (p_country is null or r.country = p_country)
+              and (p_sex is null or r.sex = p_sex)
               and (p_rating_type is null or r.rating_type = p_rating_type)
               and (
                   p_titles is null or cardinality(p_titles) = 0
