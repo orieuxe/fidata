@@ -89,9 +89,12 @@ services:
     environment:
       NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE}
       NUXT_API_BASE_SERVER: ${NUXT_API_BASE_SERVER:-${NUXT_PUBLIC_API_BASE}}
-    command: npm run generate
+    # Generate into the image's own filesystem, not straight into the
+    # volume: nitro rmdir's its output dir before writing it, and a mounted
+    # volume can't be rmdir'd (EBUSY) -- only its contents can be replaced.
+    command: sh -c "npm run generate && rm -rf /web_static/* && cp -a .output/public/. /web_static/"
     volumes:
-      - web_static:/app/.output/public
+      - web_static:/web_static
 
 volumes:
   pgdata:
