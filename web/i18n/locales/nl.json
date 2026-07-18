@@ -10,6 +10,7 @@
   },
   "filters": {
     "year": "Jaar",
+    "last12Months": "Laatste 12 maanden",
     "allTime": "Aller tijden",
     "country": "Land",
     "allCountries": "Alle landen",
@@ -32,7 +33,7 @@
     "name": "Naam",
     "country": "Land",
     "title": "Titel",
-    "rating": "Rating",
+    "rating": "Elo",
     "age": "Leeftijd",
     "games": "Partijen",
     "start": "Start",

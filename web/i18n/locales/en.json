@@ -10,6 +10,7 @@
   },
   "filters": {
     "year": "Year",
+    "last12Months": "Last 12 months",
     "allTime": "All time",
     "country": "Country",
     "allCountries": "All countries",
@@ -32,7 +33,7 @@
     "name": "Name",
     "country": "Country",
     "title": "Title",
-    "rating": "Rating",
+    "rating": "Elo",
     "age": "Age",
     "games": "Games",
     "start": "Start",

@@ -10,6 +10,7 @@
   },
   "filters": {
     "year": "Année",
+    "last12Months": "12 derniers mois",
     "allTime": "Toutes périodes",
     "country": "Pays",
     "allCountries": "Tous les pays",
@@ -32,7 +33,7 @@
     "name": "Nom",
     "country": "Pays",
     "title": "Titre",
-    "rating": "Classement",
+    "rating": "Elo",
     "age": "ans",
     "games": "Parties",
     "start": "Début",

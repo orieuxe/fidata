@@ -426,7 +426,8 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    p_year?: number;
+                    p_from?: string;
+                    p_to?: string;
                     p_country?: string;
                     p_rating_type?: string;
                     p_titles?: string;
@@ -466,6 +467,8 @@ export interface paths {
                     "application/json": {
                         /** Format: text */
                         p_country?: string;
+                        /** Format: date */
+                        p_from?: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -478,12 +481,14 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
+                        /** Format: date */
+                        p_to?: string;
                     };
                     "application/vnd.pgrst.object+json;nulls=stripped": {
                         /** Format: text */
                         p_country?: string;
+                        /** Format: date */
+                        p_from?: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -496,12 +501,14 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
+                        /** Format: date */
+                        p_to?: string;
                     };
                     "application/vnd.pgrst.object+json": {
                         /** Format: text */
                         p_country?: string;
+                        /** Format: date */
+                        p_from?: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -514,12 +521,14 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
+                        /** Format: date */
+                        p_to?: string;
                     };
                     "text/csv": {
                         /** Format: text */
                         p_country?: string;
+                        /** Format: date */
+                        p_from?: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -532,8 +541,8 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year?: number;
+                        /** Format: date */
+                        p_to?: string;
                     };
                 };
             };
@@ -563,7 +572,8 @@ export interface paths {
         get: {
             parameters: {
                 query: {
-                    p_year: number;
+                    p_from: string;
+                    p_to: string;
                     p_country?: string;
                     p_rating_type?: string;
                     p_titles?: string;
@@ -606,6 +616,8 @@ export interface paths {
                         p_country?: string;
                         /** Format: text */
                         p_direction?: string;
+                        /** Format: date */
+                        p_from: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -618,14 +630,16 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year: number;
+                        /** Format: date */
+                        p_to: string;
                     };
                     "application/vnd.pgrst.object+json;nulls=stripped": {
                         /** Format: text */
                         p_country?: string;
                         /** Format: text */
                         p_direction?: string;
+                        /** Format: date */
+                        p_from: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -638,14 +652,16 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year: number;
+                        /** Format: date */
+                        p_to: string;
                     };
                     "application/vnd.pgrst.object+json": {
                         /** Format: text */
                         p_country?: string;
                         /** Format: text */
                         p_direction?: string;
+                        /** Format: date */
+                        p_from: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -658,14 +674,16 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year: number;
+                        /** Format: date */
+                        p_to: string;
                     };
                     "text/csv": {
                         /** Format: text */
                         p_country?: string;
                         /** Format: text */
                         p_direction?: string;
+                        /** Format: date */
+                        p_from: string;
                         /** Format: integer */
                         p_limit?: number;
                         /** Format: integer */
@@ -678,11 +696,140 @@ export interface paths {
                         p_rating_type?: string;
                         /** Format: text[] */
                         p_titles?: string[];
-                        /** Format: integer */
-                        p_year: number;
+                        /** Format: date */
+                        p_to: string;
                     };
                 };
             };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rpc/show_trgm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query: {
+                    "": string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Preference */
+                    Prefer?: components["parameters"]["preferParams"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** Format: text */
+                        "": string;
+                    };
+                    "application/vnd.pgrst.object+json;nulls=stripped": {
+                        /** Format: text */
+                        "": string;
+                    };
+                    "application/vnd.pgrst.object+json": {
+                        /** Format: text */
+                        "": string;
+                    };
+                    "text/csv": {
+                        /** Format: text */
+                        "": string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rpc/player_profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query: {
+                    p_fideid: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Preference */
+                    Prefer?: components["parameters"]["preferParams"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: components["requestBodies"]["Args"];
             responses: {
                 /** @description OK */
                 200: {
@@ -811,6 +958,213 @@ export interface paths {
                     };
                 };
             };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rpc/search_players": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query: {
+                    p_name: string;
+                    p_limit?: number;
+                    p_offset?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Preference */
+                    Prefer?: components["parameters"]["preferParams"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** Format: integer */
+                        p_limit?: number;
+                        /** Format: text */
+                        p_name: string;
+                        /** Format: integer */
+                        p_offset?: number;
+                    };
+                    "application/vnd.pgrst.object+json;nulls=stripped": {
+                        /** Format: integer */
+                        p_limit?: number;
+                        /** Format: text */
+                        p_name: string;
+                        /** Format: integer */
+                        p_offset?: number;
+                    };
+                    "application/vnd.pgrst.object+json": {
+                        /** Format: integer */
+                        p_limit?: number;
+                        /** Format: text */
+                        p_name: string;
+                        /** Format: integer */
+                        p_offset?: number;
+                    };
+                    "text/csv": {
+                        /** Format: integer */
+                        p_limit?: number;
+                        /** Format: text */
+                        p_name: string;
+                        /** Format: integer */
+                        p_offset?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rpc/show_limit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Preference */
+                    Prefer?: components["parameters"]["preferParams"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": Record<string, never>;
+                    "application/vnd.pgrst.object+json;nulls=stripped": Record<string, never>;
+                    "application/vnd.pgrst.object+json": Record<string, never>;
+                    "text/csv": Record<string, never>;
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rpc/player_yearly_stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query: {
+                    p_fideid: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Preference */
+                    Prefer?: components["parameters"]["preferParams"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: components["requestBodies"]["Args"];
             responses: {
                 /** @description OK */
                 200: {
@@ -1003,6 +1357,26 @@ export interface components {
                 "application/vnd.pgrst.object+json;nulls=stripped": components["schemas"]["countries"];
                 "application/vnd.pgrst.object+json": components["schemas"]["countries"];
                 "text/csv": components["schemas"]["countries"];
+            };
+        };
+        Args: {
+            content: {
+                "application/json": {
+                    /** Format: integer */
+                    p_fideid: number;
+                };
+                "application/vnd.pgrst.object+json;nulls=stripped": {
+                    /** Format: integer */
+                    p_fideid: number;
+                };
+                "application/vnd.pgrst.object+json": {
+                    /** Format: integer */
+                    p_fideid: number;
+                };
+                "text/csv": {
+                    /** Format: integer */
+                    p_fideid: number;
+                };
             };
         };
     };

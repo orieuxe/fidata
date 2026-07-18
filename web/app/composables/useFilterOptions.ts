@@ -5,20 +5,17 @@ import type { Country } from "~/types/api";
 import { useApi } from "./useApi";
 import { countryName, flagClass } from "~/utils/countryDisplay";
 
-export function useYearOptions(includeAllTime: boolean) {
+export function useYearOptions(includeAllTime: boolean, includeLast12 = false) {
   const { t } = useI18n();
   const currentYear = new Date().getFullYear();
-  const count = currentYear - 2015 + 1 + (includeAllTime ? 1 : 0);
-  const years = Array.from(
-    { length: count },
-    (_, i) => (includeAllTime ? currentYear + 1 : currentYear) - i,
-  );
-  const yearOptions = years.map((y) =>
-    includeAllTime && y > currentYear
-      ? { title: t("filters.allTime"), value: null }
-      : { title: String(y), value: y },
-  );
-  return { currentYear, yearOptions };
+  const years = Array.from({ length: currentYear - 2015 + 1 }, (_, i) => currentYear - i);
+  const yearOptions = [
+    ...(includeLast12 ? [{ title: t("filters.last12Months"), value: "last12" as const }] : []),
+    ...years.map((y) => ({ title: String(y), value: y })),
+    ...(includeAllTime ? [{ title: t("filters.allTime"), value: null }] : []),
+  ];
+  const defaultYear = includeLast12 ? ("last12" as const) : currentYear;
+  return { currentYear, defaultYear, yearOptions };
 }
 
 export function useRatingTypeOptions(includeAllTimeControls: boolean) {
