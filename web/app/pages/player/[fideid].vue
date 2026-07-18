@@ -157,7 +157,7 @@ function fmtDelta(delta: number | null) {
                 </div>
                 <div class="text-body-2 text-medium-emphasis">
                   {{ countryName(player.country) }}
-                  <template v-if="player.age != null"> &middot; {{ player.age }} {{ t("table.age") }} </template>
+                  <template v-if="player.age != null"> &middot; {{ t("pages.ageYears", { n: player.age }) }} </template>
                 </div>
               </div>
             </div>

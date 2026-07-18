@@ -20,6 +20,7 @@
     "rapid": "Schnellschach",
     "blitz": "Blitz",
     "title": "Titel",
+    "untitled": "Ohne Titel",
     "minAge": "Min. Alter",
     "maxAge": "Max. Alter",
     "limit": "Anzeigen",
@@ -67,7 +68,8 @@
     "activityChip": "#{rank}/{total} (Top {p}%)",
     "activityChipShort": "#{rank} (Top {p}%)",
     "totalActivePlayersWorld": "{n} aktive Spieler weltweit",
-    "totalActivePlayersCountry": "{n} aktive Spieler ({country})"
+    "totalActivePlayersCountry": "{n} aktive Spieler ({country})",
+    "ageYears": "{n} Jahre"
   },
   "links": {
     "fideProfile": "FIDE-Profil",

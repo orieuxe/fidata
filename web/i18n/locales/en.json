@@ -20,6 +20,7 @@
     "rapid": "Rapid",
     "blitz": "Blitz",
     "title": "Title",
+    "untitled": "Untitled",
     "minAge": "Min age",
     "maxAge": "Max age",
     "limit": "Show",
@@ -67,7 +68,8 @@
     "activityChip": "#{rank}/{total} (top {p}%)",
     "activityChipShort": "#{rank} (top {p}%)",
     "totalActivePlayersWorld": "{n} active players worldwide",
-    "totalActivePlayersCountry": "{n} active players ({country})"
+    "totalActivePlayersCountry": "{n} active players ({country})",
+    "ageYears": "{n} years old"
   },
   "links": {
     "fideProfile": "FIDE profile",

@@ -20,6 +20,7 @@
     "rapid": "Rapide",
     "blitz": "Blitz",
     "title": "Titre",
+    "untitled": "Sans titre",
     "minAge": "Âge min",
     "maxAge": "Âge max",
     "limit": "Afficher",
@@ -34,7 +35,7 @@
     "country": "Pays",
     "title": "Titre",
     "rating": "Elo",
-    "age": "ans",
+    "age": "Âge",
     "games": "Parties",
     "start": "Début",
     "end": "Fin",
@@ -67,7 +68,8 @@
     "activityChip": "#{rank}/{total} (top {p} %)",
     "activityChipShort": "#{rank} (top {p} %)",
     "totalActivePlayersWorld": "{n} joueurs actifs dans le monde",
-    "totalActivePlayersCountry": "{n} joueurs actifs ({country})"
+    "totalActivePlayersCountry": "{n} joueurs actifs ({country})",
+    "ageYears": "{n} ans"
   },
   "links": {
     "fideProfile": "FIDE",

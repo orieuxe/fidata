@@ -4,6 +4,16 @@ import { useI18n } from "#i18n";
 import type { Country } from "~/types/api";
 import { useApi } from "./useApi";
 import { countryName, flagClass } from "~/utils/countryDisplay";
+import { TITLE_OPTIONS } from "~/utils/filterOptions";
+
+// FIDE titles (GM/IM/...) are universal acronyms, left as-is; only the
+// synthetic "UNTITLED" option is actual language to translate.
+export function useTitleOptions() {
+  const { t } = useI18n();
+  return computed(() =>
+    TITLE_OPTIONS.map((value) => ({ title: value === "UNTITLED" ? t("filters.untitled") : value, value })),
+  );
+}
 
 export function useYearOptions(includeAllTime: boolean, includeLast12 = false) {
   const { t } = useI18n();
