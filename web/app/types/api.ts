@@ -38,6 +38,21 @@ export interface TopPlayer {
   age: number | null;
 }
 
+// Matches elo_threshold_stats() -- one row per metric ("youngest" /
+// "oldest" / "fewest_games"), each the record holder for crossing the
+// given elo threshold for the first time.
+export interface EloThresholdStat {
+  metric: "youngest" | "oldest" | "fewest_games";
+  fideid: number;
+  name: string;
+  country: string | null;
+  title: string | null;
+  period: string;
+  rating: number;
+  age: number;
+  games_to_threshold: number;
+}
+
 // Matches search_players() -- one row per
 // player with all 3 cadences, since the search page has no time control
 // picker.

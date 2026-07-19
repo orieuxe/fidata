@@ -6,10 +6,12 @@
     "topPlayers": "Top players",
     "mostActive": "Most active",
     "ratingMovers": "Rating movers",
-    "findPlayer": "Find a player"
+    "findPlayer": "Find a player",
+    "funStats": "Fun stats"
   },
   "filters": {
     "year": "Year",
+    "eloThreshold": "Elo threshold",
     "last12Months": "Last 12 months",
     "allTime": "All time",
     "country": "Country",
@@ -72,7 +74,12 @@
     "activityChipShort": "#{rank} (top {p}%)",
     "totalActivePlayersWorld": "{n} active players worldwide",
     "totalActivePlayersCountry": "{n} active players ({country})",
-    "ageYears": "{n} years old"
+    "ageYears": "{n} years old",
+    "funStatsYoungest": "Youngest to reach {elo}",
+    "funStatsOldest": "Oldest to reach {elo}",
+    "funStatsFewestGames": "Fewest games to reach {elo}",
+    "funStatsReachedOn": "Reached {elo} in {period}",
+    "funStatsGamesCount": "{n} games played to get there"
   },
   "links": {
     "fideProfile": "FIDE profile",

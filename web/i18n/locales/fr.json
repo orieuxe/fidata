@@ -6,10 +6,12 @@
     "topPlayers": "Meilleurs joueurs",
     "mostActive": "Plus actifs",
     "ratingMovers": "Évolutions de classement",
-    "findPlayer": "Chercher un joueur"
+    "findPlayer": "Chercher un joueur",
+    "funStats": "Stats amusantes"
   },
   "filters": {
     "year": "Année",
+    "eloThreshold": "Seuil Elo",
     "last12Months": "12 mois",
     "allTime": "Toutes périodes",
     "country": "Pays",
@@ -72,7 +74,12 @@
     "activityChipShort": "#{rank} (top {p} %)",
     "totalActivePlayersWorld": "{n} joueurs actifs dans le monde",
     "totalActivePlayersCountry": "{n} joueurs actifs ({country})",
-    "ageYears": "{n} ans"
+    "ageYears": "{n} ans",
+    "funStatsYoungest": "Plus jeune à atteindre {elo}",
+    "funStatsOldest": "Plus vieux à atteindre {elo}",
+    "funStatsFewestGames": "Moins de parties pour atteindre {elo}",
+    "funStatsReachedOn": "Elo {elo} atteint en {period}",
+    "funStatsGamesCount": "{n} parties jouées pour y arriver"
   },
   "links": {
     "fideProfile": "FIDE",
