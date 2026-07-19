@@ -133,8 +133,14 @@ const headers = computed(() => {
           elevation="3"
           :class="{ 'w-100': xs }"
         >
-          <v-btn value="gain" prepend-icon="mdi-trending-up" :class="{ 'flex-grow-1': xs }">{{ t('filters.mostImproved') }}</v-btn>
-          <v-btn value="loss" prepend-icon="mdi-trending-down" :class="{ 'flex-grow-1': xs }">{{ t('filters.biggestLoss') }}</v-btn>
+          <v-btn value="gain" :title="t('filters.mostImproved')" :class="{ 'flex-grow-1': xs }">
+            <span style="margin-right: 8px"><v-icon icon="mdi-trending-up" /></span>
+            <template v-if="!xs">{{ t('filters.mostImproved') }}</template>
+          </v-btn>
+          <v-btn value="loss" :title="t('filters.biggestLoss')" :class="{ 'flex-grow-1': xs }">
+            <span style="margin-right: 8px"><v-icon icon="mdi-trending-down" /></span>
+            <template v-if="!xs">{{ t('filters.biggestLoss') }}</template>
+          </v-btn>
         </v-btn-toggle>
       </v-card-title>
       <v-card-text>
