@@ -34,6 +34,7 @@
     "biggestLoss": "Größter Wertungsverlust"
   },
   "table": {
+    "rank": "#",
     "name": "Name",
     "country": "Land",
     "rating": "Elo",
