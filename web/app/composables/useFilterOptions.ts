@@ -21,8 +21,8 @@ export function useYearOptions(includeAllTime: boolean, includeLast12 = false) {
   const years = Array.from({ length: currentYear - 2001 + 1 }, (_, i) => currentYear - i);
   const yearOptions = [
     ...(includeLast12 ? [{ title: t("filters.last12Months"), value: "last12" as const }] : []),
-    ...years.map((y) => ({ title: String(y), value: y })),
     ...(includeAllTime ? [{ title: t("filters.allTime"), value: null }] : []),
+    ...years.map((y) => ({ title: String(y), value: y })),
   ];
   const defaultYear = includeLast12 ? ("last12" as const) : currentYear;
   return { currentYear, defaultYear, yearOptions };
