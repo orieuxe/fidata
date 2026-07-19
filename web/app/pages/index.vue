@@ -51,7 +51,7 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   { watch: [year, country, ratingType, titles, sex, minAge, maxAge, limit] },
 );
 
-const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
+const rows = computed(() => top.value ?? []);
 
 const topIds = computed(() => (top.value ?? []).slice(0, 15).map((r) => r.fideid));
 
@@ -72,18 +72,19 @@ const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
 
 // Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
 // right before the name instead of trailing after rating/age -- local to
-// this page, doesn't touch the shared composable.
+// this page, doesn't touch the shared composable. Rank itself is dropped:
+// row order already conveys it, and the column cost more width than it
+// was worth, especially on mobile.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
-    { ...byKey("rank"), width: 50 },
-    { ...byKey("country"), width: 50 },
+    { ...byKey("country"), width: xs.value ? 36 : 50 },
     { ...byKey("title"), width: 70 },
     byKey("name"),
-    { title: t("table.rating"), key: "rating", width: 100 },
-    { title: t("table.age"), key: "age", width: 80 },
+    { title: t("table.rating"), key: "rating", width: xs.value ? 56 : 100 },
+    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
   ].filter((h) => !xs.value || h.key !== "title");
 });
 

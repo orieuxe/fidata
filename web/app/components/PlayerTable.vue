@@ -27,7 +27,7 @@ const localePath = useLocalePath();
       <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
     </template>
     <template #item.name="{ item }">
-      <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+      <NuxtLink :to="localePath(`/player/${item.fideid}`)" :title="item.name" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
     </template>
     <template #item.country="{ item }">
       <span
@@ -45,10 +45,28 @@ const localePath = useLocalePath();
 </template>
 
 <style scoped>
+/* table-layout: fixed so columns hold their declared widths instead of
+   growing to fit content (the name column, with nothing declared, then
+   takes whatever's left) -- and cell padding trimmed, compact density's
+   default still left visible margin between columns. */
+:deep(table) {
+  table-layout: fixed;
+}
+:deep(.v-data-table__td),
+:deep(.v-data-table__th) {
+  padding-inline: 6px !important;
+}
 .player-name-link {
-  text-decoration: none;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s;
 }
 .player-name-link:hover {
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 </style>

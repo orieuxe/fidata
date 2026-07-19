@@ -26,6 +26,7 @@
     "female": "Femmes",
     "minAge": "Âge min",
     "maxAge": "Âge max",
+    "moreFilters": "Plus de filtres",
     "limit": "Afficher",
     "playerName": "Nom du joueur",
     "direction": "Sens",
@@ -33,7 +34,6 @@
     "biggestLoss": "Plus forte baisse"
   },
   "table": {
-    "rank": "#",
     "name": "Nom",
     "country": "Pays",
     "title": "Titre",
