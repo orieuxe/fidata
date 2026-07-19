@@ -18,7 +18,7 @@ export function useTitleOptions() {
 export function useYearOptions(includeAllTime: boolean, includeLast12 = false) {
   const { t } = useI18n();
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 2015 + 1 }, (_, i) => currentYear - i);
+  const years = Array.from({ length: currentYear - 2001 + 1 }, (_, i) => currentYear - i);
   const yearOptions = [
     ...(includeLast12 ? [{ title: t("filters.last12Months"), value: "last12" as const }] : []),
     ...years.map((y) => ({ title: String(y), value: y })),
