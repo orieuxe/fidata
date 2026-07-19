@@ -44,12 +44,12 @@ const activeMoreCount = computed(
 </script>
 
 <template>
-  <v-row dense>
+  <v-row density="comfortable">
     <v-col cols="6" sm="6" md="2">
-      <v-select v-model="year" :items="yearOptions" :label="t('filters.year')" density="compact" />
+      <v-select v-model="year" :items="yearOptions" :label="t('filters.year')" density="compact" hide-details="auto" />
     </v-col>
     <v-col cols="6" sm="6" md="2">
-      <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact">
+      <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact" hide-details="auto">
         <template #item="{ props, internalItem }">
           <v-list-item v-bind="props" title="">
             <span v-if="countryFlag(internalItem.raw?.value)" :class="countryFlag(internalItem.raw?.value)" class="mr-2" />
@@ -71,19 +71,19 @@ const activeMoreCount = computed(
     </v-col>
     <template v-if="!xs || moreOpen">
       <v-col cols="12" sm="6" md="2">
-        <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" />
+        <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" hide-details="auto" />
       </v-col>
       <v-col cols="12" sm="6" md="2">
-        <v-select v-model="titles" :items="titleOptions" :label="t('filters.title')" multiple chips density="compact" />
+        <v-select v-model="titles" :items="titleOptions" :label="t('filters.title')" multiple chips density="compact" hide-details="auto" />
       </v-col>
       <v-col cols="12" sm="6" md="2">
-        <v-select v-model="sex" :items="sexOptions" :label="t('filters.sex')" density="compact" clearable />
+        <v-select v-model="sex" :items="sexOptions" :label="t('filters.sex')" density="compact" clearable hide-details="auto" />
       </v-col>
       <v-col cols="6" md="1">
-        <v-text-field v-model.number="minAge" type="number" :label="t('filters.minAge')" density="compact" />
+        <v-text-field v-model.number="minAge" type="number" :label="t('filters.minAge')" density="compact" hide-details="auto" />
       </v-col>
       <v-col cols="6" md="1">
-        <v-text-field v-model.number="maxAge" type="number" :label="t('filters.maxAge')" density="compact" />
+        <v-text-field v-model.number="maxAge" type="number" :label="t('filters.maxAge')" density="compact" hide-details="auto" />
       </v-col>
     </template>
   </v-row>

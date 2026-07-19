@@ -187,7 +187,7 @@ function fmtDelta(delta: number | null) {
         </v-card-text>
       </v-card>
 
-      <v-row class="mb-4" dense>
+      <v-row class="mb-4" density="comfortable">
         <v-col v-for="c in cadenceRows" :key="c.key" cols="12" sm="4">
           <PlayerCadenceCard
             :label="c.label"
