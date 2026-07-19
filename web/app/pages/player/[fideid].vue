@@ -150,7 +150,7 @@ function fmtDelta(delta: number | null) {
               />
               <div>
                 <div class="d-flex align-center flex-wrap" style="gap: 8px">
-                  <v-chip v-if="player.title" size="small" color="amber-darken-2" variant="flat" class="font-weight-bold">
+                  <v-chip v-if="player.title" color="amber-darken-2" variant="flat" class="font-weight-bold" density="compact" style="padding-inline: 8px">
                     {{ player.title }}
                   </v-chip>
                   <span class="text-h5 font-weight-medium">{{ player.name }}</span>
