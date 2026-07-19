@@ -1,3 +1,9 @@
+--! Previous: sha1:01f878f8712b3b8810e885b3b0a4e20ff2611e7d
+--! Hash: sha1:5b8feee0467021518f3cae7a919baa730535fb94
+
+-- Enter migration here
+
+--! Included functions/most_active_players.sql
 -- Most active players by games played ("active" page). Exposed at
 -- /rpc/most_active_players.
 --
@@ -99,3 +105,43 @@ begin
 end;
 $function$
 ;
+--! EndIncluded functions/most_active_players.sql
+
+-- Backfill the new 'all' bucket, and the 2001-2014 calendar-year buckets
+-- that were never frozen (the year filter used to start at 2015). Mirrors
+-- the per-year freeze scraper/src/db.ts does every December; 'all' itself
+-- is refreshed on every scrape from here on, same as 'rolling'.
+insert into rating_change_snapshots
+  (bucket, fideid, rating_type, name, country, sex, title, birthday, start_rating, end_rating, total_games)
+select
+  'all', fideid, rating_type,
+  (array_agg(name order by period desc))[1],
+  (array_agg(country order by period desc))[1],
+  (array_agg(sex order by period desc))[1],
+  (array_agg(title order by period desc))[1],
+  (array_agg(birthday order by period desc))[1],
+  (array_agg(rating order by period asc))[1],
+  (array_agg(rating order by period desc))[1],
+  sum(coalesce(games, 0))
+from ratings
+where games > 0
+group by fideid, rating_type
+on conflict (bucket, fideid, rating_type) do nothing;
+
+insert into rating_change_snapshots
+  (bucket, fideid, rating_type, name, country, sex, title, birthday, start_rating, end_rating, total_games)
+select
+  extract(year from period)::int::text, fideid, rating_type,
+  (array_agg(name order by period desc))[1],
+  (array_agg(country order by period desc))[1],
+  (array_agg(sex order by period desc))[1],
+  (array_agg(title order by period desc))[1],
+  (array_agg(birthday order by period desc))[1],
+  (array_agg(rating order by period asc))[1],
+  (array_agg(rating order by period desc))[1],
+  sum(coalesce(games, 0))
+from ratings
+where games > 0
+  and period >= '2001-01-01' and period < '2015-01-01'
+group by extract(year from period), fideid, rating_type
+on conflict (bucket, fideid, rating_type) do nothing;

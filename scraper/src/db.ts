@@ -96,7 +96,8 @@ export async function refreshDerivedViews(): Promise<void> {
 }
 
 // Rolling 12-month rating-change snapshot for the "movers" page (see
-// rating_change.sql), rewritten every scrape. The window matches
+// rating_change.sql) and the all-time bucket for most_active_players (see
+// most_active_players.sql), both rewritten every scrape. The rolling window matches
 // web/app/utils/filterOptions.ts' yearFilterRange("last12") exactly, so
 // rating_change() can recognize and reuse it.
 //
@@ -124,6 +125,29 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
     from ratings
     where games > 0
       and period >= (date_trunc('month', current_date) + interval '1 month' - interval '12 months')::date
+    group by fideid, rating_type
+  `;
+
+  // "all time" bucket for most_active_players (see 000013.sql) -- only the
+  // current year's totals can still change between scrapes, but the whole
+  // aggregate is cheap enough (~seconds) to just redo in full every run
+  // rather than tracking which fideids actually changed.
+  await sql`delete from rating_change_snapshots where bucket = 'all'`;
+  await sql`
+    insert into rating_change_snapshots
+      (bucket, fideid, rating_type, name, country, sex, title, birthday, start_rating, end_rating, total_games)
+    select
+      'all', fideid, rating_type,
+      (array_agg(name order by period desc))[1],
+      (array_agg(country order by period desc))[1],
+      (array_agg(sex order by period desc))[1],
+      (array_agg(title order by period desc))[1],
+      (array_agg(birthday order by period desc))[1],
+      (array_agg(rating order by period asc))[1],
+      (array_agg(rating order by period desc))[1],
+      sum(coalesce(games, 0))
+    from ratings
+    where games > 0
     group by fideid, rating_type
   `;
 
