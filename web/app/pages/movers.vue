@@ -61,20 +61,21 @@ const { rows: allRows, pending, loadInitial, onLoad } = useInfiniteRows(fetchPag
 watch([year, country, ratingType, titles, sex, minAge, maxAge, direction, limit], loadInitial);
 await loadInitial();
 
-const rows = computed(() => allRows.value);
+const rows = computed(() => allRows.value.map((p, i) => ({ ...p, rank: i + 1 })));
 
-// Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
-// right before the name -- same compact layout as index.vue, local to this
-// page so it doesn't touch the shared composable. Rank itself is dropped:
-// row order already conveys it, and the column cost more width than it
-// was worth, especially on mobile.
+// Reorders useBaseHeaders' [name, country, title] so flag sits right
+// before the name -- same compact layout as index.vue, local to this page
+// so it doesn't touch the shared composable. Rank has no column on mobile
+// (row order already conveys it, and there's no width to spare); title has
+// no column either -- it renders inline before the name (see #item.name)
+// instead of taking a column of its own.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
+    ...(xs.value ? [] : [{ title: t("table.rank"), key: "rank", width: 50 }]),
     { ...byKey("country"), width: xs.value ? 36 : 50 },
-    { ...byKey("title"), width: 70 },
     byKey("name"),
     { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
     { title: t("table.start"), key: "start_rating", width: 90 },
@@ -82,7 +83,7 @@ const headers = computed(() => {
     { title: t("table.delta"), key: "delta", width: xs.value ? 56 : 90 },
     // On mobile, start rating is the one column dropped -- end rating +
     // delta already tell the story, and there's still no room for all four.
-  ].filter((h) => !xs.value || !["title", "start_rating"].includes(h.key as string));
+  ].filter((h) => !xs.value || h.key !== "start_rating");
 });
 </script>
 
@@ -100,8 +101,14 @@ const headers = computed(() => {
           elevation="3"
           :class="{ 'w-100': xs }"
         >
-          <v-btn value="gain" prepend-icon="mdi-trending-up" :class="{ 'flex-grow-1': xs }">{{ t('filters.mostImproved') }}</v-btn>
-          <v-btn value="loss" prepend-icon="mdi-trending-down" :class="{ 'flex-grow-1': xs }">{{ t('filters.biggestLoss') }}</v-btn>
+          <v-btn value="gain" :title="t('filters.mostImproved')" :class="{ 'flex-grow-1': xs }">
+            <span style="margin-right: 8px"><v-icon icon="mdi-trending-up" /></span>
+            <template v-if="!xs">{{ t('filters.mostImproved') }}</template>
+          </v-btn>
+          <v-btn value="loss" :title="t('filters.biggestLoss')" :class="{ 'flex-grow-1': xs }">
+            <span style="margin-right: 8px"><v-icon icon="mdi-trending-down" /></span>
+            <template v-if="!xs">{{ t('filters.biggestLoss') }}</template>
+          </v-btn>
         </v-btn-toggle>
       </v-card-title>
       <v-card-text>

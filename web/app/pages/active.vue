@@ -59,25 +59,26 @@ const { rows: allRows, pending, loadInitial, onLoad } = useInfiniteRows(fetchPag
 watch([year, country, ratingType, titles, sex, minAge, maxAge, limit], loadInitial);
 await loadInitial();
 
-const rows = computed(() => allRows.value);
+const rows = computed(() => allRows.value.map((p, i) => ({ ...p, rank: i + 1 })));
 
-// Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
-// right before the name -- same compact layout as index.vue, local to this
-// page so it doesn't touch the shared composable. Rank itself is dropped:
-// row order already conveys it, and the column cost more width than it
-// was worth, especially on mobile.
+// Reorders useBaseHeaders' [name, country, title] so flag sits right
+// before the name -- same compact layout as index.vue, local to this page
+// so it doesn't touch the shared composable. Rank has no column on mobile
+// (row order already conveys it, and there's no width to spare); title has
+// no column either -- it renders inline before the name (see #item.name)
+// instead of taking a column of its own.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
+    ...(xs.value ? [] : [{ title: t("table.rank"), key: "rank", width: 50 }]),
     { ...byKey("country"), width: xs.value ? 36 : 50 },
-    { ...byKey("title"), width: 70 },
     byKey("name"),
     { title: t("table.rating"), key: "rating", width: xs.value ? 56 : 100 },
     { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
     { title: t("table.games"), key: "total_games", width: xs.value ? 48 : 100 },
-  ].filter((h) => !xs.value || h.key !== "title");
+  ];
 });
 </script>
 

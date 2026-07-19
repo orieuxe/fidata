@@ -34,9 +34,9 @@
     "biggestLoss": "Biggest rating loss"
   },
   "table": {
+    "rank": "#",
     "name": "Name",
     "country": "Country",
-    "title": "Title",
     "rating": "Elo",
     "age": "Age",
     "games": "Games",
