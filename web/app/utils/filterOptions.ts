@@ -5,6 +5,8 @@ export const TITLE_OPTIONS = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM"
 export const LIMIT_OPTIONS = [25, 50, 100];
 export const LIMIT_OPTIONS_WIDE = [10, 15, 25, 50, 100, 200];
 
+export const ELO_THRESHOLD_OPTIONS = [2000, 2200, 2300, 2400, 2500, 2600, 2700];
+
 export type YearFilterValue = number | "last12" | null;
 
 // Rolling 12 calendar months (current month included), rather than the

@@ -1,3 +1,8 @@
+--! Previous: sha1:99f7989a02ce7bcaa8c4cd832c331800a89201d4
+--! Hash: sha1:a711b02f83d35ad1d5cf0c000e81723a01ee181d
+--! Message: feat(db): add elo_threshold_stats fun-stats function
+
+--! Included functions/elo_threshold_stats.sql
 -- Fun stats: who crossed an elo threshold youngest/oldest, and in fewest
 -- games. Based on `ratings` history (first period where rating >= X), not
 -- FIDE title-attribution dates, which are unreliable. Exposed at
@@ -58,3 +63,4 @@ as $function$
     (select 'fewest_games' as metric, * from crossing order by games_to_threshold asc, age asc limit 1)
 $function$
 ;
+--! EndIncluded functions/elo_threshold_stats.sql

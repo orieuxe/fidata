@@ -2,10 +2,6 @@
 
 - Rating distribution with percentile, sliceable by country / worldwide /
   per title.
-- Stats amusantes : plus jeune/plus vieux (et/ou le moins de parties) à
-  passer la barre des X elo. Basé sur historique `ratings`, pas sur
-  l'attribution de titre FIDE donc data fiable (contrairement à "titre le
-  plus jeune obtenu", cf. exclu ci-dessous).
 
 # PAGE FEDERATION
 

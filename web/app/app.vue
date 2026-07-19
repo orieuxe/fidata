@@ -22,6 +22,7 @@ const navLinks = [
   { to: "/active", key: "mostActive" },
   { to: "/movers", key: "ratingMovers" },
   { to: "/search", key: "findPlayer" },
+  { to: "/fun-stats", key: "funStats" },
 ] as const;
 </script>
 

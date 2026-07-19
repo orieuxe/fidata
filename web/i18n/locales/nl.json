@@ -6,10 +6,12 @@
     "topPlayers": "Topspelers",
     "mostActive": "Meest actief",
     "ratingMovers": "Ratingveranderingen",
-    "findPlayer": "Speler zoeken"
+    "findPlayer": "Speler zoeken",
+    "funStats": "Leuke statistieken"
   },
   "filters": {
     "year": "Jaar",
+    "eloThreshold": "Elo-drempel",
     "last12Months": "Laatste 12 maanden",
     "allTime": "Aller tijden",
     "country": "Land",
@@ -72,7 +74,12 @@
     "activityChipShort": "#{rank} (top {p}%)",
     "totalActivePlayersWorld": "{n} actieve spelers wereldwijd",
     "totalActivePlayersCountry": "{n} actieve spelers ({country})",
-    "ageYears": "{n} jaar"
+    "ageYears": "{n} jaar",
+    "funStatsYoungest": "Jongste om {elo} te bereiken",
+    "funStatsOldest": "Oudste om {elo} te bereiken",
+    "funStatsFewestGames": "Minste partijen om {elo} te bereiken",
+    "funStatsReachedOn": "{elo} elo bereikt in {period}",
+    "funStatsGamesCount": "{n} partijen gespeeld om daar te komen"
   },
   "links": {
     "fideProfile": "FIDE-profiel",
