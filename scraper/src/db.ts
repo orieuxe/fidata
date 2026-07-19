@@ -92,22 +92,27 @@ export async function refreshLatestRatings(): Promise<void> {
 export async function refreshDerivedViews(): Promise<void> {
   await sql`refresh materialized view concurrently player_activity_12m`;
   await sql`refresh materialized view concurrently player_ranks`;
-  await refreshRatingChangeSnapshots();
+  await refreshLeaderboardSnapshots();
 }
 
-// Rolling 12-month rating-change snapshot for the "movers" page (see
-// rating_change.sql) and the all-time bucket for most_active_players (see
-// most_active_players.sql), both rewritten every scrape. The rolling window matches
-// web/app/utils/filterOptions.ts' yearFilterRange("last12") exactly, so
-// rating_change() can recognize and reuse it.
+// Precomputed tables behind the "movers" (rating_change_snapshots) and
+// "active"/"top players" (rating_change_snapshots' total_games column,
+// top_players_snapshots) pages -- see rating_change.sql,
+// most_active_players.sql, top_players.sql.
+//
+// Rolling 12-month and all-time buckets are rewritten every scrape. The
+// rolling window matches web/app/utils/filterOptions.ts'
+// yearFilterRange("last12") exactly, so rating_change()/most_active_players()
+// can recognize and reuse it.
 //
 // The scraper runs on the 3rd of the month (deploy/fidata-scraper.timer),
-// after the 1st -- so in December this window already lands exactly on
-// Jan-Dec of the current year (excludes last December's row, includes this
-// one, both already scraped). Freeze it under its own year bucket then,
-// once -- `on conflict do nothing` makes this safe to leave running every
-// December going forward without ever overwriting a frozen year.
-async function refreshRatingChangeSnapshots(): Promise<void> {
+// after the 1st -- so in December the rolling window already lands exactly
+// on Jan-Dec of the current year (excludes last December's row, includes
+// this one, both already scraped). Freeze both snapshot tables under their
+// own year bucket then, once -- `on conflict do nothing` makes this safe to
+// leave running every December going forward without ever overwriting a
+// frozen year.
+async function refreshLeaderboardSnapshots(): Promise<void> {
   await sql`delete from rating_change_snapshots where bucket = 'rolling'`;
   const rolling = await sql`
     insert into rating_change_snapshots
