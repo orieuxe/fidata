@@ -62,6 +62,7 @@ const headers = computed(() => [
           clearable
           autofocus
           style="max-width: 400px; width: 100%"
+          @click:clear="name = ''"
         />
         <p v-if="name.trim().length > 0 && name.trim().length < 2" class="text-caption text-medium-emphasis">
           {{ t("pages.searchHint") }}
@@ -78,6 +79,7 @@ const headers = computed(() => [
             :country-name="countryName"
           />
         </template>
+        <template #empty />
       </v-infinite-scroll>
     </v-card>
   </v-container>
