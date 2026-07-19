@@ -83,16 +83,19 @@ async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => vo
 }
 
 // No title column -- it renders inline before the name (see #item.name)
-// instead of taking a column of its own.
+// instead of taking a column of its own. Country comes before name, same
+// position as every other table.
 const headers = computed(() => [
-  { title: t("table.name"), key: "name" },
   { title: t("table.country"), key: "country", width: xs.value ? 36 : 50 },
+  { title: t("table.name"), key: "name" },
   // Full "Standard"/"Rapide"/"Blitz" header text forces these columns
   // wider than their 4-digit content needs -- on mobile there's no room
-  // for that, so abbreviate to 3 letters instead of losing a column.
-  { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: 56 },
-  { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: 56 },
-  { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: 56 },
+  // for that, so abbreviate to 3 letters instead of losing a column. On
+  // desktop, table-layout:fixed means this width has to fit that full text
+  // too, not just the 4-digit rating.
+  { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: xs.value ? 56 : 90 },
+  { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: xs.value ? 56 : 90 },
+  { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: xs.value ? 56 : 90 },
   { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
 ]);
 </script>
