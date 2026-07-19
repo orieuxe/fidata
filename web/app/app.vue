@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { useTheme, useDisplay } from "vuetify";
 import { useCookie } from "#app";
-import { useI18n } from "#i18n";
+import { useI18n, useLocalePath } from "#i18n";
 
 const theme = useTheme();
 const themeCookie = useCookie<"light" | "dark">("theme", { default: () => "dark" });
@@ -14,6 +14,7 @@ function toggleTheme() {
 
 const { t, locale, locales, setLocale } = useI18n();
 const { mobile } = useDisplay();
+const localePath = useLocalePath();
 const drawer = ref(false);
 
 const navLinks = [
@@ -32,7 +33,7 @@ const navLinks = [
         <v-app-bar-nav-icon @click="drawer = !drawer" />
       </template>
       <template v-if="!mobile">
-        <v-btn v-for="l in navLinks" :key="l.to" :to="l.to" :text="t(`nav.${l.key}`)" />
+        <v-btn v-for="l in navLinks" :key="l.to" :to="localePath(l.to)" :text="t(`nav.${l.key}`)" />
       </template>
       <v-spacer />
       <v-menu>
@@ -59,7 +60,7 @@ const navLinks = [
         <v-list-item
           v-for="l in navLinks"
           :key="l.to"
-          :to="l.to"
+          :to="localePath(l.to)"
           :title="t(`nav.${l.key}`)"
           @click="drawer = false"
         />
