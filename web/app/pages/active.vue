@@ -110,10 +110,7 @@ const headers = computed(() => {
     byKey("name"),
     { title: t("table.rating"), key: "rating", width: xs.value ? 56 : 100 },
     { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
-    // Full "Parties" header text forces the column wider than its numeric
-    // content needs -- abbreviate on mobile, same trick as search.vue, so
-    // the table fits without a horizontal scroll users don't expect.
-    { title: xs.value ? t("table.games").slice(0, 3) : t("table.games"), key: "total_games", width: xs.value ? 56 : 100 },
+    { title: t("table.games"), key: "total_games", width: xs.value ? 48 : 100 },
   ].filter((h) => !xs.value || h.key !== "title");
 });
 </script>
@@ -153,6 +150,9 @@ const headers = computed(() => {
           >
             <template #header.country="{ column }">
               <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
+            </template>
+            <template #header.total_games="{ column }">
+              <v-icon icon="mdi-chess-pawn" size="16" :title="column.title" />
             </template>
             <template #item.name="{ item }">
               <NuxtLink :to="localePath(`/player/${item.fideid}`)" :title="item.name" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
