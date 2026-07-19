@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useI18n } from "#i18n";
 import { fideProfileUrl, grandRoqueUrl, lichessUrl } from "~/utils/links";
 
-const { fideid, name, size = 14, showProfileLink = false, detailed = false } = defineProps<{
+const { fideid, name, size = 14 } = defineProps<{
   fideid: number;
   name: string;
   size?: number;

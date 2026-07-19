@@ -1,7 +1,7 @@
 export interface CountryEntry {
   code: string;
-  name: string | null;
-  iso2: string | null;
+  name?: string;
+  iso2?: string;
 }
 
 // flag-icons (CSS classes backed by SVGs) instead of the regional-indicator
