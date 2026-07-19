@@ -34,6 +34,7 @@
     "biggestLoss": "Plus forte baisse"
   },
   "table": {
+    "rank": "#",
     "name": "Nom",
     "country": "Pays",
     "rating": "Elo",

@@ -34,6 +34,7 @@
     "biggestLoss": "Biggest rating loss"
   },
   "table": {
+    "rank": "#",
     "name": "Name",
     "country": "Country",
     "rating": "Elo",

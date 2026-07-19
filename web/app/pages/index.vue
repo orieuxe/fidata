@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAsyncData } from "#app";
 import { useI18n, useLocalePath } from "#i18n";
 import { useDisplay } from "vuetify";
@@ -51,7 +51,17 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   { watch: [year, country, ratingType, titles, sex, minAge, maxAge, limit] },
 );
 
-const rows = computed(() => top.value ?? []);
+const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
+
+// v-data-table caches column widths per key on first render and doesn't
+// react to width/column-count changes after that -- SSR always guesses xs
+// (no real viewport to measure), so once the client corrects `xs` post-
+// mount, the table would otherwise keep rendering the wrong (SSR-guessed)
+// column layout forever. Force one clean remount right after mount, keyed
+// on the now-correct value, to pick up the real widths.
+const mounted = ref(false);
+onMounted(() => { mounted.value = true; });
+const tableKey = computed(() => (mounted.value ? `full-${xs.value}` : "ssr"));
 
 const topIds = computed(() => (top.value ?? []).slice(0, 15).map((r) => r.fideid));
 
@@ -72,14 +82,16 @@ const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
 
 // Reorders useBaseHeaders' [name, country, title] so flag sits right
 // before the name instead of trailing after rating/age -- local to this
-// page, doesn't touch the shared composable. Rank has no column (row order
-// already conveys it); title has no column either -- it renders inline
-// before the name (see #item.name) instead of taking a column of its own.
+// page, doesn't touch the shared composable. Rank has no column on mobile
+// (row order already conveys it, and there's no width to spare); title has
+// no column either -- it renders inline before the name (see #item.name)
+// instead of taking a column of its own.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
+    ...(xs.value ? [] : [{ title: t("table.rank"), key: "rank", width: 50 }]),
     { ...byKey("country"), width: xs.value ? 36 : 50 },
     byKey("name"),
     { title: t("table.rating"), key: "rating", width: xs.value ? 56 : 100 },
@@ -146,6 +158,7 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
     <div class="d-flex flex-wrap align-start" style="gap: 16px">
       <v-card style="width: 620px; max-width: 100%">
         <v-data-table
+          :key="tableKey"
           :headers="headers"
           :items="rows"
           :loading="pending"
