@@ -161,6 +161,29 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
       where bucket = 'rolling'
       on conflict (bucket, fideid, rating_type) do nothing
     `;
+
+    // top_players_snapshots (see 000014.sql) -- same year-end freeze, same
+    // 2-years-of-activity requirement as the one-time backfill used. Reads
+    // latest_ratings instead of a DISTINCT ON over ratings for the "latest
+    // rating" part: it's already been refreshed earlier in
+    // refreshDerivedViews, and in a December run its latest period is this
+    // year's December scrape -- exactly the year-end snapshot we want.
+    const yearEnd = new Date().getFullYear();
+    await sql`
+      insert into top_players_snapshots
+        (bucket, fideid, rating_type, name, country, sex, title, birthday, rating)
+      select ${year}, l.fideid, l.rating_type, l.name, l.country, l.sex, l.title, l.birthday, l.rating
+      from latest_ratings l
+      join (
+        select distinct fideid, rating_type
+        from ratings
+        where games > 0
+          and period > make_date(${yearEnd}, 12, 1) - interval '2 years'
+          and period <= make_date(${yearEnd}, 12, 1)
+      ) a using (fideid, rating_type)
+      where l.rating is not null
+      on conflict (bucket, fideid, rating_type) do nothing
+    `;
   }
 }
 
