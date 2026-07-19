@@ -38,17 +38,11 @@ function fetchPage(off: number, limit: number) {
 const { rows, pending, loadInitial, onLoad } = useInfiniteRows(fetchPage, () => PAGE_SIZE);
 watch(debouncedName, loadInitial, { immediate: true });
 
-// No title column -- it renders inline before the name (see PlayerTable's
-// #item.name). Country comes before name, same position as every other
-// table.
+// No title column -- renders inline in PlayerTable's #item.name.
 const headers = computed(() => [
   { title: t("table.country"), key: "country", width: xs.value ? 36 : 50 },
   { title: t("table.name"), key: "name" },
-  // Full "Standard"/"Rapide"/"Blitz" header text forces these columns
-  // wider than their 4-digit content needs -- on mobile there's no room
-  // for that, so abbreviate to 3 letters instead of losing a column. On
-  // desktop, table-layout:fixed means this width has to fit that full text
-  // too, not just the 4-digit rating.
+  // Abbreviate on mobile to keep the column from stealing width; desktop keeps full text since table-layout:fixed sizes to it anyway.
   { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: xs.value ? 56 : 90 },
   { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: xs.value ? 56 : 90 },
   { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: xs.value ? 56 : 90 },

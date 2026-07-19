@@ -70,12 +70,7 @@ const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
   { watch: [topIds, ratingType, year, country, titles, sex, minAge, maxAge, limit] },
 );
 
-// Reorders useBaseHeaders' [name, country, title] so flag sits right
-// before the name instead of trailing after rating/age -- local to this
-// page, doesn't touch the shared composable. Rank has no column on mobile
-// (row order already conveys it, and there's no width to spare); title has
-// no column either -- it renders inline before the name (see #item.name)
-// instead of taking a column of its own.
+// Local header reorder: flag before name; no rank/title column on mobile (title renders inline in #item.name).
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
