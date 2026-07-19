@@ -1,3 +1,9 @@
+--! Previous: sha1:1f8056857844036f807ee6da6ef999f1b9549981
+--! Hash: sha1:0e57ddea8b184f61c45887456d474ba3385199f9
+
+-- Enter migration here
+
+--! Included functions/search_players.sql
 create or replace function public.search_players(p_name text, p_limit integer default 25, p_offset integer default 0)
  returns table(fideid integer, name text, country text, title text, rating_standard integer, rating_rapid integer, rating_blitz integer, age integer)
  language sql
@@ -33,3 +39,4 @@ as $function$
     limit p_limit offset p_offset;
 $function$
 ;
+--! EndIncluded functions/search_players.sql
