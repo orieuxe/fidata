@@ -1,3 +1,36 @@
+--! Previous: sha1:5b8feee0467021518f3cae7a919baa730535fb94
+--! Hash: sha1:1f8056857844036f807ee6da6ef999f1b9549981
+
+-- Enter migration here
+
+-- Precomputed top_players() leaderboard per past calendar year (see
+-- top_players.sql) -- same "latest rating as of year end" the live
+-- DISTINCT ON fallback computes, but done once here instead of per
+-- request. Only includes players who played at least one game in the two
+-- years leading up to that year end (per-year equivalent of the flag='i'
+-- 2-year-inactive filter the live/current-year branches use, which is
+-- itself relative to today and so can't be reused for a past year).
+create table if not exists top_players_snapshots (
+    bucket       text not null,
+    fideid       integer not null,
+    rating_type  rating_type not null,
+    name         text not null,
+    country      text,
+    sex          text,
+    title        text,
+    birthday     integer,
+    rating       integer,
+    primary key (bucket, fideid, rating_type)
+);
+
+create index if not exists top_players_snapshots_type_rating_idx
+    on top_players_snapshots (bucket, rating_type, rating desc);
+create index if not exists top_players_snapshots_type_country_rating_idx
+    on top_players_snapshots (bucket, rating_type, country, rating desc);
+
+grant select on top_players_snapshots to web_anon;
+
+--! Included functions/top_players.sql
 -- Top N players by rating, filterable by year/country/time-control/title/age.
 -- Exposed at /rpc/top_players.
 --
@@ -81,3 +114,41 @@ as $function$
     limit p_limit;
 $function$
 ;
+--! EndIncluded functions/top_players.sql
+
+-- One-time backfill, every year from 2001 to last year, all three rating
+-- types (75 combos) -- top_players_snapshots starts empty, and unlike
+-- rating_change_snapshots there's no existing per-year data to build on.
+do $$
+declare
+    rt rating_type;
+    y int;
+    current_y int := extract(year from current_date)::int;
+begin
+    foreach rt in array enum_range(null::rating_type) loop
+        for y in 2001..(current_y - 1) loop
+            insert into top_players_snapshots
+              (bucket, fideid, rating_type, name, country, sex, title, birthday, rating)
+            with latest as (
+                select distinct on (fideid)
+                    fideid, name, country, sex, title, birthday, rating
+                from ratings
+                where rating_type = rt and period <= make_date(y, 12, 1)
+                order by fideid, period desc
+            ),
+            active as (
+                select distinct fideid
+                from ratings
+                where rating_type = rt
+                  and games > 0
+                  and period > make_date(y, 12, 1) - interval '2 years'
+                  and period <= make_date(y, 12, 1)
+            )
+            select y::text, l.fideid, rt, l.name, l.country, l.sex, l.title, l.birthday, l.rating
+            from latest l
+            join active a using (fideid)
+            where l.rating is not null
+            on conflict (bucket, fideid, rating_type) do nothing;
+        end loop;
+    end loop;
+end $$;
