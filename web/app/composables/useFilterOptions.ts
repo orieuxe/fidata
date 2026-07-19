@@ -85,14 +85,14 @@ export async function useCountryOptions() {
   return { countryOptions, countryName: nameFor, countryFlag: flagFor };
 }
 
-// Name/country/title columns are identical across every player table; each
-// page appends whatever else it shows (rating, games, delta...). No rank
-// column -- row order already conveys it, and it's not worth the width.
+// Name/country columns are identical across every player table; each page
+// appends whatever else it shows (rating, games, delta...). No rank column
+// (row order already conveys it) and no title column (it renders inline
+// before the name instead, see each page's #item.name).
 export function useBaseHeaders() {
   const { t } = useI18n();
   return computed(() => [
     { title: t("table.name"), key: "name" },
     { title: t("table.country"), key: "country" },
-    { title: t("table.title"), key: "title" },
   ]);
 }

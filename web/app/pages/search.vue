@@ -82,20 +82,19 @@ async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => vo
   }
 }
 
-const headers = computed(() =>
-  [
-    { title: t("table.name"), key: "name" },
-    { title: t("table.country"), key: "country", width: xs.value ? 36 : 50 },
-    { title: t("table.title"), key: "title", width: 70 },
-    // Full "Standard"/"Rapide"/"Blitz" header text forces these columns
-    // wider than their 4-digit content needs -- on mobile there's no room
-    // for that, so abbreviate to 3 letters instead of losing a column.
-    { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: 56 },
-    { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: 56 },
-    { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: 56 },
-    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
-  ].filter((h) => !xs.value || h.key !== "title"),
-);
+// No title column -- it renders inline before the name (see #item.name)
+// instead of taking a column of its own.
+const headers = computed(() => [
+  { title: t("table.name"), key: "name" },
+  { title: t("table.country"), key: "country", width: xs.value ? 36 : 50 },
+  // Full "Standard"/"Rapide"/"Blitz" header text forces these columns
+  // wider than their 4-digit content needs -- on mobile there's no room
+  // for that, so abbreviate to 3 letters instead of losing a column.
+  { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: 56 },
+  { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: 56 },
+  { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: 56 },
+  { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
+]);
 </script>
 
 <template>
@@ -130,7 +129,10 @@ const headers = computed(() =>
               <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
             </template>
             <template #item.name="{ item }">
-              <NuxtLink :to="localePath(`/player/${item.fideid}`)" :title="item.name" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+              <span class="player-cell" :title="item.name">
+                <span v-if="item.title" class="player-title-prefix">{{ item.title }}</span>
+                <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+              </span>
             </template>
             <template #item.country="{ item }">
               <span
@@ -156,11 +158,19 @@ const headers = computed(() =>
 :deep(.v-data-table__th) {
   padding-inline: 6px !important;
 }
-.player-name-link {
+.player-cell {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.player-title-prefix {
+  color: #ff8f00; /* amber-darken-2, same as the title chip on the player page */
+  font-weight: 700;
+  font-size: 0.85em;
+  margin-right: 4px;
+}
+.player-name-link {
   color: rgb(var(--v-theme-primary));
   text-decoration: underline;
   text-decoration-color: transparent;
