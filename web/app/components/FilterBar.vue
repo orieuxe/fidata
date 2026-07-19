@@ -28,13 +28,17 @@ const sex = defineModel<string | null>("sex", { required: true });
 const minAge = defineModel<number | null>("minAge", { required: true });
 const maxAge = defineModel<number | null>("maxAge", { required: true });
 
-// Country/title/sex/age take real estate every page pays for even though
-// most visits never touch them -- on mobile, tuck them behind a toggle so
-// the table shows up without scrolling past a wall of dropdowns first.
-// Always expanded on sm+, where there's room for everything on one row.
+// Country/time-control/title/sex/age take real estate every page pays for
+// even though most visits never touch them -- on mobile, tuck them behind
+// a toggle so the table shows up without scrolling past a wall of
+// dropdowns first. Always expanded on sm+, where there's room for
+// everything on one row.
 const moreOpen = ref(false);
+// ratingType isn't counted here: every page defaults it to "standard"
+// rather than null, so unlike the others there's no "unset" value that
+// would make the badge mean "you changed something".
 const activeMoreCount = computed(
-  () => [country.value, titles.value.length > 0, sex.value, minAge.value != null, maxAge.value != null]
+  () => [titles.value.length > 0, sex.value, minAge.value != null, maxAge.value != null]
     .filter(Boolean).length,
 );
 </script>
@@ -45,7 +49,18 @@ const activeMoreCount = computed(
       <v-select v-model="year" :items="yearOptions" :label="t('filters.year')" density="compact" />
     </v-col>
     <v-col cols="6" sm="6" md="2">
-      <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" />
+      <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact">
+        <template #item="{ props, item }">
+          <v-list-item v-bind="props" title="">
+            <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
+            {{ item.raw?.title ?? item.title }}
+          </v-list-item>
+        </template>
+        <template #selection="{ item }">
+          <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
+          {{ item.raw?.title ?? item.title }}
+        </template>
+      </v-autocomplete>
     </v-col>
     <v-col v-if="xs" cols="12">
       <v-btn variant="tonal" density="comfortable" block prepend-icon="mdi-filter-variant" @click="moreOpen = !moreOpen">
@@ -56,18 +71,7 @@ const activeMoreCount = computed(
     </v-col>
     <template v-if="!xs || moreOpen">
       <v-col cols="12" sm="6" md="2">
-        <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact">
-          <template #item="{ props, item }">
-            <v-list-item v-bind="props" title="">
-              <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
-              {{ item.raw?.title ?? item.title }}
-            </v-list-item>
-          </template>
-          <template #selection="{ item }">
-            <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
-            {{ item.raw?.title ?? item.title }}
-          </template>
-        </v-autocomplete>
+        <v-select v-model="ratingType" :items="ratingTypeOptions" :label="t('filters.timeControl')" density="compact" />
       </v-col>
       <v-col cols="12" sm="6" md="2">
         <v-select v-model="titles" :items="titleOptions" :label="t('filters.title')" multiple chips density="compact" />
