@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   imports: { autoImport: false },
   components: false,
   modules: ["@nuxtjs/i18n"],
-  css: ["vuetify/styles", "@mdi/font/css/materialdesignicons.css", "flag-icons/css/flag-icons.min.css"],
+  css: ["vuetify/styles", "@mdi/font/css/materialdesignicons.css", "flag-icons/css/flag-icons.min.css", "~/assets/css/fide-flag.css"],
   build: { transpile: ["vuetify"] },
   vite: {
     plugins: [vuetify({ autoImport: true })],

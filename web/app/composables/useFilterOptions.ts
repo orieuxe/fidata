@@ -65,6 +65,7 @@ export async function useCountryOptions() {
   }
 
   function flagFor(code: string | null) {
+    if (code === "FID") return "fi fi-fide";
     return code ? flagClass(byCode.value.get(code)?.iso2) : null;
   }
 

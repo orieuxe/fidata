@@ -10,10 +10,10 @@
   },
   "filters": {
     "year": "Année",
-    "last12Months": "12 derniers mois",
+    "last12Months": "12 mois",
     "allTime": "Toutes périodes",
     "country": "Pays",
-    "allCountries": "Tous les pays",
+    "allCountries": "Tous",
     "timeControl": "Cadence",
     "allTimeControls": "Toutes les cadences",
     "standard": "Standard",
