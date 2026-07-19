@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useAsyncData } from "#app";
-import { useI18n } from "#i18n";
+import { useI18n, useLocalePath } from "#i18n";
 import { useDisplay } from "vuetify";
 import { Line } from "vue-chartjs";
 import type { TopPlayer, Rating } from "~/types/api";
@@ -13,6 +13,7 @@ import FilterBar from "~/components/FilterBar.vue";
 
 const { get } = useApi();
 const { t } = useI18n();
+const localePath = useLocalePath();
 const { xs } = useDisplay();
 
 const { currentYear, yearOptions } = useYearOptions(false);
@@ -156,7 +157,7 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
             <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
           </template>
           <template #item.name="{ item }">
-            <NuxtLink :to="`/player/${item.fideid}`" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+            <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
           </template>
           <template #item.country="{ item }">
             <span

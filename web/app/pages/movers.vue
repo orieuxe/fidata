@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { useI18n } from "#i18n";
+import { useI18n, useLocalePath } from "#i18n";
 import { useDisplay } from "vuetify";
 import type { RatingChange } from "~/types/api";
 import { useApi } from "~/composables/useApi";
@@ -11,6 +11,7 @@ import FilterBar from "~/components/FilterBar.vue";
 
 const { get } = useApi();
 const { t } = useI18n();
+const localePath = useLocalePath();
 const { xs } = useDisplay();
 
 const { defaultYear, yearOptions } = useYearOptions(false, true);
@@ -165,7 +166,7 @@ const headers = computed(() => {
               <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
             </template>
             <template #item.name="{ item }">
-              <NuxtLink :to="`/player/${item.fideid}`" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+              <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
             </template>
             <template #item.country="{ item }">
               <span

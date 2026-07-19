@@ -162,7 +162,7 @@ function fmtDelta(delta: number | null) {
               </div>
             </div>
             <div>
-              <PlayerLinks :fideid="player.fideid" :name="player.name" :size="16" detailed />
+              <PlayerLinks :fideid="player.fideid" :name="player.name" :size="16" />
             </div>
           </div>
         </v-card-text>
