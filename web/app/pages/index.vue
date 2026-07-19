@@ -84,7 +84,9 @@ const headers = computed(() => {
     byKey("name"),
     { title: t("table.rating"), key: "rating", width: 100 },
     { title: t("table.age"), key: "age", width: 80 },
-  ].filter((h) => !xs.value || h.key !== "title");
+    // On mobile, age is the least essential column -- rank/name/rating are
+    // the point of a top-players leaderboard.
+  ].filter((h) => !xs.value || !["title", "age"].includes(h.key as string));
 });
 
 const chartData = computed(() => {
@@ -182,9 +184,12 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
 
 <style scoped>
 .player-name-link {
-  text-decoration: none;
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s;
 }
 .player-name-link:hover {
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 </style>

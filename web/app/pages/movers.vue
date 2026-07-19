@@ -113,7 +113,10 @@ const headers = computed(() => {
     { title: t("table.start"), key: "start_rating", width: 90 },
     { title: t("table.end"), key: "end_rating", width: 90 },
     { title: t("table.delta"), key: "delta", width: 90 },
-  ].filter((h) => !xs.value || h.key !== "title");
+    // On mobile, keep only what the page is actually about (name + delta,
+    // end rating for context) -- title/age/start already push the table
+    // past phone width, forcing a horizontal scroll users don't expect.
+  ].filter((h) => !xs.value || !["title", "age", "start_rating"].includes(h.key as string));
 });
 </script>
 
@@ -189,9 +192,12 @@ const headers = computed(() => {
 
 <style scoped>
 .player-name-link {
-  text-decoration: none;
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s;
 }
 .player-name-link:hover {
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 </style>

@@ -87,11 +87,16 @@ const headers = computed(() =>
     { title: t("table.name"), key: "name" },
     { title: t("table.country"), key: "country", width: 50 },
     { title: t("table.title"), key: "title", width: 70 },
-    { title: t("filters.standard"), key: "rating_standard" },
-    { title: t("filters.rapid"), key: "rating_rapid" },
-    { title: t("filters.blitz"), key: "rating_blitz" },
+    // Full "Standard"/"Rapide"/"Blitz" header text forces these columns
+    // wider than their 4-digit content needs -- on mobile there's no room
+    // for that, so abbreviate to 3 letters instead of losing a column.
+    { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: 56 },
+    { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: 56 },
+    { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: 56 },
     { title: t("table.age"), key: "age" },
-  ].filter((h) => !xs.value || h.key !== "title"),
+    // On mobile, age is the least essential column -- name/country/the
+    // three ratings are what this page is for.
+  ].filter((h) => !xs.value || !["title", "age"].includes(h.key)),
 );
 </script>
 
@@ -147,9 +152,12 @@ const headers = computed(() =>
 
 <style scoped>
 .player-name-link {
-  text-decoration: none;
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s;
 }
 .player-name-link:hover {
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 </style>

@@ -103,14 +103,17 @@ const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
-    { ...byKey("rank"), width: 50 },
-    { ...byKey("country"), width: 50 },
+    { ...byKey("rank"), width: xs.value ? 36 : 50 },
+    { ...byKey("country"), width: xs.value ? 36 : 50 },
     { ...byKey("title"), width: 70 },
     byKey("name"),
-    { title: t("table.rating"), key: "rating", width: 100 },
+    { title: t("table.rating"), key: "rating", width: xs.value ? 56 : 100 },
     { title: t("table.age"), key: "age", width: 80 },
-    { title: t("table.games"), key: "total_games", width: 100 },
-  ].filter((h) => !xs.value || h.key !== "title");
+    // Full "Parties" header text forces the column wider than its numeric
+    // content needs -- abbreviate on mobile, same trick as search.vue, so
+    // the table fits without a horizontal scroll users don't expect.
+    { title: xs.value ? t("table.games").slice(0, 3) : t("table.games"), key: "total_games", width: xs.value ? 56 : 100 },
+  ].filter((h) => !xs.value || !["title", "age"].includes(h.key as string));
 });
 </script>
 
@@ -171,9 +174,12 @@ const headers = computed(() => {
 
 <style scoped>
 .player-name-link {
-  text-decoration: none;
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s;
 }
 .player-name-link:hover {
-  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 </style>
