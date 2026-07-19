@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useAsyncData } from "#app";
-import { useI18n, useLocalePath } from "#i18n";
+import { useI18n } from "#i18n";
 import { useDisplay } from "vuetify";
 import { Line } from "vue-chartjs";
 import type { TopPlayer, Rating } from "~/types/api";
@@ -10,10 +10,10 @@ import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders
 import { useUrlFilters } from "~/composables/useUrlFilters";
 import { LIMIT_OPTIONS_WIDE } from "~/utils/filterOptions";
 import FilterBar from "~/components/FilterBar.vue";
+import PlayerTable from "~/components/PlayerTable.vue";
 
 const { get } = useApi();
 const { t } = useI18n();
-const localePath = useLocalePath();
 const { xs } = useDisplay();
 
 const { currentYear, yearOptions } = useYearOptions(false);
@@ -145,30 +145,13 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
     </v-card>
     <div class="d-flex flex-wrap align-start" style="gap: 16px">
       <v-card style="width: 620px; max-width: 100%">
-        <v-data-table
+        <PlayerTable
           :headers="headers"
           :items="rows"
           :loading="pending"
-          :items-per-page="-1"
-          hide-default-footer
-          density="compact"
-        >
-          <template #header.country="{ column }">
-            <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
-          </template>
-          <template #item.name="{ item }">
-            <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
-          </template>
-          <template #item.country="{ item }">
-            <span
-              v-if="countryFlag(item.country)"
-              :class="countryFlag(item.country)"
-              :title="countryName(item.country)"
-              style="font-size: 1.2em"
-            />
-            <span v-else :title="item.country">{{ item.country }}</span>
-          </template>
-        </v-data-table>
+          :country-flag="countryFlag"
+          :country-name="countryName"
+        />
       </v-card>
       <v-card class="flex-grow-1" style="min-width: 320px">
         <div class="pa-4" style="height: 420px">
@@ -179,12 +162,3 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
     </div>
   </v-container>
 </template>
-
-<style scoped>
-.player-name-link {
-  text-decoration: none;
-}
-.player-name-link:hover {
-  text-decoration: underline;
-}
-</style>
