@@ -29,11 +29,7 @@ as $function$
           and coalesce(flag, '') not like '%i%'
           and (p_country is null or country = p_country)
           and (p_sex is null or sex = p_sex)
-          and (
-              p_titles is null or cardinality(p_titles) = 0
-              or title = any(p_titles)
-              or ('UNTITLED' = any(p_titles) and (title is null or title = ''))
-          )
+          and title_matches(title, p_titles)
         union all
         select s.fideid, s.name, s.country, s.title, s.birthday, s.rating
         from top_players_snapshots s
@@ -42,11 +38,7 @@ as $function$
           and s.rating_type = p_rating_type
           and (p_country is null or s.country = p_country)
           and (p_sex is null or s.sex = p_sex)
-          and (
-              p_titles is null or cardinality(p_titles) = 0
-              or s.title = any(p_titles)
-              or ('UNTITLED' = any(p_titles) and (s.title is null or s.title = ''))
-          )
+          and title_matches(s.title, p_titles)
         union all
         select r.fideid, r.name, r.country, r.title, r.birthday, r.rating
         from (
@@ -63,11 +55,7 @@ as $function$
               and coalesce(r.flag, '') not like '%i%'
               and (p_country is null or r.country = p_country)
               and (p_sex is null or r.sex = p_sex)
-              and (
-                  p_titles is null or cardinality(p_titles) = 0
-                  or r.title = any(p_titles)
-                  or ('UNTITLED' = any(p_titles) and (r.title is null or r.title = ''))
-              )
+              and title_matches(r.title, p_titles)
             order by r.fideid, r.period desc
         ) r
     )

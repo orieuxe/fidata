@@ -39,11 +39,7 @@ begin
               and s.rating_type = p_rating_type
               and (p_country is null or s.country = p_country)
               and (p_sex is null or s.sex = p_sex)
-              and (
-                  p_titles is null or cardinality(p_titles) = 0
-                  or s.title = any(p_titles)
-                  or ('UNTITLED' = any(p_titles) and (s.title is null or s.title = ''))
-              )
+              and title_matches(s.title, p_titles)
               and (p_min_age is null or (v_age_year - s.birthday) >= p_min_age)
               and (p_max_age is null or (v_age_year - s.birthday) <= p_max_age)
             order by (case when p_direction = 'loss' then s.end_rating - s.start_rating
@@ -68,11 +64,7 @@ begin
               and (p_country is null or r.country = p_country)
               and (p_sex is null or r.sex = p_sex)
               and (p_rating_type is null or r.rating_type = p_rating_type)
-              and (
-                  p_titles is null or cardinality(p_titles) = 0
-                  or r.title = any(p_titles)
-                  or ('UNTITLED' = any(p_titles) and (r.title is null or r.title = ''))
-              )
+              and title_matches(r.title, p_titles)
               and (p_min_age is null or (v_age_year - r.birthday) >= p_min_age)
               and (p_max_age is null or (v_age_year - r.birthday) <= p_max_age)
             group by r.fideid
