@@ -96,9 +96,6 @@ const headers = computed(() => {
           :title-options="titleOptions"
           :sex-options="sexOptions"
         />
-        <p v-if="year == null" class="text-caption text-medium-emphasis">
-          {{ t("pages.allTimeWarning") }}
-        </p>
       </v-card-text>
       <v-infinite-scroll @load="onLoad" style="max-width: 700px; margin: 0 auto">
         <template #default>
