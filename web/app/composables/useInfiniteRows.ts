@@ -1,22 +1,15 @@
 import { ref } from "vue";
 
-// Infinite-scroll pagination shared by search/active/movers: each page hands
-// in its own fetchPage(offset, limit) built from its own filters, this just
-// tracks the accumulated rows and the v-infinite-scroll load state.
 export function useInfiniteRows<T>(
   fetchPage: (offset: number, limit: number) => Promise<T[]>,
-  // Getter, not a plain number: active/movers' page size is a reactive
-  // "limit" filter that can change after mount.
-  pageSize: () => number,
+  pageSize: () => number, // getter: active/movers' limit filter can change after mount
 ) {
   const rows = ref<T[]>([]);
   const offset = ref(0);
   const finished = ref(false);
   const pending = ref(false);
 
-  // ponytail: plain sequence token instead of AbortController -- infinite
-  // scroll's own onLoad already serializes chunk fetches, this only guards
-  // against a filter change racing an in-flight one.
+  // ponytail: sequence token guards a filter change racing an in-flight fetch
   let requestToken = 0;
 
   async function loadInitial() {
@@ -42,7 +35,7 @@ export function useInfiniteRows<T>(
         done("ok");
         return;
       }
-      rows.value = [...rows.value, ...data];
+      rows.value = [...rows.value, ...data] as any;
       offset.value += data.length;
       if (data.length < pageSize()) finished.value = true;
       done(data.length ? "ok" : "empty");

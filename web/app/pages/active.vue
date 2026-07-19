@@ -61,12 +61,7 @@ await loadInitial();
 
 const rows = computed(() => allRows.value.map((p, i) => ({ ...p, rank: i + 1 })));
 
-// Reorders useBaseHeaders' [name, country, title] so flag sits right
-// before the name -- same compact layout as index.vue, local to this page
-// so it doesn't touch the shared composable. Rank has no column on mobile
-// (row order already conveys it, and there's no width to spare); title has
-// no column either -- it renders inline before the name (see #item.name)
-// instead of taking a column of its own.
+// Local header reorder: flag before name; no rank/title column on mobile (title renders inline in #item.name).
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
@@ -115,7 +110,7 @@ const headers = computed(() => {
             :country-name="countryName"
           >
             <template #header.total_games="{ column }">
-              <v-icon icon="mdi-chess-pawn" size="16" :title="column.title" />
+              <v-icon icon="mdi-checkerboard" size="16" :title="column.title" />
             </template>
           </PlayerTable>
         </template>

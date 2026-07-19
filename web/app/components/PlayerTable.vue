@@ -14,13 +14,7 @@ defineProps<{
 
 const localePath = useLocalePath();
 
-// v-data-table caches column widths per key on first render and doesn't
-// react to width/column-count changes after that -- SSR always guesses xs
-// (no real viewport to measure), so once the client corrects `xs` post-
-// mount, the table would otherwise keep rendering the wrong (SSR-guessed)
-// column layout forever. Force one clean remount right after mount, keyed
-// on the now-correct value, to pick up the real widths. Harmless no-op for
-// tables that only ever render client-side post-hydration (e.g. search).
+// Force one remount after mount so column widths pick up the real xs, not SSR's guess.
 const { xs } = useDisplay();
 const mounted = ref(false);
 onMounted(() => { mounted.value = true; });
@@ -63,10 +57,7 @@ const tableKey = computed(() => (mounted.value ? `full-${xs.value}` : "ssr"));
 </template>
 
 <style scoped>
-/* table-layout: fixed so columns hold their declared widths instead of
-   growing to fit content (the name column, with nothing declared, then
-   takes whatever's left) -- and cell padding trimmed, compact density's
-   default still left visible margin between columns. */
+/* table-layout: fixed keeps declared column widths; name column fills the rest. */
 :deep(table) {
   table-layout: fixed;
 }
