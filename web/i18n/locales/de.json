@@ -26,6 +26,7 @@
     "female": "Frauen",
     "minAge": "Min. Alter",
     "maxAge": "Max. Alter",
+    "moreFilters": "Weitere Filter",
     "limit": "Anzeigen",
     "playerName": "Spielername",
     "direction": "Richtung",
@@ -33,7 +34,6 @@
     "biggestLoss": "Größter Wertungsverlust"
   },
   "table": {
-    "rank": "#",
     "name": "Name",
     "country": "Land",
     "title": "Titel",

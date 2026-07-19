@@ -41,12 +41,15 @@ watch(debouncedName, loadInitial, { immediate: true });
 const headers = computed(() =>
   [
     { title: t("table.name"), key: "name" },
-    { title: t("table.country"), key: "country", width: 50 },
+    { title: t("table.country"), key: "country", width: xs.value ? 36 : 50 },
     { title: t("table.title"), key: "title", width: 70 },
-    { title: t("filters.standard"), key: "rating_standard" },
-    { title: t("filters.rapid"), key: "rating_rapid" },
-    { title: t("filters.blitz"), key: "rating_blitz" },
-    { title: t("table.age"), key: "age" },
+    // Full "Standard"/"Rapide"/"Blitz" header text forces these columns
+    // wider than their 4-digit content needs -- on mobile there's no room
+    // for that, so abbreviate to 3 letters instead of losing a column.
+    { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: 56 },
+    { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: 56 },
+    { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: 56 },
+    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
   ].filter((h) => !xs.value || h.key !== "title"),
 );
 </script>

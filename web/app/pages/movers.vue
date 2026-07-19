@@ -61,25 +61,28 @@ const { rows: allRows, pending, loadInitial, onLoad } = useInfiniteRows(fetchPag
 watch([year, country, ratingType, titles, sex, minAge, maxAge, direction, limit], loadInitial);
 await loadInitial();
 
-const rows = computed(() => allRows.value.map((p, i) => ({ ...p, rank: i + 1 })));
+const rows = computed(() => allRows.value);
 
 // Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
 // right before the name -- same compact layout as index.vue, local to this
-// page so it doesn't touch the shared composable.
+// page so it doesn't touch the shared composable. Rank itself is dropped:
+// row order already conveys it, and the column cost more width than it
+// was worth, especially on mobile.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
-    { ...byKey("rank"), width: 50 },
-    { ...byKey("country"), width: 50 },
+    { ...byKey("country"), width: xs.value ? 36 : 50 },
     { ...byKey("title"), width: 70 },
     byKey("name"),
-    { title: t("table.age"), key: "age", width: 80 },
+    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
     { title: t("table.start"), key: "start_rating", width: 90 },
-    { title: t("table.end"), key: "end_rating", width: 90 },
-    { title: t("table.delta"), key: "delta", width: 90 },
-  ].filter((h) => !xs.value || h.key !== "title");
+    { title: t("table.end"), key: "end_rating", width: xs.value ? 64 : 90 },
+    { title: t("table.delta"), key: "delta", width: xs.value ? 56 : 90 },
+    // On mobile, start rating is the one column dropped -- end rating +
+    // delta already tell the story, and there's still no room for all four.
+  ].filter((h) => !xs.value || !["title", "start_rating"].includes(h.key as string));
 });
 </script>
 

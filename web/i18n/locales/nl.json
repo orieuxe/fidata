@@ -26,6 +26,7 @@
     "female": "Vrouwen",
     "minAge": "Min. leeftijd",
     "maxAge": "Max. leeftijd",
+    "moreFilters": "Meer filters",
     "limit": "Tonen",
     "playerName": "Spelersnaam",
     "direction": "Richting",
@@ -33,7 +34,6 @@
     "biggestLoss": "Grootste ratingverlies"
   },
   "table": {
-    "rank": "#",
     "name": "Naam",
     "country": "Land",
     "title": "Titel",
