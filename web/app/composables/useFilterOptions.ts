@@ -56,8 +56,12 @@ export async function useCountryOptions() {
 
   const byCode = computed(() => new Map((countries.value ?? []).map((c) => [c.code, c])));
 
-  function nameFor(code: string) {
+  function resolveName(code: string) {
     return countryName(byCode.value.get(code), locale.value);
+  }
+
+  function nameFor(code: string | null) {
+    return code ? resolveName(code) : undefined;
   }
 
   function flagFor(code: string | null) {
@@ -73,11 +77,11 @@ export async function useCountryOptions() {
     const pinned = codes.find((c) => c.iso2 === region)?.code ?? null;
     const rest = codes
       .filter((c) => c.code !== pinned)
-      .map((c) => ({ title: nameFor(c.code), value: c.code }))
+      .map((c) => ({ title: resolveName(c.code), value: c.code }))
       .sort((a, b) => a.title.localeCompare(b.title, locale.value));
     return [
       { title: t("filters.allCountries"), value: null },
-      ...(pinned && codes.some((c) => c.code === pinned) ? [{ title: nameFor(pinned), value: pinned }] : []),
+      ...(pinned && codes.some((c) => c.code === pinned) ? [{ title: resolveName(pinned), value: pinned }] : []),
       ...rest,
     ];
   });

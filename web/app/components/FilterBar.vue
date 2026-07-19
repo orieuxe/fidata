@@ -50,15 +50,15 @@ const activeMoreCount = computed(
     </v-col>
     <v-col cols="6" sm="6" md="2">
       <v-autocomplete v-model="country" :items="countryOptions" :label="t('filters.country')" density="compact">
-        <template #item="{ props, item }">
+        <template #item="{ props, internalItem }">
           <v-list-item v-bind="props" title="">
-            <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
-            {{ item.raw?.title ?? item.title }}
+            <span v-if="countryFlag(internalItem.raw?.value)" :class="countryFlag(internalItem.raw?.value)" class="mr-2" />
+            {{ internalItem.title }}
           </v-list-item>
         </template>
-        <template #selection="{ item }">
-          <span v-if="countryFlag(item.raw?.value)" :class="countryFlag(item.raw?.value)" class="mr-2" />
-          {{ item.raw?.title ?? item.title }}
+        <template #selection="{ internalItem }">
+          <span v-if="countryFlag(internalItem.raw?.value)" :class="countryFlag(internalItem.raw?.value)" class="mr-2" />
+          {{ internalItem.title }}
         </template>
       </v-autocomplete>
     </v-col>
