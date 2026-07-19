@@ -34,9 +34,9 @@
     "biggestLoss": "Grootste ratingverlies"
   },
   "table": {
+    "rank": "#",
     "name": "Naam",
     "country": "Land",
-    "title": "Titel",
     "rating": "Elo",
     "age": "Leeftijd",
     "games": "Partijen",
