@@ -93,27 +93,28 @@ async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => vo
   }
 }
 
-const rows = computed(() => allRows.value.map((p, i) => ({ ...p, rank: i + 1 })));
+const rows = computed(() => allRows.value);
 
 // Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
 // right before the name -- same compact layout as index.vue, local to this
-// page so it doesn't touch the shared composable.
+// page so it doesn't touch the shared composable. Rank itself is dropped:
+// row order already conveys it, and the column cost more width than it
+// was worth, especially on mobile.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
-    { ...byKey("rank"), width: xs.value ? 36 : 50 },
     { ...byKey("country"), width: xs.value ? 36 : 50 },
     { ...byKey("title"), width: 70 },
     byKey("name"),
     { title: t("table.rating"), key: "rating", width: xs.value ? 56 : 100 },
-    { title: t("table.age"), key: "age", width: 80 },
+    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
     // Full "Parties" header text forces the column wider than its numeric
     // content needs -- abbreviate on mobile, same trick as search.vue, so
     // the table fits without a horizontal scroll users don't expect.
     { title: xs.value ? t("table.games").slice(0, 3) : t("table.games"), key: "total_games", width: xs.value ? 56 : 100 },
-  ].filter((h) => !xs.value || !["title", "age"].includes(h.key as string));
+  ].filter((h) => !xs.value || h.key !== "title");
 });
 </script>
 
@@ -154,7 +155,7 @@ const headers = computed(() => {
               <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
             </template>
             <template #item.name="{ item }">
-              <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+              <NuxtLink :to="localePath(`/player/${item.fideid}`)" :title="item.name" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
             </template>
             <template #item.country="{ item }">
               <span
@@ -173,7 +174,22 @@ const headers = computed(() => {
 </template>
 
 <style scoped>
+/* table-layout: fixed so columns hold their declared widths instead of
+   growing to fit content (the name column, with nothing declared, then
+   takes whatever's left) -- and cell padding trimmed, compact density's
+   default still left visible margin between columns. */
+:deep(table) {
+  table-layout: fixed;
+}
+:deep(.v-data-table__td),
+:deep(.v-data-table__th) {
+  padding-inline: 6px !important;
+}
 .player-name-link {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: rgb(var(--v-theme-primary));
   text-decoration: underline;
   text-decoration-color: transparent;

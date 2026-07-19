@@ -95,28 +95,28 @@ async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => vo
   }
 }
 
-const rows = computed(() => allRows.value.map((p, i) => ({ ...p, rank: i + 1 })));
+const rows = computed(() => allRows.value);
 
 // Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
 // right before the name -- same compact layout as index.vue, local to this
-// page so it doesn't touch the shared composable.
+// page so it doesn't touch the shared composable. Rank itself is dropped:
+// row order already conveys it, and the column cost more width than it
+// was worth, especially on mobile.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
-    { ...byKey("rank"), width: 50 },
-    { ...byKey("country"), width: 50 },
+    { ...byKey("country"), width: xs.value ? 36 : 50 },
     { ...byKey("title"), width: 70 },
     byKey("name"),
-    { title: t("table.age"), key: "age", width: 80 },
+    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
     { title: t("table.start"), key: "start_rating", width: 90 },
-    { title: t("table.end"), key: "end_rating", width: 90 },
-    { title: t("table.delta"), key: "delta", width: 90 },
-    // On mobile, keep only what the page is actually about (name + delta,
-    // end rating for context) -- title/age/start already push the table
-    // past phone width, forcing a horizontal scroll users don't expect.
-  ].filter((h) => !xs.value || !["title", "age", "start_rating"].includes(h.key as string));
+    { title: t("table.end"), key: "end_rating", width: xs.value ? 64 : 90 },
+    { title: t("table.delta"), key: "delta", width: xs.value ? 56 : 90 },
+    // On mobile, start rating is the one column dropped -- end rating +
+    // delta already tell the story, and there's still no room for all four.
+  ].filter((h) => !xs.value || !["title", "start_rating"].includes(h.key as string));
 });
 </script>
 
@@ -169,7 +169,7 @@ const headers = computed(() => {
               <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
             </template>
             <template #item.name="{ item }">
-              <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+              <NuxtLink :to="localePath(`/player/${item.fideid}`)" :title="item.name" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
             </template>
             <template #item.country="{ item }">
               <span
@@ -191,7 +191,18 @@ const headers = computed(() => {
 </template>
 
 <style scoped>
+:deep(table) {
+  table-layout: fixed;
+}
+:deep(.v-data-table__td),
+:deep(.v-data-table__th) {
+  padding-inline: 6px !important;
+}
 .player-name-link {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: rgb(var(--v-theme-primary));
   text-decoration: underline;
   text-decoration-color: transparent;
