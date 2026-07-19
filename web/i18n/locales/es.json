@@ -36,7 +36,6 @@
   "table": {
     "name": "Nombre",
     "country": "País",
-    "title": "Título",
     "rating": "Elo",
     "age": "Edad",
     "games": "Partidas",
