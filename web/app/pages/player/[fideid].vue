@@ -24,6 +24,22 @@ const { data: profileRows } = await useAsyncData<PlayerProfile[]>(
 );
 const player = computed(() => profileRows.value?.[0] ?? null);
 
+// Lichess has photos for titled/FIDE-known players only; 404 for most, so fail silently.
+const { data: photoUrl } = await useAsyncData<string | null>(
+  () => `player-photo-${fideid.value}`,
+  async (_nuxtApp, { signal }) => {
+    try {
+      const res = await fetch(`https://lichess.org/api/fide/player/${fideid.value}`, { signal });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.photo?.medium ?? null;
+    } catch {
+      return null;
+    }
+  },
+  { watch: [fideid] },
+);
+
 const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
   () => `player-history-${fideid.value}`,
   (_nuxtApp, { signal }) =>
@@ -142,6 +158,9 @@ function fmtDelta(delta: number | null) {
         <v-card-text>
           <div class="d-flex flex-wrap align-center justify-space-between w-100">
             <div class="d-flex align-center" style="gap: 12px">
+              <v-avatar v-if="photoUrl" size="56">
+                <v-img :src="photoUrl" :alt="player.name" />
+              </v-avatar>
               <span
                 v-if="countryFlag(player.country)"
                 :class="countryFlag(player.country)"
@@ -169,7 +188,7 @@ function fmtDelta(delta: number | null) {
       </v-card>
 
       <v-row class="mb-4" dense>
-        <v-col v-for="c in cadenceRows" :key="c.key" cols="4">
+        <v-col v-for="c in cadenceRows" :key="c.key" cols="12" sm="4">
           <PlayerCadenceCard
             :label="c.label"
             :color="c.color"
