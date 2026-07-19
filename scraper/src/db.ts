@@ -196,6 +196,19 @@ async function refreshLeaderboardSnapshots(): Promise<void> {
   }
 }
 
+// Shared epilogue for both the monthly scrape (index.ts) and the one-time
+// historical backfill (backfill-historical.ts): flag inactive players, then
+// refresh the materialized views that depend on the ratings just written.
+export async function finalizeScrapeRun(): Promise<void> {
+  console.log("flagging inactive (2+ years) players...");
+  await flagInactivePlayers();
+  console.log("refreshing latest_ratings...");
+  await refreshLatestRatings();
+  console.log("refreshing player_activity_12m, player_ranks...");
+  await refreshDerivedViews();
+  await closeDb();
+}
+
 export async function closeDb(): Promise<void> {
   await sql.end();
 }

@@ -1,6 +1,6 @@
 import type { RatingKind } from "./fetch.js";
 import type { PlayerRow } from "./parse.js";
-import { upsertRatings, flagInactivePlayers, refreshLatestRatings, refreshDerivedViews, closeDb } from "./db.js";
+import { upsertRatings, finalizeScrapeRun } from "./db.js";
 
 // FIDE's official archive only goes back to Feb 2015 (see periods.ts). This
 // backs that up with anujdahiya24/FIDE's "Step 2 - Reformat" mirror, which
@@ -346,13 +346,7 @@ async function main(): Promise<void> {
       await sleep(200); // be polite to raw.githubusercontent.com
     }
   }
-  console.log("flagging inactive (2+ years) players...");
-  await flagInactivePlayers();
-  console.log("refreshing latest_ratings...");
-  await refreshLatestRatings();
-  console.log("refreshing player_activity_12m, player_ranks...");
-  await refreshDerivedViews();
-  await closeDb();
+  await finalizeScrapeRun();
 }
 
 main().catch((err) => {
