@@ -2,8 +2,6 @@
 
 - Rating distribution with percentile, sliceable by country / worldwide /
   per title.
-- Optimize most active all time ? mettre en valeur le filtre ?
-- Optimize top players années passés ?
 
 # mobile 
 
