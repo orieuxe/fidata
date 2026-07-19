@@ -34,7 +34,6 @@
     "biggestLoss": "Größter Wertungsverlust"
   },
   "table": {
-    "rank": "#",
     "name": "Name",
     "country": "Land",
     "title": "Titel",

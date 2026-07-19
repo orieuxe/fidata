@@ -51,7 +51,7 @@ const { data: top, pending } = await useAsyncData<TopPlayer[]>(
   { watch: [year, country, ratingType, titles, sex, minAge, maxAge, limit] },
 );
 
-const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
+const rows = computed(() => top.value ?? []);
 
 const topIds = computed(() => (top.value ?? []).slice(0, 15).map((r) => r.fideid));
 
@@ -72,21 +72,20 @@ const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
 
 // Reorders useBaseHeaders' [rank, name, country, title] so flag + title sit
 // right before the name instead of trailing after rating/age -- local to
-// this page, doesn't touch the shared composable.
+// this page, doesn't touch the shared composable. Rank itself is dropped:
+// row order already conveys it, and the column cost more width than it
+// was worth, especially on mobile.
 const baseHeaders = useBaseHeaders();
 const headers = computed(() => {
   const base = baseHeaders.value;
   const byKey = (key: string) => base.find((h) => h.key === key)!;
   return [
-    { ...byKey("rank"), width: 50 },
-    { ...byKey("country"), width: 50 },
+    { ...byKey("country"), width: xs.value ? 36 : 50 },
     { ...byKey("title"), width: 70 },
     byKey("name"),
-    { title: t("table.rating"), key: "rating", width: 100 },
-    { title: t("table.age"), key: "age", width: 80 },
-    // On mobile, age is the least essential column -- rank/name/rating are
-    // the point of a top-players leaderboard.
-  ].filter((h) => !xs.value || !["title", "age"].includes(h.key as string));
+    { title: t("table.rating"), key: "rating", width: xs.value ? 56 : 100 },
+    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
+  ].filter((h) => !xs.value || h.key !== "title");
 });
 
 const chartData = computed(() => {
@@ -159,7 +158,7 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
             <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
           </template>
           <template #item.name="{ item }">
-            <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+            <NuxtLink :to="localePath(`/player/${item.fideid}`)" :title="item.name" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
           </template>
           <template #item.country="{ item }">
             <span
@@ -183,7 +182,18 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
 </template>
 
 <style scoped>
+:deep(table) {
+  table-layout: fixed;
+}
+:deep(.v-data-table__td),
+:deep(.v-data-table__th) {
+  padding-inline: 6px !important;
+}
 .player-name-link {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: rgb(var(--v-theme-primary));
   text-decoration: underline;
   text-decoration-color: transparent;

@@ -85,7 +85,7 @@ async function onLoad({ done }: { done: (status: "ok" | "error" | "empty") => vo
 const headers = computed(() =>
   [
     { title: t("table.name"), key: "name" },
-    { title: t("table.country"), key: "country", width: 50 },
+    { title: t("table.country"), key: "country", width: xs.value ? 36 : 50 },
     { title: t("table.title"), key: "title", width: 70 },
     // Full "Standard"/"Rapide"/"Blitz" header text forces these columns
     // wider than their 4-digit content needs -- on mobile there's no room
@@ -93,10 +93,8 @@ const headers = computed(() =>
     { title: xs.value ? t("filters.standard").slice(0, 3) : t("filters.standard"), key: "rating_standard", width: 56 },
     { title: xs.value ? t("filters.rapid").slice(0, 3) : t("filters.rapid"), key: "rating_rapid", width: 56 },
     { title: xs.value ? t("filters.blitz").slice(0, 3) : t("filters.blitz"), key: "rating_blitz", width: 56 },
-    { title: t("table.age"), key: "age" },
-    // On mobile, age is the least essential column -- name/country/the
-    // three ratings are what this page is for.
-  ].filter((h) => !xs.value || !["title", "age"].includes(h.key)),
+    { title: t("table.age"), key: "age", width: xs.value ? 48 : 80 },
+  ].filter((h) => !xs.value || h.key !== "title"),
 );
 </script>
 
@@ -132,7 +130,7 @@ const headers = computed(() =>
               <v-icon icon="mdi-flag-outline" size="16" :title="column.title" />
             </template>
             <template #item.name="{ item }">
-              <NuxtLink :to="localePath(`/player/${item.fideid}`)" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
+              <NuxtLink :to="localePath(`/player/${item.fideid}`)" :title="item.name" class="player-name-link text-high-emphasis">{{ item.name }}</NuxtLink>
             </template>
             <template #item.country="{ item }">
               <span
@@ -151,7 +149,18 @@ const headers = computed(() =>
 </template>
 
 <style scoped>
+:deep(table) {
+  table-layout: fixed;
+}
+:deep(.v-data-table__td),
+:deep(.v-data-table__th) {
+  padding-inline: 6px !important;
+}
 .player-name-link {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: rgb(var(--v-theme-primary));
   text-decoration: underline;
   text-decoration-color: transparent;
