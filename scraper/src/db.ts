@@ -109,7 +109,7 @@ export async function refreshDerivedViews(): Promise<void> {
 // December going forward without ever overwriting a frozen year.
 async function refreshRatingChangeSnapshots(): Promise<void> {
   await sql`delete from rating_change_snapshots where bucket = 'rolling'`;
-  await sql`
+  const rolling = await sql`
     insert into rating_change_snapshots
       (bucket, fideid, rating_type, name, country, sex, title, birthday, start_rating, end_rating, total_games)
     select
@@ -127,13 +127,14 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
       and period >= (date_trunc('month', current_date) + interval '1 month' - interval '12 months')::date
     group by fideid, rating_type
   `;
+  console.log(`  rating_change_snapshots 'rolling': ${rolling.count} rows`);
 
   // "all time" bucket for most_active_players (see 000013.sql) -- only the
   // current year's totals can still change between scrapes, but the whole
   // aggregate is cheap enough (~seconds) to just redo in full every run
   // rather than tracking which fideids actually changed.
   await sql`delete from rating_change_snapshots where bucket = 'all'`;
-  await sql`
+  const all = await sql`
     insert into rating_change_snapshots
       (bucket, fideid, rating_type, name, country, sex, title, birthday, start_rating, end_rating, total_games)
     select
@@ -150,10 +151,11 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
     where games > 0
     group by fideid, rating_type
   `;
+  console.log(`  rating_change_snapshots 'all': ${all.count} rows`);
 
   if (new Date().getMonth() === 11) {
     const year = String(new Date().getFullYear());
-    await sql`
+    const frozen = await sql`
       insert into rating_change_snapshots
         (bucket, fideid, rating_type, name, country, sex, title, birthday, start_rating, end_rating, total_games)
       select ${year}, fideid, rating_type, name, country, sex, title, birthday, start_rating, end_rating, total_games
@@ -161,6 +163,7 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
       where bucket = 'rolling'
       on conflict (bucket, fideid, rating_type) do nothing
     `;
+    console.log(`  rating_change_snapshots '${year}' freeze: ${frozen.count} rows inserted`);
 
     // top_players_snapshots (see 000014.sql) -- same year-end freeze, same
     // 2-years-of-activity requirement as the one-time backfill used. Reads
@@ -169,7 +172,7 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
     // refreshDerivedViews, and in a December run its latest period is this
     // year's December scrape -- exactly the year-end snapshot we want.
     const yearEnd = new Date().getFullYear();
-    await sql`
+    const topFrozen = await sql`
       insert into top_players_snapshots
         (bucket, fideid, rating_type, name, country, sex, title, birthday, rating)
       select ${year}, l.fideid, l.rating_type, l.name, l.country, l.sex, l.title, l.birthday, l.rating
@@ -184,6 +187,7 @@ async function refreshRatingChangeSnapshots(): Promise<void> {
       where l.rating is not null
       on conflict (bucket, fideid, rating_type) do nothing
     `;
+    console.log(`  top_players_snapshots '${year}' freeze: ${topFrozen.count} rows inserted`);
   }
 }
 
