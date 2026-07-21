@@ -7,6 +7,7 @@ import type { TopPlayer, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders, useTitleOptions, useSexOptions } from "~/composables/useFilterOptions";
 import { useUrlFilters } from "~/composables/useUrlFilters";
+import { useSequenceGuard } from "~/composables/useSequenceGuard";
 import { LIMIT_OPTIONS_WIDE, buildBaseFilterParams } from "~/utils/filterOptions";
 import FilterBar from "~/components/FilterBar.vue";
 import PlayerTable from "~/components/PlayerTable.vue";
@@ -39,11 +40,10 @@ const history = ref<Rating[]>([]);
 const pending = ref(false);
 const historyPending = ref(false);
 
-// ponytail: sequence token guards a filter change racing an in-flight fetch (see useInfiniteRows)
-let requestToken = 0;
+const { start, isStale } = useSequenceGuard();
 
 async function load() {
-  const token = ++requestToken;
+  const token = start();
   pending.value = true;
   historyPending.value = true;
 
@@ -52,7 +52,7 @@ async function load() {
     ...buildBaseFilterParams({ country, sex, ratingType, titles, minAge, maxAge }),
     p_limit: String(limit.value),
   });
-  if (token !== requestToken) return;
+  if (isStale(token)) return;
   top.value = topData;
   pending.value = false;
 
@@ -66,7 +66,7 @@ async function load() {
         select: "fideid,period,rating,name",
       })
     : [];
-  if (token !== requestToken) return;
+  if (isStale(token)) return;
   history.value = historyData;
   historyPending.value = false;
 }
