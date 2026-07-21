@@ -1,4 +1,5 @@
 import { ref } from "vue";
+import { useSequenceGuard } from "./useSequenceGuard";
 
 export function useInfiniteRows<T>(
   fetchPage: (offset: number, limit: number) => Promise<T[]>,
@@ -9,14 +10,13 @@ export function useInfiniteRows<T>(
   const finished = ref(false);
   const pending = ref(false);
 
-  // ponytail: sequence token guards a filter change racing an in-flight fetch
-  let requestToken = 0;
+  const { start, current, isStale } = useSequenceGuard();
 
   async function loadInitial() {
-    const token = ++requestToken;
+    const token = start();
     pending.value = true;
     const data = await fetchPage(0, pageSize());
-    if (token !== requestToken) return;
+    if (isStale(token)) return;
     rows.value = data;
     offset.value = data.length;
     finished.value = data.length < pageSize();
@@ -28,10 +28,10 @@ export function useInfiniteRows<T>(
       done("empty");
       return;
     }
-    const token = requestToken;
+    const token = current();
     try {
       const data = await fetchPage(offset.value, pageSize());
-      if (token !== requestToken) {
+      if (isStale(token)) {
         done("ok");
         return;
       }
