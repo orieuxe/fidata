@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useAsyncData } from "#app";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "#i18n";
 import { useDisplay } from "vuetify";
 import { Line } from "vue-chartjs";
@@ -8,7 +7,8 @@ import type { TopPlayer, Rating } from "~/types/api";
 import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders, useTitleOptions, useSexOptions } from "~/composables/useFilterOptions";
 import { useUrlFilters } from "~/composables/useUrlFilters";
-import { LIMIT_OPTIONS_WIDE } from "~/utils/filterOptions";
+import { useSequenceGuard } from "~/composables/useSequenceGuard";
+import { LIMIT_OPTIONS_WIDE, buildBaseFilterParams } from "~/utils/filterOptions";
 import FilterBar from "~/components/FilterBar.vue";
 import PlayerTable from "~/components/PlayerTable.vue";
 
@@ -35,40 +35,46 @@ const limit = ref<number>(10);
 
 useUrlFilters({ year, country, ratingType, titles, sex, minAge, maxAge, limit });
 
-const { data: top, pending } = await useAsyncData<TopPlayer[]>(
-  "top-players",
-  (_nuxtApp, { signal }) =>
-    get<TopPlayer[]>("/rpc/top_players", {
-      p_year: String(year.value),
-      ...(country.value && { p_country: country.value }),
-      ...(sex.value && { p_sex: sex.value }),
-      p_rating_type: ratingType.value,
-      ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
-      ...(minAge.value != null && { p_min_age: String(minAge.value) }),
-      ...(maxAge.value != null && { p_max_age: String(maxAge.value) }),
-      p_limit: String(limit.value),
-    }, { signal }),
-  { watch: [year, country, ratingType, titles, sex, minAge, maxAge, limit] },
-);
+const top = ref<TopPlayer[]>([]);
+const history = ref<Rating[]>([]);
+const pending = ref(false);
+const historyPending = ref(false);
 
-const rows = computed(() => (top.value ?? []).map((r, i) => ({ ...r, rank: i + 1 })));
+const { start, isStale } = useSequenceGuard();
 
-const topIds = computed(() => (top.value ?? []).slice(0, 15).map((r) => r.fideid));
+async function load() {
+  const token = start();
+  pending.value = true;
+  historyPending.value = true;
 
-const { data: history, pending: historyPending } = await useAsyncData<Rating[]>(
-  "rating-history",
-  (_nuxtApp, { signal }) =>
-    topIds.value.length
-      ? get<Rating[]>("/ratings", {
-          fideid: `in.(${topIds.value.join(",")})`,
-          rating_type: `eq.${ratingType.value}`,
-          period: `lte.${year.value}-12-31`,
-          order: "period.asc",
-          select: "fideid,period,rating,name",
-        }, { signal })
-      : Promise.resolve([] as Rating[]),
-  { watch: [topIds, ratingType, year, country, titles, sex, minAge, maxAge, limit] },
-);
+  const topData = await get<TopPlayer[]>("/rpc/top_players", {
+    p_year: String(year.value),
+    ...buildBaseFilterParams({ country, sex, ratingType, titles, minAge, maxAge }),
+    p_limit: String(limit.value),
+  });
+  if (isStale(token)) return;
+  top.value = topData;
+  pending.value = false;
+
+  const topIds = topData.slice(0, 15).map((r) => r.fideid);
+  const historyData = topIds.length
+    ? await get<Rating[]>("/ratings", {
+        fideid: `in.(${topIds.join(",")})`,
+        rating_type: `eq.${ratingType.value}`,
+        period: `lte.${year.value}-12-31`,
+        order: "period.asc",
+        select: "fideid,period,rating,name",
+      })
+    : [];
+  if (isStale(token)) return;
+  history.value = historyData;
+  historyPending.value = false;
+}
+
+watch([year, country, ratingType, titles, sex, minAge, maxAge, limit], load);
+await load();
+
+const rows = computed(() => top.value.map((r, i) => ({ ...r, rank: i + 1 })));
 
 // Local header reorder: flag before name; no rank/title column on mobile (title renders inline in #item.name).
 const baseHeaders = useBaseHeaders();
