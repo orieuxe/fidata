@@ -6,6 +6,9 @@
   passer la barre des X elo. Basé sur historique `ratings`, pas sur
   l'attribution de titre FIDE donc data fiable (contrairement à "titre le
   plus jeune obtenu", cf. exclu ci-dessous).
+- Stats amusantes : plus de parties jouées, all-time + filtrable sur 1 mois /
+  12 mois, filtrable par pays au minimum. À voir si intéressant d'ajouter
+  d'autres filtres (fédération plus fine, tranche elo...).
 
 # PAGE FEDERATION
 
