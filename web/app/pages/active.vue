@@ -7,7 +7,7 @@ import { useApi } from "~/composables/useApi";
 import { useCountryOptions, useYearOptions, useRatingTypeOptions, useBaseHeaders, useTitleOptions, useSexOptions } from "~/composables/useFilterOptions";
 import { useUrlFilters } from "~/composables/useUrlFilters";
 import { useInfiniteRows } from "~/composables/useInfiniteRows";
-import { LIMIT_OPTIONS, yearFilterRange, type YearFilterValue } from "~/utils/filterOptions";
+import { LIMIT_OPTIONS, yearFilterRange, buildBaseFilterParams, type YearFilterValue } from "~/utils/filterOptions";
 import FilterBar from "~/components/FilterBar.vue";
 import PlayerTable from "~/components/PlayerTable.vue";
 
@@ -39,12 +39,7 @@ function buildParams(off: number) {
   return {
     ...(from && { p_from: from }),
     ...(to && { p_to: to }),
-    ...(country.value && { p_country: country.value }),
-    ...(sex.value && { p_sex: sex.value }),
-    ...(ratingType.value && { p_rating_type: ratingType.value }),
-    ...(titles.value.length && { p_titles: `{${titles.value.join(",")}}` }),
-    ...(minAge.value != null && { p_min_age: String(minAge.value) }),
-    ...(maxAge.value != null && { p_max_age: String(maxAge.value) }),
+    ...buildBaseFilterParams({ country, sex, ratingType, titles, minAge, maxAge }),
     p_limit: String(limit.value),
     p_offset: String(off),
   };
