@@ -1,3 +1,5 @@
+import type { Ref } from "vue";
+
 export const TITLE_OPTIONS = ["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM", "UNTITLED"];
 
 export const LIMIT_OPTIONS = [25, 50, 100];
@@ -21,4 +23,24 @@ export function yearFilterRange(value: YearFilterValue): { from: string | null; 
 
 function toISODate(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// Country/sex/rating-type/titles/age-range filters are identical across
+// index/active/movers; each page only adds its own year and pagination params.
+export function buildBaseFilterParams(filters: {
+  country: Ref<string | null>;
+  sex: Ref<string | null>;
+  ratingType: Ref<string | null>;
+  titles: Ref<string[]>;
+  minAge: Ref<number | null>;
+  maxAge: Ref<number | null>;
+}): Record<string, string> {
+  return {
+    ...(filters.country.value && { p_country: filters.country.value }),
+    ...(filters.sex.value && { p_sex: filters.sex.value }),
+    ...(filters.ratingType.value && { p_rating_type: filters.ratingType.value }),
+    ...(filters.titles.value.length && { p_titles: `{${filters.titles.value.join(",")}}` }),
+    ...(filters.minAge.value != null && { p_min_age: String(filters.minAge.value) }),
+    ...(filters.maxAge.value != null && { p_max_age: String(filters.maxAge.value) }),
+  };
 }
