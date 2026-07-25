@@ -15,7 +15,7 @@ const { get } = useApi();
 const { t } = useI18n();
 const { xs } = useDisplay();
 
-const { defaultYear, yearOptions } = useYearOptions(false, true);
+const { defaultYear, yearOptions } = useYearOptions(false, true, 1985);
 const { countryOptions, countryName, countryFlag } = await useCountryOptions();
 const ratingTypeOptions = useRatingTypeOptions(false);
 
