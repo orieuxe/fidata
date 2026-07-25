@@ -1,3 +1,18 @@
 .fi-fide {
   background-image: url(/flag/FIDE.jpg);
 }
+
+/* Historical flags for pre-1992 FIDE federations. flag-icons doesn't ship
+   these, so they're embedded as minimal-but-recognizable SVG data URIs. */
+.fi-su {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Crect fill='%23cd0000' width='640' height='480'/%3E%3Cpath fill='%23ffd700' d='m320 110 30 90h95l-77 55 30 90-78-57-78 57 30-90-77-55h95z'/%3E%3C/svg%3E");
+}
+.fi-yu {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Crect fill='%2300389e' width='640' height='160'/%3E%3Crect fill='%23fff' y='160' width='640' height='160'/%3E%3Crect fill='%23c80000' y='320' width='640' height='160'/%3E%3C/svg%3E");
+}
+.fi-cs {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Crect fill='%23fff' width='640' height='240'/%3E%3Crect fill='%23d7141a' y='240' width='640' height='240'/%3E%3C/svg%3E");
+}
+.fi-dd {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Crect fill='%23000' width='640' height='160'/%3E%3Crect fill='%23dd0000' y='160' width='640' height='160'/%3E%3Crect fill='%23ffce00' y='320' width='640' height='160'/%3E%3C/svg%3E");
+}
