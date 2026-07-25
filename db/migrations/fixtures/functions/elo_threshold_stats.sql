@@ -15,23 +15,27 @@ as $function$
           and r.rating >= p_threshold
         order by r.fideid, r.period
     ),
-    -- birthday sourced from latest_ratings (FIDE's most recently corrected
-    -- value), not the crossing row: FIDE occasionally fixes a player's
-    -- birth year later on, and the row at the actual crossing period can
-    -- still carry the old, wrong value.
+    -- Age at crossing: use the latest birthday known at the time of
+    -- crossing (max of all non-null birthdays recorded for this fideid
+    -- up to that period), not latest_ratings.birthday. FIDE occasionally
+    -- reuses fideids for completely different players (e.g. 700258 =
+    -- Szekely 1955 → Revesz 1989); latest_ratings would pull the new
+    -- player's birthday and make the old player look decades younger.
     crossing as (
         select
             fc.fideid, fc.name, fc.country, fc.title, fc.period, fc.rating,
-            extract(year from fc.period)::int - lr.birthday as age,
-            g.games_to_threshold
+            extract(year from fc.period)::int - g.birthday as age,
+            g.games_to_threshold,
+            g.has_any_games
         from first_cross fc
-        join latest_ratings lr on lr.fideid = fc.fideid and lr.rating_type = p_rating_type
         -- single scan of the player's history up to the crossing period,
         -- covering both the games tally and the "did we see them below
-        -- the threshold first" check below in one index scan instead of two.
+        -- the threshold first" check in one index scan instead of two.
         join lateral (
             select
                 sum(coalesce(r2.games, 0)) as games_to_threshold,
+                max(r2.birthday) filter (where r2.birthday > 1900) as birthday,
+                bool_or(r2.games > 0) as has_any_games,
                 bool_or(r2.rating < p_threshold and r2.period < fc.period) as has_prior_below
             from ratings r2
             where r2.fideid = fc.fideid
@@ -41,20 +45,15 @@ as $function$
         -- ponytail: sanity band, not a data audit -- FIDE birth years have
         -- occasional typos that survive corrections (off by a decade etc);
         -- this just keeps the worst of them off a public "fun stat" page.
-        where extract(year from fc.period)::int - lr.birthday between 5 and 100
-          -- `ratings` only goes back to 2001 (pre-2015 rows are a
-          -- third-party backfill, see backfill-historical.ts) -- a player
-          -- already rated >= threshold on their *first* row in our data
-          -- (e.g. an old GM re-registering after decades away) isn't a
-          -- real "crossing", just missing pre-2001 history. Require at
-          -- least one earlier row actually below the threshold as proof
-          -- we observed the real climb.
+        where extract(year from fc.period)::int - g.birthday between 5 and 100
+          -- require at least one earlier row actually below the threshold
+          -- as proof we observed the real climb.
           and g.has_prior_below
     )
-    (select 'youngest' as metric, * from crossing order by age asc, games_to_threshold asc limit 1)
+    (select 'youngest' as metric, fideid, name, country, title, period, rating, age, games_to_threshold from crossing order by age asc, games_to_threshold asc limit 1)
     union all
-    (select 'oldest' as metric, * from crossing order by age desc, games_to_threshold asc limit 1)
+    (select 'oldest' as metric, fideid, name, country, title, period, rating, age, games_to_threshold from crossing order by age desc, games_to_threshold asc limit 1)
     union all
-    (select 'fewest_games' as metric, * from crossing order by games_to_threshold asc, age asc limit 1)
+    (select 'fewest_games' as metric, fideid, name, country, title, period, rating, age, games_to_threshold from crossing where has_any_games order by games_to_threshold asc, age asc limit 1)
 $function$
 ;
