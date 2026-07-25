@@ -50,6 +50,7 @@
     "top25": "Top {n}",
     "ratingHistory": "Historique de classement",
     "loadingHistory": "Chargement de l'historique…",
+    "chartNoData": "Aucune donnée pour cette sélection",
     "mostActivePlayers": "Joueurs les plus actifs",
     "ratingMovers": "Évolutions de classement",
     "searchPlayers": "Rechercher un joueur",
