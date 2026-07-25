@@ -15,10 +15,10 @@ export function useTitleOptions() {
   );
 }
 
-export function useYearOptions(includeAllTime: boolean, includeLast12 = false) {
+export function useYearOptions(includeAllTime: boolean, includeLast12 = false, minYear = 1967) {
   const { t } = useI18n();
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 1967 + 1 }, (_, i) => currentYear - i);
+  const years = Array.from({ length: currentYear - minYear + 1 }, (_, i) => currentYear - i);
   const yearOptions = [
     ...(includeLast12 ? [{ title: t("filters.last12Months"), value: "last12" as const }] : []),
     ...(includeAllTime ? [{ title: t("filters.allTime"), value: null }] : []),
