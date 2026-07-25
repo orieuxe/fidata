@@ -12,11 +12,14 @@ import { toIntOrNull, toStrOrNull, normalizeTitle, VALID_TITLES } from "./backfi
 // FIDE had no separate rapid/blitz lists this far back.
 const ZIP_URL = "https://www.olimpbase.org/Elo/data/elo1967-2001.zip";
 
-// First run (1990-01 → 2000-10) already loaded; second run only backfills
-// the pre-FIDE-ID era. Rows from 1990-01 on were already upserted by the
-// initial run of this script. Plain string comparison works: both sides
-// are zero-padded YYYYMM.
-const CUTOFF = "199001";
+// Rows from 2001-01 on duplicate the better-sourced anujdahiya24 mirror
+// (already loaded by backfill-historical.ts) -- only take what's strictly
+// before it. Plain string comparison works: both sides are zero-padded
+// YYYYMM.
+// Two-pass setup:
+//   pass 1: CUTOFF=200101 → 1990-2000 with native fideid
+//   pass 2: CUTOFF=199001 → 1967-1989 via name+federation cross-ref (default)
+const CUTOFF = process.env.OLIMP_CUTOFF ?? "199001";
 
 // column layout (0-based, `;`-split): 0 blank, 1 name, 2 name (dup), 3
 // period YYYYMM, 4 fideid, 5 birthdate YYYY.MM.DD, 6 title, 7 federation,
