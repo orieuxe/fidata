@@ -1,5 +1,5 @@
---! Previous: sha1:99f7989a02ce7bcaa8c4cd832c331800a89201d4
---! Hash: sha1:7f0ffe0febdf114977b306dddca124c86eca36ff
+--! Previous: sha1:a711b02f83d35ad1d5cf0c000e81723a01ee181d
+--! Hash: sha1:3d80e492f8dd6b4d8f5f248da64e684ed38393b4
 --! Message: feat(db): add historical federation names and iso2 codes
 
 -- Fill in missing iso2 codes for countries the scraper inserted with
