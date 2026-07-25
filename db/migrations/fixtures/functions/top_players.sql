@@ -58,12 +58,21 @@ as $function$
               and title_matches(r.title, p_titles)
             order by r.fideid, r.period desc
         ) r
+    ),
+    -- OlimpBase and anujdahiya24 can assign different fideids to the same
+    -- player (e.g. Kasparov → 58971 / 4100018). Dedup by (name, country),
+    -- keeping the fideid with the highest rating.
+    deduped as (
+        select distinct on (lower(name), country)
+            fideid, name, country, title, birthday, rating
+        from filtered
+        where rating is not null
+        order by lower(name), country, rating desc
     )
     select fideid, name, country, title, rating,
            coalesce(p_year, extract(year from current_date)::int) - birthday as age
-    from filtered
-    where rating is not null
-      and (p_min_age is null or (coalesce(p_year, extract(year from current_date)::int) - birthday) >= p_min_age)
+    from deduped
+    where (p_min_age is null or (coalesce(p_year, extract(year from current_date)::int) - birthday) >= p_min_age)
       and (p_max_age is null or (coalesce(p_year, extract(year from current_date)::int) - birthday) <= p_max_age)
     order by rating desc
     limit p_limit;
