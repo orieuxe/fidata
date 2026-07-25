@@ -77,7 +77,7 @@ export async function useCountryOptions() {
     const region = new Intl.Locale(locale.value).maximize().region;
     const pinned = codes.find((c) => c.iso2 === region)?.code ?? null;
     const rest = codes
-      .filter((c) => c.code !== pinned)
+      .filter((c) => c.code !== pinned && (c.name || c.iso2))
       .map((c) => ({ title: resolveName(c.code), value: c.code }))
       .sort((a, b) => a.title.localeCompare(b.title, locale.value));
     return [
