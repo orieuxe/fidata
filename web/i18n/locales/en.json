@@ -50,6 +50,7 @@
     "top25": "Top {n}",
     "ratingHistory": "Rating history",
     "loadingHistory": "Loading history…",
+    "chartNoData": "No rating data for this selection",
     "mostActivePlayers": "Most active players",
     "ratingMovers": "Rating movers",
     "searchPlayers": "Search players",

@@ -153,7 +153,8 @@ const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { 
       <v-card class="flex-grow-1" style="min-width: 320px">
         <div class="pa-4" style="height: 420px">
           <Line v-if="!historyPending && chartData.labels.length" :data="chartData" :options="chartOptions" />
-          <p v-else class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
+          <p v-else-if="historyPending" class="text-medium-emphasis">{{ t("pages.loadingHistory") }}</p>
+          <p v-else class="text-medium-emphasis">{{ t("pages.chartNoData") }}</p>
         </div>
       </v-card>
     </div>

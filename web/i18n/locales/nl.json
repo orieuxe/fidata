@@ -50,6 +50,7 @@
     "top25": "Top {n}",
     "ratingHistory": "Ratingverloop",
     "loadingHistory": "Verloop laden…",
+    "chartNoData": "Geen gegevens voor deze selectie",
     "mostActivePlayers": "Meest actieve spelers",
     "ratingMovers": "Ratingveranderingen",
     "searchPlayers": "Spelers zoeken",
