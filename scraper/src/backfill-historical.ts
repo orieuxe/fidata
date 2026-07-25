@@ -182,14 +182,14 @@ const FILES: Record<RatingKind, HistoricalFile[]> = {
   ],
 };
 
-function toIntOrNull(v: string | undefined): number | null {
+export function toIntOrNull(v: string | undefined): number | null {
   const s = v?.trim();
   if (!s || s === "0000") return null; // "0000" is FIDE's unknown-birthday sentinel
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
 }
 
-function toStrOrNull(v: string | undefined): string | null {
+export function toStrOrNull(v: string | undefined): string | null {
   const s = v?.trim();
   return s ? s : null;
 }
@@ -203,12 +203,12 @@ const TITLE_ABBREVIATIONS: Record<string, string> = {
   wg: "WGM", wm: "WIM", wf: "WFM", wc: "WCM",
 };
 
-function normalizeTitle(raw: string | null): string | null {
+export function normalizeTitle(raw: string | null): string | null {
   if (!raw) return raw;
   return TITLE_ABBREVIATIONS[raw.toLowerCase()] ?? raw;
 }
 
-const VALID_TITLES = new Set(["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM"]);
+export const VALID_TITLES = new Set(["GM", "IM", "FM", "CM", "WGM", "WIM", "WFM", "WCM"]);
 
 function splitCsvLine(line: string): string[] {
   const cells: string[] = [];
