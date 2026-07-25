@@ -50,6 +50,7 @@
     "top25": "Top {n}",
     "ratingHistory": "Wertungsverlauf",
     "loadingHistory": "Verlauf wird geladen…",
+    "chartNoData": "Keine Daten für diese Auswahl",
     "mostActivePlayers": "Aktivste Spieler",
     "ratingMovers": "Wertungsveränderungen",
     "searchPlayers": "Spieler suchen",
